@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBrownCli", "BotBrownCli\BotBrownCli.csproj", "{6DEDBFF9-4BD8-4A83-A7ED-B06D7246A6DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBrownCore", "BotBrownCore\BotBrownCore.csproj", "{DE6F56DC-6EE9-48BB-8169-EF2E931C94D5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6DEDBFF9-4BD8-4A83-A7ED-B06D7246A6DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DEDBFF9-4BD8-4A83-A7ED-B06D7246A6DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DEDBFF9-4BD8-4A83-A7ED-B06D7246A6DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DEDBFF9-4BD8-4A83-A7ED-B06D7246A6DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE6F56DC-6EE9-48BB-8169-EF2E931C94D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE6F56DC-6EE9-48BB-8169-EF2E931C94D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE6F56DC-6EE9-48BB-8169-EF2E931C94D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE6F56DC-6EE9-48BB-8169-EF2E931C94D5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B80EAAEE-4338-4C30-A9B9-844EAA7063FE}
+	EndGlobalSection
+EndGlobal
