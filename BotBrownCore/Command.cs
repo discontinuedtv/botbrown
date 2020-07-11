@@ -7,8 +7,9 @@
     {
         private SoundPlayer player;
 
-        public Command(string name, int cooldownInSeconds, string filename, int volume)
+        public Command(string shortcut, string name, int cooldownInSeconds, string filename, int volume)
         {
+            Shortcut = shortcut;
             Name = name;
             CooldownInSeconds = cooldownInSeconds;
             Filename = filename;
@@ -25,6 +26,8 @@
         public int CooldownInSeconds { get; }
 
         public DateTimeOffset Cooldown { get; set; }
+
+        public string Shortcut { get; }
 
         public void Dispose()
         {

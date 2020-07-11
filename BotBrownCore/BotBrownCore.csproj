@@ -40,6 +40,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Speech" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -63,7 +64,23 @@
     <Compile Include="Bot.cs" />
     <Compile Include="BotConfiguration.cs" />
     <Compile Include="Command.cs" />
+    <Compile Include="CommandConfiguration.cs" />
+    <Compile Include="CommandConfigurationFactory.cs" />
+    <Compile Include="ConfigurationFileConstants.cs" />
+    <Compile Include="ConfigurationFileFactoryRegistry.cs" />
+    <Compile Include="ConfigurationManager.cs" />
+    <Compile Include="ConsoleLogger.cs" />
+    <Compile Include="GreetingConfiguration.cs" />
+    <Compile Include="GreetingConfigurationFileFactory.cs" />
+    <Compile Include="IConfiguration.cs" />
+    <Compile Include="IConfigurationFileFactory.cs" />
+    <Compile Include="IConfigurationFileFactoryRegistry.cs" />
+    <Compile Include="IConfigurationManager.cs" />
+    <Compile Include="ILogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SyntheticLanguageConstants.cs" />
+    <Compile Include="TwitchConfiguration.cs" />
+    <Compile Include="TwitchConfigurationFileFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
