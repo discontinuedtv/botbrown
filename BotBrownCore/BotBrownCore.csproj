@@ -62,28 +62,28 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bot.cs" />
-    <Compile Include="BotConfiguration.cs" />
+    <Compile Include="Configuration\BotConfiguration.cs" />
     <Compile Include="Command.cs" />
-    <Compile Include="CommandConfiguration.cs" />
-    <Compile Include="CommandConfigurationFactory.cs" />
-    <Compile Include="ConfigurationFileConstants.cs" />
-    <Compile Include="ConfigurationFileFactoryRegistry.cs" />
-    <Compile Include="ConfigurationManager.cs" />
+    <Compile Include="Configuration\CommandConfiguration.cs" />
+    <Compile Include="Configuration\CommandConfigurationFactory.cs" />
+    <Compile Include="Configuration\CommandDefinition.cs" />
+    <Compile Include="Configuration\ConfigurationFileConstants.cs" />
+    <Compile Include="Configuration\ConfigurationFileFactoryRegistry.cs" />
+    <Compile Include="Configuration\ConfigurationManager.cs" />
     <Compile Include="ConsoleLogger.cs" />
-    <Compile Include="GreetingConfiguration.cs" />
-    <Compile Include="GreetingConfigurationFileFactory.cs" />
-    <Compile Include="IConfiguration.cs" />
-    <Compile Include="IConfigurationFileFactory.cs" />
-    <Compile Include="IConfigurationFileFactoryRegistry.cs" />
-    <Compile Include="IConfigurationManager.cs" />
+    <Compile Include="Configuration\GreetingConfiguration.cs" />
+    <Compile Include="Configuration\GreetingConfigurationFileFactory.cs" />
+    <Compile Include="Configuration\IConfiguration.cs" />
+    <Compile Include="Configuration\IConfigurationFileFactory.cs" />
+    <Compile Include="Configuration\IConfigurationFileFactoryRegistry.cs" />
+    <Compile Include="Configuration\IConfigurationManager.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SyntheticLanguageConstants.cs" />
-    <Compile Include="TwitchConfiguration.cs" />
-    <Compile Include="TwitchConfigurationFileFactory.cs" />
-    <Compile Include="User.cs" />
-    <Compile Include="UsernameConfiguration.cs" />
-    <Compile Include="UsernameConfigurationFileFactory.cs" />
+    <Compile Include="Configuration\TwitchConfiguration.cs" />
+    <Compile Include="Configuration\TwitchConfigurationFileFactory.cs" />
+    <Compile Include="Configuration\User.cs" />
+    <Compile Include="Configuration\UsernameConfiguration.cs" />
+    <Compile Include="Configuration\UsernameConfigurationFileFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
