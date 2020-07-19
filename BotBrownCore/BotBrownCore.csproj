@@ -81,6 +81,9 @@
     <Compile Include="SyntheticLanguageConstants.cs" />
     <Compile Include="TwitchConfiguration.cs" />
     <Compile Include="TwitchConfigurationFileFactory.cs" />
+    <Compile Include="User.cs" />
+    <Compile Include="UsernameConfiguration.cs" />
+    <Compile Include="UsernameConfigurationFileFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

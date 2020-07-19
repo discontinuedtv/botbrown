@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BotBrownCore
+﻿namespace BotBrownCore.Configuration
 {
     internal class TwitchConfiguration : IConfiguration
     {
@@ -9,6 +7,8 @@ namespace BotBrownCore
         public string AccessToken { get; set; }
 
         public string Channel { get; set; }
+
+        public string TextToSpeechRewardId { get; set; }
 
         internal bool IsValid()
         {

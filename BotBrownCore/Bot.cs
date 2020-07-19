@@ -9,6 +9,8 @@
     using TwitchLib.Client.Models;
     using TwitchLib.Communication.Clients;
     using TwitchLib.Communication.Models;
+    using System.Collections.ObjectModel;
+    using BotBrownCore.Configuration;
 
     public sealed class Bot : IDisposable
     {
@@ -24,17 +26,22 @@
         private readonly ILogger logger = new ConsoleLogger();
 
         private HashSet<string> greetedPeople = new HashSet<string>();
+        private TwitchConfiguration twitchConfiguration;
         private GreetingConfiguration greetingConfiguration;
+        private UsernameConfiguration usernameConfiguration;
+        private string sprachen;
+
         private IDictionary<string, string> availableLanguages = new Dictionary<string, string>();
-        private IDictionary<string, string> usernameCache = new Dictionary<string, string>();
 
         // TODOS fürs nächste mal:
-        // Sprachen dynamisch ermitteln
-        // TTS abschaltbar
         // Lautstärke einstellbar
         // Verabschiedungen erkennen
+        // TTS abschaltbar
+        // Sprachen Whisper fixen
 
         // TODOS fürs übernächste mal:
+        // Time Befehl
+        // Timer Befehl
         // Oberfläche für die Konfiguration
 
         public Bot()
@@ -43,19 +50,14 @@
             registry.AddFactory(new CommandConfigurationFileFactory());
             registry.AddFactory(new TwitchConfigurationFileFactory());
             registry.AddFactory(new GreetingConfigurationFileFactory());
+            registry.AddFactory(new UsernameConfigurationFileFactory());
             configurationManager = new ConfigurationManager(registry);
 
             logger.Debug("Configuration Manager wurde geladen.");
 
             synth.SetOutputToDefaultAudioDevice();
 
-            availableLanguages.Add("deutsch", SyntheticLanguages.Deutsch);
-            availableLanguages.Add("chinesisch", SyntheticLanguages.Chinesisch);
-            availableLanguages.Add("polnisch", SyntheticLanguages.Polnisch);
-            availableLanguages.Add("spanisch", SyntheticLanguages.Spanisch);
-            availableLanguages.Add("russisch", SyntheticLanguages.Russisch);
-            availableLanguages.Add("französisch", SyntheticLanguages.Französisch);
-            availableLanguages.Add("amerikanisch", SyntheticLanguages.Amerikanisch);
+            RegisterAvailableLanguages();
         }
 
         public void Execute()
@@ -64,17 +66,18 @@
             {
                 RefreshCommands();
                 RefreshGreetings();
+                RefreshUsernames();
 
-                TwitchConfiguration configuration = LoadTwitchConfiguration();
+                twitchConfiguration = LoadTwitchConfiguration();
                 logger.Log("Twitch Konfiguration wurden geladen.");
 
-                if (!configuration.IsValid())
+                if (!twitchConfiguration.IsValid())
                 {
                     logger.Log("Die Twitch Konfiguration ist nich valide");
                     return;
                 }
 
-                ConnectionCredentials credentials = new ConnectionCredentials(configuration.Username, configuration.AccessToken);
+                ConnectionCredentials credentials = new ConnectionCredentials(twitchConfiguration.Username, twitchConfiguration.AccessToken);
                 var clientOptions = new ClientOptions
                 {
                     MessagesAllowedInPeriod = 750,
@@ -82,13 +85,14 @@
                 };
                 WebSocketClient customClient = new WebSocketClient(clientOptions);
                 client = new TwitchClient(customClient);
-                client.Initialize(credentials, configuration.Channel);
+                client.Initialize(credentials, twitchConfiguration.Channel);
 
                 client.OnLog += Client_OnLog;
                 client.OnJoinedChannel += Client_OnJoinedChannel;
                 client.OnMessageReceived += Client_OnMessageReceived;
                 //client.OnWhisperReceived += Client_OnWhisperReceived;
                 //client.OnNewSubscriber += Client_OnNewSubscriber;
+
                 client.OnConnected += Client_OnConnected;
 
                 client.Connect();
@@ -100,9 +104,25 @@
             }
         }
 
+        private void RegisterAvailableLanguages()
+        {
+            ReadOnlyCollection<InstalledVoice> voices = synth.GetInstalledVoices();
+
+            foreach (InstalledVoice voice in voices)
+            {
+                string[] languageName = voice.VoiceInfo.Culture.DisplayName.ToLower().Split(' ');
+                availableLanguages.Add(languageName[0], voice.VoiceInfo.Name);               
+            }
+        }
+
         private void RefreshGreetings()
         {
             greetingConfiguration = configurationManager.LoadConfiguration<GreetingConfiguration>(ConfigurationFileConstants.Greetings);
+        }
+
+        private void RefreshUsernames()
+        {
+            usernameConfiguration = configurationManager.LoadConfiguration<UsernameConfiguration>(ConfigurationFileConstants.Usernames);
         }
 
         public void RefreshCommands()
@@ -147,28 +167,63 @@
 
         private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
-            if (!RecordGreetingLanguage(e))
+            if (!RecordGreetingLanguage(e) && !RecordNamechange(e) && !GetLanguages(e))
             {
                 GreetIfNecessary(e);
             }
-
-            SpeakIfNecessary(e);
 
             Command foundCommand = FindCommandInMessage(e.ChatMessage);
             if (foundCommand != null)
             {
                 foundCommand.Execute();
-            }
-        }
-
-        private void SpeakIfNecessary(OnMessageReceivedArgs e)
-        {
-            if (e.ChatMessage.CustomRewardId != "c15394f1-571b-4484-8d1c-b1b2384bae7a")
-            {
                 return;
             }
 
+            if (SpeakIfNecessary(e))
+            {
+                return;
+            }
+        }
+
+        private bool GetLanguages(OnMessageReceivedArgs e)
+        {
+            if (!e.ChatMessage.Message.StartsWith("!sprachen", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(sprachen))
+            {
+                InitializeSprachen();
+            }
+
+            client.SendWhisper(e.ChatMessage.Username, sprachen);
+            return true;
+        }
+
+        private void InitializeSprachen()
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine("Dies sind die verfügbaren Sprachen:");
+
+            foreach (var item in availableLanguages)
+            {
+                sb.AppendLine(item.Key);
+            }
+
+            sprachen = sb.ToString();
+        }
+
+        private bool SpeakIfNecessary(OnMessageReceivedArgs e)
+        {
+            if (e.ChatMessage.CustomRewardId.Equals(twitchConfiguration.TextToSpeechRewardId, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
             Speak(e, (username) => $"{username} sagt: {e.ChatMessage.Message}");
+            return true;
         }
 
         private bool RecordGreetingLanguage(OnMessageReceivedArgs e)
@@ -191,6 +246,36 @@
             return false;
         }
 
+        private bool RecordNamechange(OnMessageReceivedArgs e)
+        {
+            if (!e.ChatMessage.Message.Trim().ToLower().StartsWith("!correctname:"))
+            {
+                return false;
+            }
+
+            if (!e.ChatMessage.IsModerator)
+            {
+                return false;
+            }
+
+            string namechange = e.ChatMessage.Message.Trim().ToLower().Replace("!correctname:", string.Empty);
+
+            string[] namechangeParameters = namechange.Split(';');
+            if (namechangeParameters.Length != 2)
+            {
+                return false;
+            }
+
+            if (!usernameConfiguration.FindUserByRealUsername(namechangeParameters[0], out User user))
+            {
+                return false;
+            }
+
+            user.Username = namechangeParameters[1];
+            configurationManager.WriteConfiguration(usernameConfiguration, ConfigurationFileConstants.Usernames);
+            return true;
+        }
+
         private void GreetIfNecessary(OnMessageReceivedArgs e)
         {
             if (!greetedPeople.Contains(e.ChatMessage.UserId))
@@ -210,7 +295,7 @@
             }
             else
             {
-                synth.SelectVoice(SyntheticLanguages.Deutsch);
+                synth.SelectVoice("Microsoft Hedda Desktop");
             }
 
             synth.Speak(messageAction(targetUsername));
@@ -218,7 +303,7 @@
 
         private string GetUsername(ChatMessage chatMessage)
         {
-            if (usernameCache.TryGetValue(chatMessage.UserId, out string cachedUsername))
+            if (usernameConfiguration.TryGetValue(chatMessage.UserId, out string cachedUsername))
             {
                 return cachedUsername;
             }
@@ -232,6 +317,10 @@
                 {
                     sb.Append($" {c}");
                 }
+                else if (char.IsNumber(c))
+                {
+                    continue;
+                }
                 else
                 {
                     sb.Append(c);
@@ -239,7 +328,8 @@
             }
 
             string targetUsername = sb.ToString();
-            usernameCache[chatMessage.UserId] = targetUsername;
+            usernameConfiguration.AddUsername(chatMessage.UserId, chatMessage.DisplayName, targetUsername);
+            configurationManager.WriteConfiguration(usernameConfiguration, ConfigurationFileConstants.Usernames);
             return targetUsername;
         }
 

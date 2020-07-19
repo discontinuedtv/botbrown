@@ -1,4 +1,4 @@
-﻿namespace BotBrownCore
+﻿namespace BotBrownCore.Configuration
 {
     internal interface IConfigurationManager
     {

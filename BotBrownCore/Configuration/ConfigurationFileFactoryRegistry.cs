@@ -1,4 +1,4 @@
-﻿namespace BotBrownCore
+﻿namespace BotBrownCore.Configuration
 {
     using System;
     using System.Collections.Generic;

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BotBrownCore
+﻿namespace BotBrownCore.Configuration
 {
+    using System.Collections.Generic;
+
     internal class GreetingConfiguration : IConfiguration
     {
         public Dictionary<string, string> Greetings { get; set; } = new Dictionary<string, string>();

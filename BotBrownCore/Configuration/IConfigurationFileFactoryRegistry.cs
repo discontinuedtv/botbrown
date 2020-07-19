@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BotBrownCore
+﻿namespace BotBrownCore.Configuration
 {
     public interface IConfigurationFileFactoryRegistry
     {

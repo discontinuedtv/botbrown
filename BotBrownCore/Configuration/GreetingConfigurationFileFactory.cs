@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace BotBrownCore
+﻿namespace BotBrownCore.Configuration
 {
+    using System.Collections.Generic;
+
     internal class GreetingConfigurationFileFactory : IConfigurationFileFactory<GreetingConfiguration>
     {
         public GreetingConfiguration CreateDefaultConfiguration()

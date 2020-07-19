@@ -1,13 +1,9 @@
-﻿using System.Collections.Generic;
-
-namespace BotBrownCore
+﻿namespace BotBrownCore.Configuration
 {
+    using System.Collections.Generic;
+
     internal class CommandConfigurationFileFactory : IConfigurationFileFactory<CommandConfiguration>
     {
-        public CommandConfigurationFileFactory()
-        {
-        }
-
         public CommandConfiguration CreateDefaultConfiguration()
         {
             return new CommandConfiguration
