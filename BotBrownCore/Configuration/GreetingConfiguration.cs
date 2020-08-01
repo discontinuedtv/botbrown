@@ -15,5 +15,15 @@
         {
             return Greetings.TryGetValue(userId, out language);
         }
+
+        internal string RetrieveDesiredLanguage(string userId)
+        {
+            if (!Greetings.TryGetValue(userId, out string desiredLanguage))
+            {
+                return "Microsoft Hedda Desktop";
+            }
+
+            return desiredLanguage;
+        }
     }
 }

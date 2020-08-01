@@ -5,16 +5,16 @@
 
     public sealed class UsernameConfiguration : IConfiguration
     {
-        public Dictionary<string, User> Users { get; set; } = new Dictionary<string, User>();
+        public Dictionary<string, ChannelUser> Users { get; set; } = new Dictionary<string, ChannelUser>();
 
         internal void AddUsername(string userId, string realUsername, string username)
         {
-            Users[userId] = new User(userId, realUsername, username);
+            Users[userId] = new ChannelUser(userId, realUsername, username);
         }
 
         internal bool TryGetValue(string userId, out string username)
         {
-            if (Users.TryGetValue(userId, out User user))
+            if (Users.TryGetValue(userId, out ChannelUser user))
             {
                 username = user.Username;
                 return true;
@@ -24,7 +24,7 @@
             return false;
         }
 
-        internal bool FindUserByRealUsername(string realUsername, out User user)
+        internal bool FindUserByRealUsername(string realUsername, out ChannelUser user)
         {
             foreach (var userEntry in Users)
             {

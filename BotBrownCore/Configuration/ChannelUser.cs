@@ -1,8 +1,8 @@
 ﻿namespace BotBrownCore.Configuration
 {
-    public sealed class User
+    public sealed class ChannelUser
     {
-        public User(string userId, string realUsername, string username)
+        public ChannelUser(string userId, string realUsername, string username)
         {
             UserId = userId;
             RealUsername = realUsername;

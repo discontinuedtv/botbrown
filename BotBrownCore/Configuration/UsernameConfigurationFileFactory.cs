@@ -8,7 +8,7 @@
         {
             return new UsernameConfiguration
             {
-                Users = new Dictionary<string, User>()
+                Users = new Dictionary<string, ChannelUser>()
             };
         }
     }
