@@ -7,6 +7,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBrownCli", "BotBrownCli\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBrownCore", "BotBrownCore\BotBrownCore.csproj", "{DE6F56DC-6EE9-48BB-8169-EF2E931C94D5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C2EB7DD9-F2AE-4EA1-A1EC-5C47AF0C7F87}"
+	ProjectSection(SolutionItems) = preProject
+		doc-112x112.png = doc-112x112.png
+		doc-2000x2000.png = doc-2000x2000.png
+		doc-28x28.png = doc-28x28.png
+		doc-56x56.png = doc-56x56.png
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

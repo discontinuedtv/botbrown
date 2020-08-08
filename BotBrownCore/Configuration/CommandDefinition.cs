@@ -10,9 +10,9 @@
 
         public int CooldownInSeconds { get; set; }
 
-        internal Command CreateCommand()
+        internal SoundCommand CreateCommand()
         {
-            return new Command(Shortcut, Name, CooldownInSeconds, Filename, 100);
+            return new SoundCommand(Shortcut, Name, CooldownInSeconds, Filename, 100);
         }
     }
 }

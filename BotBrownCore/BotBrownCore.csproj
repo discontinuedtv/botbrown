@@ -124,6 +124,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bot.cs" />
+    <Compile Include="BotExecutionContext.cs" />
     <Compile Include="Configuration\BotConfiguration.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Configuration\CommandConfiguration.cs" />
@@ -142,8 +143,11 @@
     <Compile Include="Configuration\IConfigurationFileFactory.cs" />
     <Compile Include="Configuration\IConfigurationFileFactoryRegistry.cs" />
     <Compile Include="Configuration\IConfigurationManager.cs" />
+    <Compile Include="IBotExecutionContext.cs" />
+    <Compile Include="ICommand.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="ITextToSpeechProcessor.cs" />
+    <Compile Include="PresenceStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\TwitchConfiguration.cs" />
     <Compile Include="Configuration\TwitchConfigurationFileFactory.cs" />
@@ -151,6 +155,8 @@
     <Compile Include="Configuration\UsernameConfiguration.cs" />
     <Compile Include="Configuration\UsernameConfigurationFileFactory.cs" />
     <Compile Include="Configuration\SentenceConfiguration.cs" />
+    <Compile Include="SoundCommand.cs" />
+    <Compile Include="TextToSpeechCommand.cs" />
     <Compile Include="TextToSpeechProcessor.cs" />
   </ItemGroup>
   <ItemGroup>

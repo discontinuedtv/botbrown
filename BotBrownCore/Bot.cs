@@ -2,21 +2,19 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Speech.Synthesis;
     using System.Text;
     using TwitchLib.Client;
     using TwitchLib.Client.Events;
     using TwitchLib.Client.Models;
     using TwitchLib.Communication.Clients;
     using TwitchLib.Communication.Models;
-    using System.Collections.ObjectModel;
     using BotBrownCore.Configuration;
-    using Newtonsoft.Json;
     using TwitchLib.Api.Services;
     using TwitchLib.Api.Services.Events.FollowerService;
     using TwitchLib.Api;
     using TwitchLib.Api.Core;
     using TwitchLib.Api.Helix.Models.Users;
+    using System.Threading.Tasks;
 
     public sealed class Bot : IDisposable
     {
@@ -28,34 +26,38 @@
         private readonly IConfigurationManager configurationManager;
 
         private readonly TextToSpeechProcessor ttsProcessor = new TextToSpeechProcessor();
+        private readonly IBotExecutionContext executionContext;
 
         private TwitchAPI api;
         private TwitchClient client;
         private FollowerService followerService;
 
-        private Dictionary<string, Command> soundsPerCommand = new Dictionary<string, Command>();
+        private Dictionary<string, SoundCommand> soundsPerCommand = new Dictionary<string, SoundCommand>();
         private readonly ILogger logger = new ConsoleLogger();
 
-        private HashSet<string> greetedPeople = new HashSet<string>();
         private TwitchConfiguration twitchConfiguration;
         private GreetingConfiguration greetingConfiguration;
         private UsernameConfiguration usernameConfiguration;
         private SentenceConfiguration sentenceConfiguration;
         private GeneralConfiguration generalConfiguration;
 
+        private PresenceStore presenceStore = new PresenceStore();
+
         // TODOS fürs nächste mal:
-        // Subscriber, Resubscriber, Sub-Bombs vorlesen lassen --> testen
-        // Verabschiedungen erkennen
-        // Lautstärke einstellbar
-        // Konfigurationen in Datenbank speichern
+        // Subscriber, Resubscriber vorlesen lassen --> testen
+        // Aufräumen des Codes
 
         // TODOS fürs übernächste mal:
-        // Time Befehl
-        // Timer Befehl
+        // Lautstärke einstellbar -> Recherche
+        // Commands extrahieren und erweiterbar machen
+        // Konfigurationen in Datenbank speichern
+        // Lautstärke einstellbar        
         // Oberfläche für die Konfiguration
 
         public Bot()
         {
+            executionContext = new BotExecutionContext(ttsProcessor);
+
             registry = new ConfigurationFileFactoryRegistry();
             registry.AddFactory(new CommandConfigurationFileFactory());
             registry.AddFactory(new TwitchConfigurationFileFactory());
@@ -176,7 +178,7 @@
         private void Client_OnReSubscriber(object sender, OnReSubscriberArgs e)
         {
             ChannelUser user = new ChannelUser(e.ReSubscriber.UserId, e.ReSubscriber.DisplayName, e.ReSubscriber.DisplayName);
-            Speak(user, (username) => string.Format(sentenceConfiguration.ResubscriberAlert, username, e.ReSubscriber.Months));
+            Speak(user, (username) => string.Format(sentenceConfiguration.ResubscriberAlert, username, e.ReSubscriber.MsgParamStreakMonths));
         }
 
         private void Client_OnCommunitySubscription(object sender, OnCommunitySubscriptionArgs e)
@@ -197,11 +199,13 @@
 
         public void RefreshCommands()
         {
+            // Load commands from configuration
+
             soundsPerCommand.Clear();
             CommandConfiguration commandConfiguration = LoadCommandConfiguration();
             foreach (CommandDefinition commandDefinition in commandConfiguration.CommandsDefinitions)
             {
-                Command command = commandDefinition.CreateCommand();
+                SoundCommand command = commandDefinition.CreateCommand();
                 soundsPerCommand.Add(command.Shortcut, command);
 
                 logger.Log($"Kommando {command.Shortcut} hinzugefügt.");
@@ -232,7 +236,12 @@
 
         private void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
-            client.SendMessage(e.Channel, "Hallo Leute, Bot Brown ist wieder da!");
+            if (string.IsNullOrEmpty(generalConfiguration.BotChannelGreeting))
+            {
+                return;
+            }
+
+            client.SendMessage(e.Channel, generalConfiguration.BotChannelGreeting);
         }
 
         private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
@@ -242,15 +251,29 @@
                 return;
             }
 
+            string targetUsername = ResolveUsername(new ChannelUser(e.ChatMessage.UserId, e.ChatMessage.DisplayName, e.ChatMessage.DisplayName));
+
+            if (TimerStart(e))
+            {
+                return;
+            }
+
+            if (WhatsTheTime(e))
+            {
+                return;
+            }
+
             if (!RecordGreetingLanguage(e) && !RecordNamechange(e) && !GetLanguages(e))
             {
                 GreetIfNecessary(e);
             }
 
-            Command foundCommand = FindCommandInMessage(e.ChatMessage);
+            SayByeIfNecessary(e);
+
+            ICommand foundCommand = FindCommandInMessage(e.ChatMessage);
             if (foundCommand != null)
             {
-                foundCommand.Execute();
+                foundCommand.Execute(executionContext);
                 return;
             }
 
@@ -258,6 +281,56 @@
             {
                 return;
             }
+        }
+
+        private bool TimerStart(OnMessageReceivedArgs e)
+        {
+            // !timer 420 Ex-und-hopp
+            if (!e.ChatMessage.Message.Trim().ToLower().StartsWith("!timer"))
+            {
+                return false;
+            }
+
+            string parameterString = e.ChatMessage.Message.Trim().ToLower().Replace("!timer", string.Empty).Trim();
+            string[] parameters = parameterString.Split(' ');
+            if (parameters.Length != 2)
+            {
+                return false;
+            }
+
+            if (!int.TryParse(parameters[0], out int timeInSeconds))
+            {
+                return false;
+            }
+
+            if (!e.ChatMessage.IsBroadcaster)
+            {
+                return false;
+            }
+
+            Task.Delay(TimeSpan.FromSeconds(timeInSeconds))
+                .ContinueWith(o => Speak(e.ChatMessage, (username) => $"Der Timer {parameters[1]} ist abgelaufen."));
+
+            return true;
+        }
+
+        private bool WhatsTheTime(OnMessageReceivedArgs e)
+        {
+            if (!e.ChatMessage.Message.Trim().ToLower().StartsWith("!time"))
+            {
+                return false;
+            }
+
+            if (!e.ChatMessage.IsModerator && !e.ChatMessage.IsBroadcaster)
+            {
+                return false;
+            }
+
+            DateTime now = DateTime.Now;
+
+            Speak(e.ChatMessage, (username) => $"Die Zeitleitung zeigt {now:HH} Uhr {now:mm} an.");
+
+            return true;
         }
 
         private bool GetLanguages(OnMessageReceivedArgs e)
@@ -340,10 +413,26 @@
 
         private void GreetIfNecessary(OnMessageReceivedArgs e)
         {
-            if (!greetedPeople.Contains(e.ChatMessage.UserId))
+            if (presenceStore.IsGreetingNecessary(e.ChatMessage.UserId))
             {
                 Speak(e.ChatMessage, (username) => $"Hallo {username}");
-                greetedPeople.Add(e.ChatMessage.UserId);
+                presenceStore.RecordPresence(e.ChatMessage.UserId);
+            }
+        }
+
+        private void SayByeIfNecessary(OnMessageReceivedArgs e)
+        {
+            if (!e.ChatMessage.Message.Contains("@") && presenceStore.IsSayByeNecessary(e.ChatMessage.UserId))
+            {
+                foreach (string word in e.ChatMessage.Message.Split(' '))
+                {
+                    if (generalConfiguration.ByePhrases.Contains(word.ToLower()))
+                    {
+                        Speak(e.ChatMessage, (username) => string.Format(generalConfiguration.ByePhrase, username));
+                        presenceStore.RemovePresence(e.ChatMessage.UserId);
+                        break;
+                    }
+                }
             }
         }
 
@@ -394,9 +483,9 @@
             return targetUsername;
         }
 
-        private Command FindCommandInMessage(ChatMessage chatMessage)
+        private ICommand FindCommandInMessage(ChatMessage chatMessage)
         {
-            foreach (var command in soundsPerCommand.Keys)
+            foreach (string command in soundsPerCommand.Keys)
             {
                 if (chatMessage.Message.Contains(command))
                 {
