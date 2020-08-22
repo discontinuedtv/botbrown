@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    internal class GreetingConfigurationFileFactory : IConfigurationFileFactory<GreetingConfiguration>
+    public class GreetingConfigurationFileFactory : IConfigurationFileFactory<GreetingConfiguration>
     {
         public GreetingConfiguration CreateDefaultConfiguration()
         {

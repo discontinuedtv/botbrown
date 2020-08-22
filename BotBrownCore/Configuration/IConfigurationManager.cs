@@ -1,6 +1,6 @@
 ﻿namespace BotBrownCore.Configuration
 {
-    internal interface IConfigurationManager
+    public interface IConfigurationManager
     {
         T LoadConfiguration<T>(string filename)
             where T : IConfiguration;

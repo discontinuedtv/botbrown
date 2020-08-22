@@ -143,10 +143,23 @@
     <Compile Include="Configuration\IConfigurationFileFactory.cs" />
     <Compile Include="Configuration\IConfigurationFileFactoryRegistry.cs" />
     <Compile Include="Configuration\IConfigurationManager.cs" />
+    <Compile Include="EventHandler.cs" />
+    <Compile Include="Events\ChannelJoinedEvent.cs" />
+    <Compile Include="Events\CommunitySubscriptionEvent.cs" />
+    <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\MessageReceivedEvent.cs" />
+    <Compile Include="Events\NewFollowerEvent.cs" />
+    <Compile Include="Events\NewSubscriberEvent.cs" />
+    <Compile Include="Events\ResubscriberEvent.cs" />
+    <Compile Include="Events\SubGiftEvent.cs" />
     <Compile Include="IBotExecutionContext.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="ISubscriber.cs" />
     <Compile Include="ITextToSpeechProcessor.cs" />
+    <Compile Include="ITwitchApiWrapper.cs" />
+    <Compile Include="ITwitchClientWrapper.cs" />
+    <Compile Include="ChatMessage.cs" />
     <Compile Include="PresenceStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\TwitchConfiguration.cs" />
@@ -156,8 +169,11 @@
     <Compile Include="Configuration\UsernameConfigurationFileFactory.cs" />
     <Compile Include="Configuration\SentenceConfiguration.cs" />
     <Compile Include="SoundCommand.cs" />
+    <Compile Include="Subscriber.cs" />
     <Compile Include="TextToSpeechCommand.cs" />
     <Compile Include="TextToSpeechProcessor.cs" />
+    <Compile Include="TwitchApiWrapper.cs" />
+    <Compile Include="TwitchClientWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    internal class CommandConfigurationFileFactory : IConfigurationFileFactory<CommandConfiguration>
+    public class CommandConfigurationFileFactory : IConfigurationFileFactory<CommandConfiguration>
     {
         public CommandConfiguration CreateDefaultConfiguration()
         {

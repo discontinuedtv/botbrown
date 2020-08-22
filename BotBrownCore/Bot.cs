@@ -3,18 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Text;
-    using TwitchLib.Client;
-    using TwitchLib.Client.Events;
-    using TwitchLib.Client.Models;
-    using TwitchLib.Communication.Clients;
-    using TwitchLib.Communication.Models;
     using BotBrownCore.Configuration;
-    using TwitchLib.Api.Services;
-    using TwitchLib.Api.Services.Events.FollowerService;
-    using TwitchLib.Api;
-    using TwitchLib.Api.Core;
-    using TwitchLib.Api.Helix.Models.Users;
     using System.Threading.Tasks;
+    using System.Linq;
+    using BotBrownCore.Events;
 
     public sealed class Bot : IDisposable
     {
@@ -22,15 +14,13 @@
         // https://twitchapps.com/tmi/
         // https://twitchtokengenerator.com/
 
-        private readonly IConfigurationFileFactoryRegistry registry;
         private readonly IConfigurationManager configurationManager;
 
         private readonly TextToSpeechProcessor ttsProcessor = new TextToSpeechProcessor();
         private readonly IBotExecutionContext executionContext;
 
-        private TwitchAPI api;
-        private TwitchClient client;
-        private FollowerService followerService;
+        private ITwitchApiWrapper apiWrapper;
+        private ITwitchClientWrapper clientWrapper;
 
         private Dictionary<string, SoundCommand> soundsPerCommand = new Dictionary<string, SoundCommand>();
         private readonly ILogger logger = new ConsoleLogger();
@@ -46,32 +36,34 @@
         // TODOS fürs nächste mal:
         // Subscriber, Resubscriber vorlesen lassen --> testen
         // Aufräumen des Codes
+        // Konfigurationen in Datenbank speichern <- Wirklich? Oder lieber Plugin das reagiert?
 
         // TODOS fürs übernächste mal:
         // Lautstärke einstellbar -> Recherche
         // Commands extrahieren und erweiterbar machen
-        // Konfigurationen in Datenbank speichern
         // Lautstärke einstellbar        
         // Oberfläche für die Konfiguration
 
-        public Bot()
+        public Bot(ITwitchApiWrapper apiWrapper, ITwitchClientWrapper clientWrapper, IConfigurationManager configurationManager)
         {
+            this.apiWrapper = apiWrapper;
+            this.clientWrapper = clientWrapper;
+            this.configurationManager = configurationManager;
+
             executionContext = new BotExecutionContext(ttsProcessor);
-
-            registry = new ConfigurationFileFactoryRegistry();
-            registry.AddFactory(new CommandConfigurationFileFactory());
-            registry.AddFactory(new TwitchConfigurationFileFactory());
-            registry.AddFactory(new GreetingConfigurationFileFactory());
-            registry.AddFactory(new UsernameConfigurationFileFactory());
-            registry.AddFactory(new SentenceConfigurationFileFactory());
-            registry.AddFactory(new GeneralConfigurationFileFactory());
-            configurationManager = new ConfigurationManager(registry);
-            
-            logger.Debug("Configuration Manager wurde geladen.");
-
+           
             RefreshGeneralConfiguration();
             ttsProcessor.Configure(generalConfiguration);
             ttsProcessor.RegisterAvailableLanguages();
+
+            apiWrapper.Subscribe(new Subscriber<NewFollowerEvent>(AlertForNewFollowers));
+
+            clientWrapper.Subscribe(new Subscriber<SubGiftEvent>((e) => Speak(e.User, (username) => string.Format(sentenceConfiguration.GiftedSubscriberAlert, username))));
+            clientWrapper.Subscribe(new Subscriber<NewSubscriberEvent>((e) => Speak(e.User, (username) => string.Format(sentenceConfiguration.SubscriberAlert, username))));
+            clientWrapper.Subscribe(new Subscriber<ResubscriberEvent>((e) => Speak(e.User, (username) => string.Format(sentenceConfiguration.ResubscriberAlert, username, e.NumberOfMonthsSubscribed))));
+            clientWrapper.Subscribe(new Subscriber<CommunitySubscriptionEvent>((e) => Speak(e.User, (username) => string.Format(sentenceConfiguration.SubBombAlert, username, e.NumberOfSubscriptionsGifted))));
+            clientWrapper.Subscribe(new Subscriber<MessageReceivedEvent>(OnNewMessage));
+            clientWrapper.Subscribe(new Subscriber<ChannelJoinedEvent>(OnChannelJoined));
         }
 
         public void Execute()
@@ -92,13 +84,65 @@
                     return;
                 }
 
-                InitializeTwitchLibChatClient();
-                InitializeTwitchApiClient();
+                clientWrapper.ConnectToTwitch(twitchConfiguration);
+                apiWrapper.ConnectToTwitch(twitchConfiguration);
             }
             catch (Exception e)
             {
                 logger.Log("Der Bot wurde aufgrund eines Fehlers beendet");
                 logger.Error(e);
+            }
+        }
+
+        private void OnChannelJoined(ChannelJoinedEvent @event)
+        {
+            if (string.IsNullOrEmpty(generalConfiguration.BotChannelGreeting))
+            {
+                return;
+            }
+
+            clientWrapper.SendMessage(@event.ChannelName, generalConfiguration.BotChannelGreeting);
+        }
+
+        private void OnNewMessage(MessageReceivedEvent @event)
+        {
+            string targetUsername = ResolveUsername(@event.User); // ?
+
+            if (TimerStart(@event))
+            {
+                return;
+            }
+
+            if (WhatsTheTime(@event))
+            {
+                return;
+            }
+
+            if (!RecordGreetingLanguage(@event) && !RecordNamechange(@event.Message) && !GetLanguages(@event.Message))
+            {
+                GreetIfNecessary(@event);
+            }
+
+            SayByeIfNecessary(@event);
+
+            string commandName = @event.Message.MessageContainsAnyCommand(soundsPerCommand.Keys);
+            if (commandName != null)
+            {
+                soundsPerCommand[commandName].Execute(executionContext);
+                return;
+            }
+
+            if (SpeakIfNecessary(@event))
+            {
+                return;
+            }
+        }
+
+        private void AlertForNewFollowers(NewFollowerEvent @event)
+        {
+            foreach (ChannelUser newFollow in @event.NewFollowers)
+            {
+                Speak(newFollow, (username) => string.Format(sentenceConfiguration.FollowerAlert, username));
             }
         }
 
@@ -110,81 +154,6 @@
         private void RefreshSentences()
         {
             sentenceConfiguration = configurationManager.LoadConfiguration<SentenceConfiguration>(ConfigurationFileConstants.Sentences);
-        }
-
-        private void InitializeTwitchApiClient()
-        {
-            api = new TwitchAPI(null, null, new ApiSettings
-            {
-                ClientId = twitchConfiguration.ApiClientId,
-                AccessToken = twitchConfiguration.ApiAccessToken
-            });
-
-            followerService = new FollowerService(api, 10);
-            followerService.SetChannelsByName(new List<string> { twitchConfiguration.Username }); // TODO ändern!
-            followerService.OnNewFollowersDetected += Api_OnFollowerDetected;
-            followerService.Start();
-        }
-
-        private void Api_OnFollowerDetected(object sender, OnNewFollowersDetectedArgs e)
-        {
-            DateTime dateToCheckAgainst = DateTime.UtcNow.AddSeconds(-90);
-
-            foreach (Follow follow in e.NewFollowers.FindAll(x => x.FollowedAt >= dateToCheckAgainst))
-            {
-                var user = new ChannelUser(follow.FromUserId, follow.FromUserName, follow.FromUserName);
-
-                Speak(user, (username) => string.Format(sentenceConfiguration.FollowerAlert, username));
-            }            
-        }
-
-        private void InitializeTwitchLibChatClient()
-        {
-            ConnectionCredentials credentials = new ConnectionCredentials(twitchConfiguration.Username, twitchConfiguration.AccessToken);
-            var clientOptions = new ClientOptions
-            {
-                MessagesAllowedInPeriod = 750,
-                ThrottlingPeriod = TimeSpan.FromSeconds(30)
-            };
-            WebSocketClient customClient = new WebSocketClient(clientOptions);
-            client = new TwitchClient(customClient);
-            client.Initialize(credentials, twitchConfiguration.Channel);
-
-            client.OnLog += Client_OnLog;
-            client.OnJoinedChannel += Client_OnJoinedChannel;
-            client.OnMessageReceived += Client_OnMessageReceived;
-            client.OnCommunitySubscription += Client_OnCommunitySubscription;
-            client.OnReSubscriber += Client_OnReSubscriber;
-            client.OnNewSubscriber += Client_OnNewSubscriber;
-            client.OnGiftedSubscription += Client_OnGiftedSubscription;
-
-            client.OnConnected += Client_OnConnected;
-
-            client.Connect();
-        }
-
-        private void Client_OnGiftedSubscription(object sender, OnGiftedSubscriptionArgs e)
-        {
-            ChannelUser user = new ChannelUser(e.GiftedSubscription.MsgParamRecipientId, e.GiftedSubscription.MsgParamRecipientUserName, e.GiftedSubscription.MsgParamRecipientUserName);
-            Speak(user, (username) => string.Format(sentenceConfiguration.GiftedSubscriberAlert, username));
-        }
-
-        private void Client_OnNewSubscriber(object sender, OnNewSubscriberArgs e)
-        {
-            ChannelUser user = new ChannelUser(e.Subscriber.UserId, e.Subscriber.DisplayName, e.Subscriber.DisplayName);
-            Speak(user, (username) => string.Format(sentenceConfiguration.SubscriberAlert, username));
-        }
-
-        private void Client_OnReSubscriber(object sender, OnReSubscriberArgs e)
-        {
-            ChannelUser user = new ChannelUser(e.ReSubscriber.UserId, e.ReSubscriber.DisplayName, e.ReSubscriber.DisplayName);
-            Speak(user, (username) => string.Format(sentenceConfiguration.ResubscriberAlert, username, e.ReSubscriber.MsgParamStreakMonths));
-        }
-
-        private void Client_OnCommunitySubscription(object sender, OnCommunitySubscriptionArgs e)
-        {
-            ChannelUser user = new ChannelUser(e.GiftedSubscription.UserId, e.GiftedSubscription.DisplayName, e.GiftedSubscription.DisplayName);
-            Speak(user, (username) => string.Format(sentenceConfiguration.SubBombAlert, username, e.GiftedSubscription.MsgParamMassGiftCount));
         }
 
         private void RefreshGreetings()
@@ -199,8 +168,6 @@
 
         public void RefreshCommands()
         {
-            // Load commands from configuration
-
             soundsPerCommand.Clear();
             CommandConfiguration commandConfiguration = LoadCommandConfiguration();
             foreach (CommandDefinition commandDefinition in commandConfiguration.CommandsDefinitions)
@@ -224,76 +191,20 @@
             return configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
         }
 
-        private void Client_OnLog(object sender, OnLogArgs e)
+        private bool TimerStart(MessageReceivedEvent @event)
         {
-            //Console.WriteLine($"{e.DateTime.ToString()}: {e.BotUsername} - {e.Data}");
-        }
+            ChatMessage message = @event.Message;
+            ChannelUser user = @event.User;
 
-        private void Client_OnConnected(object sender, OnConnectedArgs e)
-        {
-            Console.WriteLine($"Connected to {e.AutoJoinChannel}");
-        }
-
-        private void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
-        {
-            if (string.IsNullOrEmpty(generalConfiguration.BotChannelGreeting))
-            {
-                return;
-            }
-
-            client.SendMessage(e.Channel, generalConfiguration.BotChannelGreeting);
-        }
-
-        private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
-        {
-            if (e == null || sender == null)
-            {
-                return;
-            }
-
-            string targetUsername = ResolveUsername(new ChannelUser(e.ChatMessage.UserId, e.ChatMessage.DisplayName, e.ChatMessage.DisplayName));
-
-            if (TimerStart(e))
-            {
-                return;
-            }
-
-            if (WhatsTheTime(e))
-            {
-                return;
-            }
-
-            if (!RecordGreetingLanguage(e) && !RecordNamechange(e) && !GetLanguages(e))
-            {
-                GreetIfNecessary(e);
-            }
-
-            SayByeIfNecessary(e);
-
-            ICommand foundCommand = FindCommandInMessage(e.ChatMessage);
-            if (foundCommand != null)
-            {
-                foundCommand.Execute(executionContext);
-                return;
-            }
-
-            if (SpeakIfNecessary(e))
-            {
-                return;
-            }
-        }
-
-        private bool TimerStart(OnMessageReceivedArgs e)
-        {
             // !timer 420 Ex-und-hopp
-            if (!e.ChatMessage.Message.Trim().ToLower().StartsWith("!timer"))
+            if (!message.MessageStartsWith("!timer"))
             {
                 return false;
             }
 
-            string parameterString = e.ChatMessage.Message.Trim().ToLower().Replace("!timer", string.Empty).Trim();
+            string parameterString = message.ReplaceInNormalizedMessage("!timer", string.Empty);
             string[] parameters = parameterString.Split(' ');
-            if (parameters.Length != 2)
+            if (parameters.Length < 2)
             {
                 return false;
             }
@@ -303,97 +214,105 @@
                 return false;
             }
 
-            if (!e.ChatMessage.IsBroadcaster)
+            if (!message.IsMessageFromBroadcaster && !message.IsMessageFromModerator)
             {
                 return false;
             }
 
+            string timerName = string.Join(" ", parameters.Skip(1));
+
+            Speak(@event.User, (username) => $"Der Timer {timerName} wurde gestartet.");
+
             Task.Delay(TimeSpan.FromSeconds(timeInSeconds))
-                .ContinueWith(o => Speak(e.ChatMessage, (username) => $"Der Timer {parameters[1]} ist abgelaufen."));
+                .ContinueWith(o => Speak(user, (username) => $"Der Timer {timerName} ist abgelaufen."));
 
             return true;
         }
 
-        private bool WhatsTheTime(OnMessageReceivedArgs e)
+        private bool WhatsTheTime(MessageReceivedEvent @event)
         {
-            if (!e.ChatMessage.Message.Trim().ToLower().StartsWith("!time"))
+            ChatMessage message = @event.Message;
+            ChannelUser user = @event.User;
+
+            if (!message.MessageStartsWith("!time"))
             {
                 return false;
             }
 
-            if (!e.ChatMessage.IsModerator && !e.ChatMessage.IsBroadcaster)
+            if (!message.IsMessageFromModerator && !message.IsMessageFromBroadcaster)
             {
                 return false;
             }
 
             DateTime now = DateTime.Now;
 
-            Speak(e.ChatMessage, (username) => $"Die Zeitleitung zeigt {now:HH} Uhr {now:mm} an.");
+            Speak(user, (username) => $"Die Zeitleitung zeigt {now:HH} Uhr {now:mm} an.");
 
             return true;
         }
 
-        private bool GetLanguages(OnMessageReceivedArgs e)
+        private bool GetLanguages(ChatMessage chatMessage)
         {
-            if (!e.ChatMessage.Message.StartsWith("!sprachen", StringComparison.OrdinalIgnoreCase))
+            if (!chatMessage.MessageStartsWith("!sprachen"))
             {
                 return false;
             }
 
             string languages = ttsProcessor.TextToSpeechLanguages;
-            client.SendWhisper(e.ChatMessage.Username, languages);
+            chatMessage.SendReplyToWhisper(languages);
             return true;
         }
 
-        private bool SpeakIfNecessary(OnMessageReceivedArgs e)
+        private bool SpeakIfNecessary(MessageReceivedEvent @event)
         {
-            if (e.ChatMessage.CustomRewardId == null)
+            ChatMessage chatMessage = @event.Message;
+            ChannelUser user = @event.User;
+
+            if (!chatMessage.IsCustomRewardId(twitchConfiguration.TextToSpeechRewardId))
             {
                 return false;
             }
 
-            if (!e.ChatMessage.CustomRewardId.Equals(twitchConfiguration.TextToSpeechRewardId, StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-
-            Speak(e.ChatMessage, (username) => $"{username} sagt: {e.ChatMessage.Message}");
+            Speak(user, (username) => $"{username} sagt: {chatMessage.Message}");
             return true;
         }
 
-        private bool RecordGreetingLanguage(OnMessageReceivedArgs e)
+        private bool RecordGreetingLanguage(MessageReceivedEvent @event)
         {
-            if (!e.ChatMessage.Message.Trim().ToLower().StartsWith("!sprache:"))
+            ChatMessage chatMessage = @event.Message;
+            ChannelUser user = @event.User;
+
+            if (!chatMessage.MessageStartsWith("!sprache"))
             {
                 return false;
             }
 
-            string requestedLanguage = e.ChatMessage.Message.Trim().ToLower().Replace("!sprache:", string.Empty);
+            string requestedLanguage = chatMessage.ReplaceInNormalizedMessage("!sprache:", string.Empty);
 
             if (ttsProcessor.TryGetLanguage(requestedLanguage, out string language))
             {
-                greetingConfiguration.AddGreeting(e.ChatMessage.UserId, language);
+                greetingConfiguration.AddGreeting(user, language);
                 configurationManager.WriteConfiguration(greetingConfiguration, ConfigurationFileConstants.Greetings);
                 return true;
             }
 
-            client.SendMessage(e.ChatMessage.Channel, $"Die Sprache {requestedLanguage} spreche ich leider nicht.");
+            chatMessage.SendReplyToChannel($"Die Sprache {requestedLanguage} spreche ich leider nicht.");           
             return false;
         }
 
-        private bool RecordNamechange(OnMessageReceivedArgs e)
+        private bool RecordNamechange(ChatMessage chatMessage)
         {
-            if (!e.ChatMessage.Message.Trim().ToLower().StartsWith("!correctname:"))
+            if (!chatMessage.MessageStartsWith("!correctname:"))
             {
                 return false;
             }
 
-            if (!e.ChatMessage.IsModerator)
+            if (!chatMessage.IsMessageFromModerator)
             {
                 return false;
             }
 
-            string namechange = e.ChatMessage.Message.Trim().ToLower().Replace("!correctname:", string.Empty);
+            string namechange = chatMessage.ReplaceInNormalizedMessage("!correctname:", string.Empty);
 
             string[] namechangeParameters = namechange.Split(';');
             if (namechangeParameters.Length != 2)
@@ -411,35 +330,40 @@
             return true;
         }
 
-        private void GreetIfNecessary(OnMessageReceivedArgs e)
+        private void GreetIfNecessary(MessageReceivedEvent @event)
         {
-            if (presenceStore.IsGreetingNecessary(e.ChatMessage.UserId))
+            ChannelUser user = @event.User;
+
+            if (presenceStore.IsGreetingNecessary(user))
             {
-                Speak(e.ChatMessage, (username) => $"Hallo {username}");
-                presenceStore.RecordPresence(e.ChatMessage.UserId);
+                Speak(user, (username) => $"Hallo {username}");
+                presenceStore.RecordPresence(user);
             }
         }
 
-        private void SayByeIfNecessary(OnMessageReceivedArgs e)
+        private void SayByeIfNecessary(MessageReceivedEvent @event)
         {
-            if (!e.ChatMessage.Message.Contains("@") && presenceStore.IsSayByeNecessary(e.ChatMessage.UserId))
+            ChannelUser user = @event.User;
+
+            if (!presenceStore.IsSayByeNecessary(user))
             {
-                foreach (string word in e.ChatMessage.Message.Split(' '))
-                {
-                    if (generalConfiguration.ByePhrases.Contains(word.ToLower()))
-                    {
-                        Speak(e.ChatMessage, (username) => string.Format(generalConfiguration.ByePhrase, username));
-                        presenceStore.RemovePresence(e.ChatMessage.UserId);
-                        break;
-                    }
-                }
+                return;
+            }
+
+            ChatMessage message = @event.Message;
+
+            if (message.IsGoodbyeMessage(generalConfiguration.ByePhrases))
+            {
+                Speak(user, (username) => string.Format(generalConfiguration.ByePhrase, username));
+                presenceStore.RemovePresence(user);
             }
         }
 
-        public void Speak(ChatMessage message, Func<string, string> messageAction)
+        public void Speak(MessageReceivedEvent message, Func<string, string> messageAction)
         {
-            string targetUsername = ResolveUsername(new ChannelUser(message.UserId, message.DisplayName, message.DisplayName));
-            string languageForProcessing = greetingConfiguration.RetrieveDesiredLanguage(message.UserId);
+            ChannelUser user = message.User;
+            string targetUsername = ResolveUsername(user);
+            string languageForProcessing = greetingConfiguration.RetrieveDesiredLanguage(user.UserId);
             ttsProcessor.Speak(targetUsername, languageForProcessing, messageAction);
         }
 
@@ -483,19 +407,6 @@
             return targetUsername;
         }
 
-        private ICommand FindCommandInMessage(ChatMessage chatMessage)
-        {
-            foreach (string command in soundsPerCommand.Keys)
-            {
-                if (chatMessage.Message.Contains(command))
-                {
-                    return soundsPerCommand[command];
-                }
-            }
-
-            return null;
-        }
-
         public void Dispose()
         {
             foreach (var command in soundsPerCommand)
@@ -503,8 +414,8 @@
                 command.Value.Dispose();
             }
 
-            client.Disconnect();
-            followerService.Stop();
+            clientWrapper.Stop();
+            apiWrapper.Stop();
         }
     }
 }

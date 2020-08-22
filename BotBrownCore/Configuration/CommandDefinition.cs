@@ -1,6 +1,6 @@
 ﻿namespace BotBrownCore.Configuration
 {
-    internal class CommandDefinition
+    public class CommandDefinition
     {
         public string Shortcut { get; set; }
 

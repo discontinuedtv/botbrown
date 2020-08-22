@@ -2,13 +2,13 @@
 {
     using System.Collections.Generic;
 
-    internal class GreetingConfiguration : IConfiguration
+    public class GreetingConfiguration : IConfiguration
     {
         public Dictionary<string, string> Greetings { get; set; } = new Dictionary<string, string>();
 
-        internal void AddGreeting(string userId, string language)
+        internal void AddGreeting(ChannelUser user, string language)
         {
-            Greetings[userId] = language;
+            Greetings[user.UserId] = language;
         }
 
         internal bool TryGetValue(string userId, out string language)

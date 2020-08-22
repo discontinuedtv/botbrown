@@ -1,6 +1,6 @@
 ﻿namespace BotBrownCore.Configuration
 {
-    internal class TwitchConfiguration : IConfiguration
+    public class TwitchConfiguration : IConfiguration
     {
         public string Username { get; set; }
 

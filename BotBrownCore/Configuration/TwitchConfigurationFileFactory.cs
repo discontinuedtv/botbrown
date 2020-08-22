@@ -1,6 +1,6 @@
 ﻿namespace BotBrownCore.Configuration
 {
-    internal class TwitchConfigurationFileFactory : IConfigurationFileFactory<TwitchConfiguration>
+    public class TwitchConfigurationFileFactory : IConfigurationFileFactory<TwitchConfiguration>
     {
         public TwitchConfiguration CreateDefaultConfiguration()
         {

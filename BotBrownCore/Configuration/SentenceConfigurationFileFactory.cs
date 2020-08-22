@@ -1,6 +1,6 @@
 ﻿namespace BotBrownCore.Configuration
 {
-    internal class SentenceConfigurationFileFactory : IConfigurationFileFactory<SentenceConfiguration>
+    public class SentenceConfigurationFileFactory : IConfigurationFileFactory<SentenceConfiguration>
     {
         public SentenceConfiguration CreateDefaultConfiguration()
         {

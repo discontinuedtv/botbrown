@@ -3,13 +3,13 @@
     using System;
     using System.Collections.Generic;
 
-    internal class ConfigurationFileFactoryRegistry : IConfigurationFileFactoryRegistry
+    public class ConfigurationFileFactoryRegistry : IConfigurationFileFactoryRegistry
     {
         private readonly IDictionary<Type, object> factories = new Dictionary<Type, object>();
 
         public void AddFactory<T>(IConfigurationFileFactory<T> factory) where T : IConfiguration
         {
-            if (factories.TryGetValue(typeof(T), out object tmpFactory))
+            if (factories.TryGetValue(typeof(T), out _))
             {
                 throw new InvalidOperationException($"Es gibt bereits eine Factory für den Typ {typeof(T)}");
             }

@@ -1,6 +1,6 @@
 ﻿namespace BotBrownCore.Configuration
 {
-    internal class SentenceConfiguration : IConfiguration
+    public class SentenceConfiguration : IConfiguration
     {
         public string FollowerAlert { get; set; }
 

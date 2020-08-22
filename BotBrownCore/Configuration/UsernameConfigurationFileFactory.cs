@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    internal class UsernameConfigurationFileFactory : IConfigurationFileFactory<UsernameConfiguration>
+    public class UsernameConfigurationFileFactory : IConfigurationFileFactory<UsernameConfiguration>
     {
         public UsernameConfiguration CreateDefaultConfiguration()
         {

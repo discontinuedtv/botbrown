@@ -2,7 +2,7 @@
 
 namespace BotBrownCore.Configuration
 {
-    internal class GeneralConfigurationFileFactory : IConfigurationFileFactory<GeneralConfiguration>
+    public class GeneralConfigurationFileFactory : IConfigurationFileFactory<GeneralConfiguration>
     {
         public GeneralConfiguration CreateDefaultConfiguration()
         {
