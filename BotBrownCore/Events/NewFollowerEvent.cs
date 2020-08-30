@@ -3,7 +3,7 @@
     using BotBrownCore.Configuration;
     using System.Collections.Generic;
 
-    public class NewFollowerEvent
+    public class NewFollowerEvent : Event
     {
         private List<ChannelUser> newFollowers = new List<ChannelUser>();
 

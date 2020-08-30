@@ -34,7 +34,7 @@
             player.Dispose();
         }
 
-        public void Execute(IBotExecutionContext context)
+        public void Execute()
         {
             if (Cooldown > DateTimeOffset.Now)
             {

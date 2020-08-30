@@ -3,15 +3,15 @@ using BotBrownCore.Configuration;
 
 namespace BotBrownCore.Events
 {
-    public sealed class MessageReceivedEvent : Event
+    public sealed class MessageReceivedEvent : UserSpecificEvent
     {
-        public MessageReceivedEvent(ChannelUser user, ChatMessage message)
+        public MessageReceivedEvent(ChannelUser user, TwitchChatMessage message)
             : base(user)
         {
             Message = message;
         }
 
-        public ChatMessage Message { get; }
+        public TwitchChatMessage Message { get; }
 
         internal void OutputMessage(Action<MessageReceivedEvent> action)
         {

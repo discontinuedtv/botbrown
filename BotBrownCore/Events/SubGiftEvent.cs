@@ -2,7 +2,7 @@
 
 namespace BotBrownCore.Events
 {
-    public class SubGiftEvent : Event
+    public class SubGiftEvent : UserSpecificEvent
     {
         public SubGiftEvent(ChannelUser user)
             : base(user)

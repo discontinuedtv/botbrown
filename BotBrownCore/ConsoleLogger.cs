@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal class ConsoleLogger : ILogger
+    public class ConsoleLogger : ILogger
     {
         public void Debug(string message)
         {

@@ -1,10 +1,10 @@
 ﻿namespace BotBrownCore.Events
 {
-    public class ChannelJoinedEvent
+    public class TwitchChannelJoinedEvent : Event
     {
         public string ChannelName { get; }
 
-        public ChannelJoinedEvent(string channelName)
+        public TwitchChannelJoinedEvent(string channelName)
         {
             ChannelName = channelName;
         }

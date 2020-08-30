@@ -1,0 +1,3 @@
+[*.cs] # IDE0065: Die using-Anweisung wurde falsch platziert. 
+
+csharp_using_directive_placement = inside_namespace:silent

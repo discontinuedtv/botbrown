@@ -3,13 +3,10 @@
     using System;
     using System.Collections.Generic;
 
-    public class ChatMessage
+    public class TwitchChatMessage
     {
         private string customRewardId;
         private string normalizedMessage;
-        private string channel;
-        private string username;
-        private ITwitchClientWrapper clientWrapper;
 
         public bool IsMessageFromModerator { get; internal set; }
 
@@ -17,13 +14,13 @@
 
         public string Message { get; }
 
-        public ChatMessage(ITwitchClientWrapper clientWrapper, string message, bool isMessageFromBroadcaster, bool isMessageFromModerator, string customRewardId, string channel, string username)
+        public string ChannelName { get; }
+
+        public TwitchChatMessage(string message, bool isMessageFromBroadcaster, bool isMessageFromModerator, string customRewardId, string channel)
         {
-            normalizedMessage = message.Trim().ToLower();
-            this.clientWrapper = clientWrapper;
+            normalizedMessage = message.ToLower();
             this.customRewardId = customRewardId;
-            this.username = username;
-            this.channel = channel;
+            ChannelName = channel;
             IsMessageFromBroadcaster = isMessageFromBroadcaster;
             IsMessageFromModerator = isMessageFromModerator;
             Message = message;
@@ -33,19 +30,14 @@
             return normalizedMessage.StartsWith(expectedStartOfString);
         }
 
-        internal void SendReplyToChannel(string replyMessage)
+        public bool MessageIs(string expectedMessage)
         {
-            clientWrapper.SendMessage(channel, replyMessage);
+            return normalizedMessage == expectedMessage.ToLower();
         }
 
         internal string ReplaceInNormalizedMessage(string stringToReplace, string stringToReplaceWith)
         {
             return normalizedMessage.Replace(stringToReplace, stringToReplaceWith).Trim();
-        }
-
-        internal void SendReplyToWhisper(string languages)
-        {
-            clientWrapper.SendWhisper(username, languages);
         }
 
         internal bool IsCustomRewardId(string expectedRewardId)

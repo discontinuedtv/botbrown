@@ -2,7 +2,7 @@
 {
     using BotBrownCore.Configuration;
 
-    public class ResubscriberEvent : Event
+    public class ResubscriberEvent : UserSpecificEvent
     {
         public ResubscriberEvent(ChannelUser user, int numberOfMonthsSubscribed)
             : base(user)

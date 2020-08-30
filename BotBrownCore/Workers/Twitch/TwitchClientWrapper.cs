@@ -1,9 +1,9 @@
-﻿namespace BotBrownCore
+﻿namespace BotBrownCore.Workers.Twitch
 {
     using BotBrownCore.Configuration;
     using BotBrownCore.Events;
+    using BotBrownCore.Events.Twitch;
     using System;
-    using System.Collections.Generic;
     using TwitchLib.Client;
     using TwitchLib.Client.Events;
     using TwitchLib.Client.Models;
@@ -13,47 +13,22 @@
 
     public class TwitchClientWrapper : ITwitchClientWrapper
     {
+        private readonly IUsernameResolver usernameResolver;
+        private readonly IEventBus bus;
+        private readonly ILogger logger;
         private TwitchClient client;
 
-        private List<Subscriber<SubGiftEvent>> subGiftEventSubscriber = new List<Subscriber<SubGiftEvent>>();
-        private List<Subscriber<NewSubscriberEvent>> newSubscriberEventSubscriber = new List<Subscriber<NewSubscriberEvent>>();
-        private List<Subscriber<ResubscriberEvent>> resubscriberEventSubscriber = new List<Subscriber<ResubscriberEvent>>();
-        private List<Subscriber<CommunitySubscriptionEvent>> communitySubscriptionEventSubscriber = new List<Subscriber<CommunitySubscriptionEvent>>();
-        private List<Subscriber<MessageReceivedEvent>> messageReceivedEventSubscriber = new List<Subscriber<MessageReceivedEvent>>();
-        private List<Subscriber<ChannelJoinedEvent>> channelJoinedEventSubscriber = new List<Subscriber<ChannelJoinedEvent>>();
-        
-        public void Subscribe(Subscriber<SubGiftEvent> subscriber)
+        public TwitchClientWrapper(IUsernameResolver usernameResolver, IEventBus bus, ILogger logger)
         {
-            subGiftEventSubscriber.Add(subscriber);
-        }
-
-        public void Subscribe(Subscriber<NewSubscriberEvent> subscriber)
-        {
-            newSubscriberEventSubscriber.Add(subscriber);
-        }
-
-        public void Subscribe(Subscriber<ResubscriberEvent> subscriber)
-        {
-            resubscriberEventSubscriber.Add(subscriber);
-        }
-
-        public void Subscribe(Subscriber<CommunitySubscriptionEvent> subscriber)
-        {
-            communitySubscriptionEventSubscriber.Add(subscriber);
-        }
-
-        public void Subscribe(Subscriber<MessageReceivedEvent> subscriber)
-        {
-            messageReceivedEventSubscriber.Add(subscriber);
-        }
-
-        public void Subscribe(Subscriber<ChannelJoinedEvent> subscriber)
-        {
-            channelJoinedEventSubscriber.Add(subscriber);
+            this.usernameResolver = usernameResolver;
+            this.bus = bus;
+            this.logger = logger;
         }
 
         public void ConnectToTwitch(TwitchConfiguration twitchConfiguration)
         {
+            SetUpEvents();
+
             ConnectionCredentials credentials = new ConnectionCredentials(twitchConfiguration.Username, twitchConfiguration.AccessToken);
             ClientOptions clientOptions = CreateClientOptions();
             WebSocketClient customClient = new WebSocketClient(clientOptions);
@@ -63,21 +38,43 @@
             client.Connect();
         }
 
+        private void SetUpEvents()
+        {
+            bus.AddTopic<SubGiftEvent>();
+            bus.AddTopic<NewSubscriberEvent>();
+            bus.AddTopic<ResubscriberEvent>();
+            bus.AddTopic<CommunitySubscriptionEvent>();
+            bus.AddTopic<MessageReceivedEvent>();
+            bus.AddTopic<TwitchChannelJoinedEvent>();
+        }
+
         private void RegisterClientCallbacks()
         {
             client.OnJoinedChannel += Client_OnJoinedChannel;
             client.OnLeftChannel += Client_OnLeftChannel;
-            
+
             client.OnMessageReceived += Client_OnMessageReceived;
             client.OnCommunitySubscription += Client_OnCommunitySubscription;
             client.OnReSubscriber += Client_OnReSubscriber;
             client.OnNewSubscriber += Client_OnNewSubscriber;
             client.OnGiftedSubscription += Client_OnGiftedSubscription;
+            client.OnChatCommandReceived += Client_OnChatCommandReceived;
+            client.OnWhisperCommandReceived += Client_OnWhisperCommandReceived;
 
             client.OnConnected += Client_OnConnected;
             client.OnDisconnected += Client_OnDisconnected;
-            
+
             client.OnLog += Client_Log;
+        }
+
+        private void Client_OnWhisperCommandReceived(object sender, OnWhisperCommandReceivedArgs e)
+        {
+            var asd = e;
+        }
+
+        private void Client_OnChatCommandReceived(object sender, OnChatCommandReceivedArgs e)
+        {
+            var asd = e;
         }
 
         private void Client_Log(object sender, OnLogArgs e)
@@ -102,28 +99,26 @@
 
         private void Client_OnConnected(object sender, OnConnectedArgs e)
         {
-            Console.WriteLine($"Connected to {e.AutoJoinChannel}");
+            logger.Log($"Connected to {e.AutoJoinChannel}");
+            bus.Publish(new ConnectedToTwitchEvent());
         }
 
         private void Client_OnDisconnected(object sender, OnDisconnectedEventArgs e)
         {
-            Console.WriteLine($"Disconnected");
+            logger.Log($"Disconnected");
+            bus.Publish(new DisconnectedFromTwitchEvent());
         }
 
         private void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
-            ChannelJoinedEvent channelJoined = new ChannelJoinedEvent(e.Channel);
-
-            foreach (Subscriber<ChannelJoinedEvent> subscriber in channelJoinedEventSubscriber)
-            {
-                subscriber.Notify(channelJoined);
-            }
+            TwitchChannelJoinedEvent channelJoined = new TwitchChannelJoinedEvent(e.Channel);
+            bus.Publish(channelJoined);
         }
 
         private void Client_OnLeftChannel(object sender, OnLeftChannelArgs e)
         {
-            var asd = e;
-
+            logger.Log($"{e.BotUsername} left Channel {e.Channel}");
+            bus.Publish(new TwitchChannelLeftEvent(e.Channel));
         }
 
         private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
@@ -133,41 +128,35 @@
                 return;
             }
 
-            ChannelUser user = new ChannelUser(e.ChatMessage.UserId, e.ChatMessage.DisplayName, e.ChatMessage.DisplayName);
-            ChatMessage chatMessage = new ChatMessage(this, e.ChatMessage.Message, e.ChatMessage.IsBroadcaster, e.ChatMessage.IsModerator, e.ChatMessage.CustomRewardId, e.ChatMessage.Channel, e.ChatMessage.Username);
+            ChannelUser user = usernameResolver.ResolveUsername(new ChannelUser(e.ChatMessage.UserId, e.ChatMessage.DisplayName, e.ChatMessage.DisplayName));
+            TwitchChatMessage chatMessage = new TwitchChatMessage(e.ChatMessage.Message, e.ChatMessage.IsBroadcaster, e.ChatMessage.IsModerator, e.ChatMessage.CustomRewardId, e.ChatMessage.Channel);
             MessageReceivedEvent message = new MessageReceivedEvent(user, chatMessage);
 
-            foreach (Subscriber<MessageReceivedEvent> subscriber in messageReceivedEventSubscriber)
-            {
-                subscriber.Notify(message);
-            }
+            bus.Publish(message);
         }
 
         private void Client_OnGiftedSubscription(object sender, OnGiftedSubscriptionArgs e)
         {
             ChannelUser user = new ChannelUser(e.GiftedSubscription.MsgParamRecipientId, e.GiftedSubscription.MsgParamRecipientUserName, e.GiftedSubscription.MsgParamRecipientUserName);
-            SubGiftEvent subgift = new SubGiftEvent(user);
+            ChannelUser resolvedUser = usernameResolver.ResolveUsername(user);
+            SubGiftEvent subgift = new SubGiftEvent(resolvedUser);
 
-            foreach (Subscriber<SubGiftEvent> subscriber in subGiftEventSubscriber)
-            {
-                subscriber.Notify(subgift);
-            }
+            bus.Publish(subgift);
         }
 
         private void Client_OnNewSubscriber(object sender, OnNewSubscriberArgs e)
         {
             ChannelUser user = new ChannelUser(e.Subscriber.UserId, e.Subscriber.DisplayName, e.Subscriber.DisplayName);
-            NewSubscriberEvent newSubscriber = new NewSubscriberEvent(user);
+            ChannelUser resolvedUser = usernameResolver.ResolveUsername(user);
+            NewSubscriberEvent newSubscriber = new NewSubscriberEvent(resolvedUser);
 
-            foreach (Subscriber<NewSubscriberEvent> subscriber in newSubscriberEventSubscriber)
-            {
-                subscriber.Notify(newSubscriber);
-            }           
+            bus.Publish(newSubscriber);
         }
 
         private void Client_OnReSubscriber(object sender, OnReSubscriberArgs resubscriberEventArguments)
         {
             ChannelUser user = new ChannelUser(resubscriberEventArguments.ReSubscriber.UserId, resubscriberEventArguments.ReSubscriber.DisplayName, resubscriberEventArguments.ReSubscriber.DisplayName);
+            ChannelUser resolvedUser = usernameResolver.ResolveUsername(user);
 
             string months = !string.IsNullOrWhiteSpace(resubscriberEventArguments.ReSubscriber.MsgParamStreakMonths) ? resubscriberEventArguments.ReSubscriber.MsgParamStreakMonths : resubscriberEventArguments.ReSubscriber.MsgParamCumulativeMonths;
 
@@ -176,23 +165,17 @@
                 numberOfMonthsSubscribed = 1;
             }
 
-            ResubscriberEvent resubscriber = new ResubscriberEvent(user, numberOfMonthsSubscribed);
-
-            foreach (Subscriber<ResubscriberEvent> subscriber in resubscriberEventSubscriber)
-            {
-                subscriber.Notify(resubscriber);
-            }
+            ResubscriberEvent resubscriber = new ResubscriberEvent(resolvedUser, numberOfMonthsSubscribed);
+            bus.Publish(resubscriber);
         }
 
         private void Client_OnCommunitySubscription(object sender, OnCommunitySubscriptionArgs e)
         {
             ChannelUser user = new ChannelUser(e.GiftedSubscription.UserId, e.GiftedSubscription.DisplayName, e.GiftedSubscription.DisplayName);
-            CommunitySubscriptionEvent communitySubscription = new CommunitySubscriptionEvent(user, e.GiftedSubscription.MsgParamMassGiftCount);
+            ChannelUser resolvedUser = usernameResolver.ResolveUsername(user);
 
-            foreach (Subscriber<CommunitySubscriptionEvent> subscriber in communitySubscriptionEventSubscriber)
-            {
-                subscriber.Notify(communitySubscription);
-            }
+            CommunitySubscriptionEvent communitySubscription = new CommunitySubscriptionEvent(resolvedUser, e.GiftedSubscription.MsgParamMassGiftCount);
+            bus.Publish(communitySubscription);
         }
 
         public void Stop()

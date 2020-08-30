@@ -3,12 +3,12 @@
     using BotBrownCore.Configuration;
     using System.Collections.Generic;
 
-    internal class PresenceStore
+    public class PresenceStore : IPresenceStore
     {
         private readonly HashSet<string> presentUsers = new HashSet<string>();
         private readonly Dictionary<string, int> presencesThisSession = new Dictionary<string, int>();
 
-        internal bool IsGreetingNecessary(ChannelUser user)
+        public bool IsGreetingNecessary(ChannelUser user)
         {
             string userId = user.UserId;
 
@@ -25,18 +25,18 @@
             return false;
         }
 
-        internal void RecordPresence(ChannelUser user)
+        public void RecordPresence(ChannelUser user)
         {
             string userId = user.UserId;
             presentUsers.Add(userId);
         }
 
-        internal bool IsSayByeNecessary(ChannelUser user)
+        public bool IsSayByeNecessary(ChannelUser user)
         {
             return presentUsers.Contains(user.UserId);
         }
 
-        internal void RemovePresence(ChannelUser user)
+        public void RemovePresence(ChannelUser user)
         {
             string userId = user.UserId;
 

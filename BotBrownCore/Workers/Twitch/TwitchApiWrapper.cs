@@ -1,4 +1,4 @@
-﻿namespace BotBrownCore
+﻿namespace BotBrownCore.Workers.Twitch
 {
     using BotBrownCore.Configuration;
     using BotBrownCore.Events;
@@ -12,20 +12,29 @@
 
     public class TwitchApiWrapper : ITwitchApiWrapper
     {
+        private readonly IUsernameResolver usernameResolver;
+        private readonly IEventBus bus;
         private FollowerService followerService;
-        private readonly IList<Subscriber<NewFollowerEvent>> subscribers = new List<Subscriber<NewFollowerEvent>>();
+
+        public TwitchApiWrapper(IUsernameResolver usernameResolver, IEventBus bus)
+        {
+            this.usernameResolver = usernameResolver;
+            this.bus = bus;
+        }
 
         public void ConnectToTwitch(TwitchConfiguration twitchConfiguration)
         {
+            SetUpEvents();
+
             TwitchAPI api = InitializeTwitchApi(twitchConfiguration);
             CreateFollowerService(twitchConfiguration, api);
             RegisterFollowerServiceCallback();
             followerService.Start();
         }
 
-        public void Subscribe(Subscriber<NewFollowerEvent> subscriber)
+        private void SetUpEvents()
         {
-            subscribers.Add(subscriber);
+            bus.AddTopic<NewFollowerEvent>();
         }
 
         public void Stop()
@@ -59,15 +68,11 @@
 
             List<ChannelUser> newFollowers = newFollowerDetectedEventArguments.NewFollowers
                 .Where(follow => follow.FollowedAt >= dateToCheckAgainst)
-                .Select(follow => new ChannelUser(follow.FromUserId, follow.FromUserName, follow.FromUserName))
+                .Select(follow => usernameResolver.ResolveUsername(new ChannelUser(follow.FromUserId, follow.FromUserName, follow.FromUserName)))
                 .ToList();
 
             NewFollowerEvent newFollowerEvent = new NewFollowerEvent(newFollowers);
-
-            foreach (Subscriber<NewFollowerEvent> subscriber in subscribers)
-            {
-                subscriber.Notify(newFollowerEvent);
-            }
+            bus.Publish(newFollowerEvent);
         }
     }
 }

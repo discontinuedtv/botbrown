@@ -124,7 +124,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bot.cs" />
-    <Compile Include="BotExecutionContext.cs" />
     <Compile Include="Configuration\BotConfiguration.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Configuration\CommandConfiguration.cs" />
@@ -143,10 +142,25 @@
     <Compile Include="Configuration\IConfigurationFileFactory.cs" />
     <Compile Include="Configuration\IConfigurationFileFactoryRegistry.cs" />
     <Compile Include="Configuration\IConfigurationManager.cs" />
+    <Compile Include="DefaultTimeProvider.cs" />
+    <Compile Include="Events\AvailableLanguagesRequestedEvent.cs" />
+    <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\SendChannelMessageEvent.cs" />
+    <Compile Include="Events\SendWhisperMessageEvent.cs" />
+    <Compile Include="Events\SpeakEvent.cs" />
+    <Compile Include="Events\TextToSpeechEvent.cs" />
+    <Compile Include="Events\Twitch\ConnectedToTwitchEvent.cs" />
+    <Compile Include="Events\Twitch\DisconnectedFromTwitchEvent.cs" />
+    <Compile Include="Events\Twitch\TwitchChannelLeftEvent.cs" />
+    <Compile Include="IPresenceStore.cs" />
+    <Compile Include="ITimeProvider.cs" />
+    <Compile Include="ITimerProcessor.cs" />
+    <Compile Include="IUsernameResolver.cs" />
+    <Compile Include="Messaging\EventBus.cs" />
     <Compile Include="EventHandler.cs" />
     <Compile Include="Events\ChannelJoinedEvent.cs" />
     <Compile Include="Events\CommunitySubscriptionEvent.cs" />
-    <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\UserSpecificEvent.cs" />
     <Compile Include="Events\MessageReceivedEvent.cs" />
     <Compile Include="Events\NewFollowerEvent.cs" />
     <Compile Include="Events\NewSubscriberEvent.cs" />
@@ -154,12 +168,17 @@
     <Compile Include="Events\SubGiftEvent.cs" />
     <Compile Include="IBotExecutionContext.cs" />
     <Compile Include="ICommand.cs" />
+    <Compile Include="IEventBus.cs" />
+    <Compile Include="IEventSubscriber.cs" />
+    <Compile Include="IEventSubscriber1.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="ISubscriber.cs" />
-    <Compile Include="ITextToSpeechProcessor.cs" />
-    <Compile Include="ITwitchApiWrapper.cs" />
-    <Compile Include="ITwitchClientWrapper.cs" />
-    <Compile Include="ChatMessage.cs" />
+    <Compile Include="Workers\TextToSpeech\ITextToSpeechProcessor.cs" />
+    <Compile Include="Workers\Twitch\ITwitchApiWrapper.cs" />
+    <Compile Include="Workers\Twitch\ITwitchClientWrapper.cs" />
+    <Compile Include="TwitchChatMessage.cs" />
+    <Compile Include="Messaging\ITopic.cs" />
+    <Compile Include="Messaging\Topic.cs" />
     <Compile Include="PresenceStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\TwitchConfiguration.cs" />
@@ -170,14 +189,21 @@
     <Compile Include="Configuration\SentenceConfiguration.cs" />
     <Compile Include="SoundCommand.cs" />
     <Compile Include="Subscriber.cs" />
-    <Compile Include="TextToSpeechCommand.cs" />
-    <Compile Include="TextToSpeechProcessor.cs" />
-    <Compile Include="TwitchApiWrapper.cs" />
-    <Compile Include="TwitchClientWrapper.cs" />
+    <Compile Include="Workers\TextToSpeech\TextToSpeechProcessor.cs" />
+    <Compile Include="TimerProcessor.cs" />
+    <Compile Include="Workers\Twitch\TwitchApiWrapper.cs" />
+    <Compile Include="Workers\Twitch\TwitchClientWrapper.cs" />
+    <Compile Include="UsernameResolver.cs" />
+    <Compile Include="Workers\CommandWorker.cs" />
+    <Compile Include="Workers\TextToSpeechWorker.cs" />
+    <Compile Include="Workers\Timers\TimerCommand.cs" />
+    <Compile Include="Workers\TwitchInterfaceWorker.cs" />
+    <Compile Include="Workers\WorkerHost.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
