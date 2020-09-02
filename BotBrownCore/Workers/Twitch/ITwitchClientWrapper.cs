@@ -1,6 +1,6 @@
-﻿namespace BotBrownCore.Workers.Twitch
+﻿namespace BotBrown.Workers.Twitch
 {
-    using BotBrownCore.Configuration;
+    using BotBrown.Configuration;
 
     public interface ITwitchClientWrapper
     {

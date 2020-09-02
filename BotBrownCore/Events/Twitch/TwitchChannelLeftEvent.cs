@@ -1,4 +1,4 @@
-﻿namespace BotBrownCore.Events.Twitch
+﻿namespace BotBrown.Events.Twitch
 {
     public sealed class TwitchChannelLeftEvent : Event
     {

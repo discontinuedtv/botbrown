@@ -1,4 +1,4 @@
-﻿namespace BotBrownCore.Configuration
+﻿namespace BotBrown.Configuration
 {
     using Newtonsoft.Json;
     using System;

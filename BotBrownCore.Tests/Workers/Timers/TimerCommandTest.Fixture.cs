@@ -1,6 +1,7 @@
 ﻿namespace BotBrownCore.Tests.Workers.Timers
 {
-    using BotBrownCore.Workers.Timers;
+    using BotBrown;
+    using BotBrown.Workers.Timers;
     using Moq;
     using System;
 

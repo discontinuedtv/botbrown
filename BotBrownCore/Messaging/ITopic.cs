@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BotBrownCore.Messaging
+namespace BotBrown.Messaging
 {
     public interface ITopic
     {

@@ -1,4 +1,4 @@
-﻿namespace BotBrownCore.Workers.Timers
+﻿namespace BotBrown.Workers.Timers
 {
     public class TimerProcessor : ITimerProcessor
     {

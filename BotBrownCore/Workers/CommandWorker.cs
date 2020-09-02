@@ -1,10 +1,10 @@
-﻿namespace BotBrownCore.Workers
+﻿namespace BotBrown.Workers
 {
-    using BotBrownCore.Configuration;
-    using BotBrownCore.Events;
-    using BotBrownCore.Events.Twitch;
-    using BotBrownCore.Workers.TextToSpeech;
-    using BotBrownCore.Workers.Timers;
+    using BotBrown.Configuration;
+    using BotBrown.Events;
+    using BotBrown.Events.Twitch;
+    using BotBrown.Workers.TextToSpeech;
+    using BotBrown.Workers.Timers;
     using System;
     using System.Collections.Generic;
     using System.Linq;

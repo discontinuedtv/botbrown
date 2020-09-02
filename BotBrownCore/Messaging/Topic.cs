@@ -1,6 +1,6 @@
-﻿namespace BotBrownCore.Messaging
+﻿namespace BotBrown.Messaging
 {
-    using BotBrownCore.Events;
+    using BotBrown.Events;
     using System;
     using System.Collections.Concurrent;
 

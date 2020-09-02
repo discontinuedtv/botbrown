@@ -1,6 +1,6 @@
-﻿namespace BotBrownCore.Events
+﻿namespace BotBrown.Events
 {
-    using BotBrownCore.Configuration;
+    using BotBrown.Configuration;
 
     public class SpeakEvent : TextToSpeechEvent
     {

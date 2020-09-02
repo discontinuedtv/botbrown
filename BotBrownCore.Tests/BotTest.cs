@@ -1,5 +1,6 @@
 ﻿namespace BotBrownCore.Tests
 {
+    using BotBrown;
     using NUnit.Framework;
 
     [TestFixture]

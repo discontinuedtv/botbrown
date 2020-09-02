@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BotBrownCore.Configuration
+namespace BotBrown.Configuration
 {
     public class GeneralConfigurationFileFactory : IConfigurationFileFactory<GeneralConfiguration>
     {

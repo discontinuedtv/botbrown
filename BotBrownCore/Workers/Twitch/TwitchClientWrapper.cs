@@ -1,8 +1,8 @@
-﻿namespace BotBrownCore.Workers.Twitch
+﻿namespace BotBrown.Workers.Twitch
 {
-    using BotBrownCore.Configuration;
-    using BotBrownCore.Events;
-    using BotBrownCore.Events.Twitch;
+    using BotBrown.Configuration;
+    using BotBrown.Events;
+    using BotBrown.Events.Twitch;
     using System;
     using TwitchLib.Client;
     using TwitchLib.Client.Events;
@@ -180,7 +180,7 @@
 
         public void Stop()
         {
-            client.Disconnect();
+            client?.Disconnect();
         }
 
         public void SendMessage(string channel, string replyMessage)

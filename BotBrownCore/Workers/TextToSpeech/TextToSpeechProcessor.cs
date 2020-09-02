@@ -1,11 +1,11 @@
-﻿namespace BotBrownCore.Workers.TextToSpeech
+﻿namespace BotBrown.Workers.TextToSpeech
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Speech.Synthesis;
     using System.Text;
-    using BotBrownCore.Configuration;
+    using BotBrown.Configuration;
 
     public class TextToSpeechProcessor : ITextToSpeechProcessor
     {

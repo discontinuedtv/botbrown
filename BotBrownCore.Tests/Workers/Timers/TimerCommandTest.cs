@@ -1,4 +1,4 @@
-﻿using BotBrownCore.Workers.Timers;
+﻿using BotBrown.Workers.Timers;
 using NUnit.Framework;
 using System;
 

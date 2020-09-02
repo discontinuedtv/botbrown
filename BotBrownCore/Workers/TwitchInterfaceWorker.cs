@@ -1,11 +1,11 @@
-﻿using BotBrownCore.Configuration;
-using BotBrownCore.Events;
-using BotBrownCore.Workers.Twitch;
+﻿using BotBrown.Configuration;
+using BotBrown.Events;
+using BotBrown.Workers.Twitch;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BotBrownCore.Workers
+namespace BotBrown.Workers
 {
     public sealed class TwitchInterfaceWorker : IDisposable
     {
@@ -71,8 +71,8 @@ namespace BotBrownCore.Workers
 
         public void Dispose()
         {
-            clientWrapper.Stop();
-            apiWrapper.Stop();
+            clientWrapper?.Stop();
+            apiWrapper?.Stop();
         }
 
         private void SendWhisperMessage(SendWhisperMessageRequestedEvent whisperRequest)

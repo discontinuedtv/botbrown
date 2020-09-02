@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BotBrownCore
+namespace BotBrown
 {
     public interface IEventSubscriber<TEvent> : IEventSubscriber
     {

@@ -1,4 +1,4 @@
-﻿namespace BotBrownCore
+﻿namespace BotBrown
 {
     using System;
 

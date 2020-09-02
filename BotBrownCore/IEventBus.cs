@@ -1,6 +1,6 @@
-﻿namespace BotBrownCore
+﻿namespace BotBrown
 {
-    using BotBrownCore.Events;
+    using BotBrown.Events;
     using System;
 
     public interface IEventBus

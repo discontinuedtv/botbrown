@@ -1,0 +1,1481 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SpiderEye.Core</name>
+    </assembly>
+    <members>
+        <member name="T:SpiderEye.Application">
+            <summary>
+            Provides methods to create or run an application.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Application.ExitWithLastWindow">
+            <summary>
+            Gets or sets a value indicating whether the application should exit once the last window is closed.
+            Default is true.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Application.OpenWindows">
+            <summary>
+            Gets a collection of windows that are currently open.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Application.ContentProvider">
+            <summary>
+            Gets or sets the content provider for loading webview files.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Application.UriWatcher">
+            <summary>
+            Gets or sets the URI watcher to check URIs before they are loaded.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Application.OS">
+            <summary>
+            Gets the operating system the app is currently running on.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Application.Factory">
+            <summary>
+            Gets the UI factory.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Application.AddGlobalHandler(System.Object)">
+            <summary>
+            Adds a custom handler to be called from any webview of the application.
+            </summary>
+            <param name="handler">The handler instance.</param>
+        </member>
+        <member name="M:SpiderEye.Application.Run">
+            <summary>
+            Starts the main loop and blocks until the application exits.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Application.Run(SpiderEye.Window)">
+            <summary>
+            Starts the main loop, shows the given window and blocks until the application exits.
+            </summary>
+            <param name="window">The window to show.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="window"/> is null.</exception>
+        </member>
+        <member name="M:SpiderEye.Application.Run(SpiderEye.Window,System.String)">
+            <summary>
+            Starts the main loop, loads the URL, shows the given window and blocks until the application exits.
+            </summary>
+            <param name="window">The window to show.</param>
+            <param name="startUrl">The initial URL to load in the window.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="window"/> is null.</exception>
+            <exception cref="T:System.ArgumentNullException"><paramref name="startUrl"/> is null.</exception>
+        </member>
+        <member name="M:SpiderEye.Application.Exit">
+            <summary>
+            Exits the main loop and allows it to return.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Application.Invoke(System.Action)">
+            <summary>
+            Executes the given action on the UI main thread.
+            </summary>
+            <param name="action">The action to execute.</param>
+        </member>
+        <member name="M:SpiderEye.Application.Invoke``1(System.Func{``0})">
+            <summary>
+            Executes the given function on the UI main thread.
+            </summary>
+            <typeparam name="T">The type of the return value.</typeparam>
+            <param name="function">The function to execute.</param>
+            <returns>The result of the given function.</returns>
+        </member>
+        <member name="M:SpiderEye.Application.Register(SpiderEye.IApplication,SpiderEye.OperatingSystem)">
+            <summary>
+            Checks if the current operating system is correct.
+            </summary>
+            <param name="application">The application OS specific implementation.</param>
+            <param name="applicationOS">The operating system the implementation is made for.</param>
+        </member>
+        <member name="T:SpiderEye.Bridge.BridgeObjectAttribute">
+            <summary>
+            Provides additional metadata for a bridge object.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Bridge.BridgeObjectAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.Bridge.BridgeObjectAttribute"/> class.
+            </summary>
+            <param name="path">The path used to access the bridge object from the webview.</param>
+        </member>
+        <member name="T:SpiderEye.Bridge.IJsonConverter">
+            <summary>
+            Provides methods for converting objects to and from JSON.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Bridge.IJsonConverter.Serialize(System.Object)">
+            <summary>
+            Serializes the given object to JSON.
+            </summary>
+            <param name="value">The object to serialize.</param>
+            <returns>The given object as JSON.</returns>
+        </member>
+        <member name="M:SpiderEye.Bridge.IJsonConverter.Deserialize``1(System.String)">
+            <summary>
+            Deserializes the given JSON into an object.
+            </summary>
+            <typeparam name="T">The type of the object.</typeparam>
+            <param name="json">The JSON to deserialize.</param>
+            <returns>The deserialized object.</returns>
+        </member>
+        <member name="M:SpiderEye.Bridge.IJsonConverter.Deserialize(System.String,System.Type)">
+            <summary>
+            Deserializes the given JSON into an object.
+            </summary>
+            <param name="json">The JSON to deserialize.</param>
+            <param name="type">The type of the object.</param>
+            <returns>The deserialized object.</returns>
+        </member>
+        <member name="T:SpiderEye.Bridge.IWebviewBridge">
+            <summary>
+            Represents a bridge between the host and the webview.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Bridge.IWebviewBridge.AddHandler(System.Object)">
+            <summary>
+            Adds a custom handler to be called from the webview.
+            </summary>
+            <param name="handler">The handler instance.</param>
+        </member>
+        <member name="M:SpiderEye.Bridge.IWebviewBridge.AddGlobalHandler(System.Object)">
+            <summary>
+            Adds a custom handler to be called from any webview of the application.
+            </summary>
+            <param name="handler">The handler instance.</param>
+        </member>
+        <member name="M:SpiderEye.Bridge.IWebviewBridge.InvokeAsync(System.String,System.Object)">
+            <summary>
+            Asynchronously invokes an event in the webview.
+            </summary>
+            <param name="id">The event ID.</param>
+            <param name="data">Optional event data.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the result of the asynchronous operation.</returns>
+        </member>
+        <member name="M:SpiderEye.Bridge.IWebviewBridge.InvokeAsync``1(System.String,System.Object)">
+            <summary>
+            Asynchronously invokes an event in the webview and get the result.
+            </summary>
+            <typeparam name="T">The result type.</typeparam>
+            <param name="id">The event ID.</param>
+            <param name="data">Optional event data.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the result of the asynchronous operation.</returns>
+        </member>
+        <member name="T:SpiderEye.Bridge.ScriptException">
+            <summary>
+            Represents errors that occur during script execution.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Bridge.ScriptException.StackTrace">
+            <inheritdoc/>
+        </member>
+        <member name="M:SpiderEye.Bridge.ScriptException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.Bridge.ScriptException"/> class.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Bridge.ScriptException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.Bridge.ScriptException"/> class.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+        </member>
+        <member name="M:SpiderEye.Bridge.ScriptException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.Bridge.ScriptException"/> class.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">
+            The exception that is the cause of the current exception,
+            or a null reference if no inner exception is specified.
+            </param>
+        </member>
+        <member name="M:SpiderEye.Bridge.ScriptException.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.Bridge.ScriptException"/> class.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="stackTrace">The original stack trace of the error.</param>
+        </member>
+        <member name="T:SpiderEye.EmbeddedContentProvider">
+            <summary>
+            Content provider for files that are embedded in an assembly.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.EmbeddedContentProvider.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.EmbeddedContentProvider"/> class.
+            </summary>
+            <param name="contentFolder">Gets or sets the folder path where the embedded files are.</param>
+        </member>
+        <member name="M:SpiderEye.EmbeddedContentProvider.#ctor(System.String,System.Reflection.Assembly)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.EmbeddedContentProvider"/> class.
+            </summary>
+            <param name="contentFolder">Gets or sets the folder path where the embedded files are.</param>
+            <param name="contentAssembly">Gets or sets the assembly where the content files are embedded.</param>
+        </member>
+        <member name="M:SpiderEye.EmbeddedContentProvider.GetStreamAsync(System.Uri)">
+            <inheritdoc/>
+        </member>
+        <member name="T:SpiderEye.IContentProvider">
+            <summary>
+            Provides methods to get content from an URI.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.IContentProvider.GetStreamAsync(System.Uri)">
+            <summary>
+            Gets the <see cref="T:System.IO.Stream"/> to a resource given an URI.
+            </summary>
+            <param name="uri">The URI of the resource.</param>
+            <returns>A Task with the <see cref="T:System.IO.Stream"/> to the resource or null if not found.</returns>
+        </member>
+        <member name="T:SpiderEye.IUriWatcher">
+            <summary>
+            Provides methods to check and manipulate URIs before they are loaded.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.IUriWatcher.CheckUri(System.Uri)">
+            <summary>
+            Checks the given URI before it's loaded.
+            </summary>
+            <param name="uri">The URI to check.</param>
+            <returns>The final URI to load.</returns>
+        </member>
+        <member name="T:SpiderEye.NoopContentProvider">
+            <summary>
+            Content provider that does nothing.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.NoopContentProvider.Instance">
+            <summary>
+            An instance of a <see cref="T:SpiderEye.NoopContentProvider"/>.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.NoopContentProvider.GetStreamAsync(System.Uri)">
+            <inheritdoc/>
+        </member>
+        <member name="T:SpiderEye.NoopUriWatcher">
+            <summary>
+            An URI watcher that does nothing.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.NoopUriWatcher.Instance">
+            <summary>
+            An instance of a <see cref="T:SpiderEye.NoopUriWatcher"/>.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.NoopUriWatcher.CheckUri(System.Uri)">
+            <inheritdoc/>
+        </member>
+        <member name="T:SpiderEye.IApplication">
+            <summary>
+            Provides methods to manage and  run an application.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IApplication.Factory">
+            <summary>
+            Gets the UI factory.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IApplication.SynchronizationContext">
+            <summary>
+            Gets the synchronization context.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.IApplication.Run">
+            <summary>
+            Starts the main loop and blocks until the application exits.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.IApplication.Exit">
+            <summary>
+            Exits the main loop and allows it to return.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.OperatingSystem">
+            <summary>
+            Operating system.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.Tools.MimeTypes">
+            <summary>
+            Contains methods to find the mime type for file extensions.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.Tools.MimeTypes.Json">
+            <summary>
+            The JSON mime type string.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.Tools.MimeTypes.Html">
+            <summary>
+            The HTML mime type string.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.Tools.MimeTypes.JavaScript">
+            <summary>
+            The JavaScript mime type string.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.Tools.MimeTypes.Binary">
+            <summary>
+            The binary data mime type string.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.Tools.MimeTypes.Map">
+            <summary>
+            The file extension to mime type map. Add or remove values depending on your need.
+            Note that the extension must start with a period "." and be in lower case.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Tools.MimeTypes.FindForUri(System.Uri)">
+            <summary>
+            Find the mime type for the given URI.
+            </summary>
+            <param name="uri">The URI.</param>
+            <returns>The found mime type. If the type was not found, "application/octet-stream" is used.</returns>
+        </member>
+        <member name="M:SpiderEye.Tools.MimeTypes.FindForFile(System.String)">
+            <summary>
+            Find the mime type for the given filename.
+            </summary>
+            <param name="file">The filename.</param>
+            <returns>The found mime type. If the type was not found, "application/octet-stream" is used.</returns>
+        </member>
+        <member name="M:SpiderEye.Tools.MimeTypes.FindForExtension(System.String)">
+            <summary>
+            Find the mime type for the given filename.
+            </summary>
+            <param name="extension">The file extension.</param>
+            <returns>The found mime type. If the type was not found, "application/octet-stream" is used.</returns>
+        </member>
+        <member name="M:SpiderEye.Tools.MimeTypes.TryFindForUri(System.Uri,System.String@)">
+            <summary>
+            Find the mime type for the given URI.
+            </summary>
+            <param name="uri">The URI.</param>
+            <param name="mimeType">The mime type if found or null otherwise.</param>
+            <returns>True if the mime type was found; False otherwise.</returns>
+        </member>
+        <member name="M:SpiderEye.Tools.MimeTypes.TryFindForFile(System.String,System.String@)">
+            <summary>
+            Find the mime type for the given filename.
+            </summary>
+            <param name="file">The filename.</param>
+            <param name="mimeType">The mime type if found or null otherwise.</param>
+            <returns>True if the mime type was found; False otherwise.</returns>
+        </member>
+        <member name="M:SpiderEye.Tools.MimeTypes.TryFindForExtension(System.String,System.String@)">
+            <summary>
+            Find the mime type for the given filename.
+            </summary>
+            <param name="extension">The file extension.</param>
+            <param name="mimeType">The mime type if found or null otherwise.</param>
+            <returns>True if the mime type was found; False otherwise.</returns>
+        </member>
+        <member name="T:SpiderEye.Tools.NativeCast">
+            <summary>
+            Provides methods to handle casts to the native type.
+            e.g. to cast a core interface to it's platform specific type.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Tools.NativeCast.To``1(System.Object)">
+            <summary>
+            Casts a general instance into the platform native type.
+            If the type does not match, it'll throw the appropriate exception.
+            </summary>
+            <typeparam name="T">The native type.</typeparam>
+            <param name="item">The item to cast.</param>
+            <returns>The cast item.</returns>
+        </member>
+        <member name="T:SpiderEye.AppIcon">
+            <summary>
+            Represents an application icon with one or more resolutions.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.AppIcon.UseFileCache">
+            <summary>
+            Gets or sets a value indicating whether to cache file based icons or read them from disk every time.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.AppIcon.FromFile(System.String,System.String)">
+            <summary>
+            Creates a new icon that looks for the appropriate icon in the given directory.
+            </summary>
+            <param name="iconName">The name of the icon file. e.g. "MyIcon".</param>
+            <param name="directory">The directory to look for icon files.</param>
+            <returns>The created icon.</returns>
+        </member>
+        <member name="M:SpiderEye.AppIcon.FromFile(System.String,System.String,System.Boolean)">
+            <summary>
+            Creates a new icon that looks for the appropriate icon in the given directory.
+            </summary>
+            <param name="iconName">The name of the icon file. e.g. "MyIcon".</param>
+            <param name="directory">The directory to look for icon files.
+            May be absolute or relative to the executable.
+            To use the executable directory, use either an empty string or a period.
+            </param>
+            <param name="cacheFiles">True to cache files after the first read; False to read from disk every time.</param>
+            <returns>The created icon.</returns>
+        </member>
+        <member name="M:SpiderEye.AppIcon.FromResource(System.String,System.String)">
+            <summary>
+            Creates a new icon that looks for the appropriate icon with the given base resource name.
+            </summary>
+            <param name="iconName">The name of the icon file. e.g. "MyIcon".</param>
+            <param name="baseName">The base resource name for the icon files.</param>
+            <returns>The created icon.</returns>
+        </member>
+        <member name="M:SpiderEye.AppIcon.FromResource(System.String,System.String,System.Reflection.Assembly)">
+            <summary>
+            Creates a new icon that looks for the appropriate icon with the given base resource name.
+            </summary>
+            <param name="iconName">The name of the icon file. e.g. "MyIcon".</param>
+            <param name="baseName">The base resource name for the icon files.</param>
+            <param name="assembly">The assembly containing the resource.</param>
+            <returns>The created icon.</returns>
+        </member>
+        <member name="T:SpiderEye.Dialog">
+            <summary>
+            Represents a dialog.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Dialog.Title">
+            <summary>
+            Gets or sets the dialog title.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Dialog.NativeDialog">
+            <summary>
+            Gets the native dialog.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Dialog.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.Dialog"/> class.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Dialog.Show">
+            <summary>
+            Shows the dialog.
+            </summary>
+            <returns>The user selection.</returns>
+        </member>
+        <member name="M:SpiderEye.Dialog.Show(SpiderEye.Window)">
+            <summary>
+            Shows the dialog.
+            </summary>
+            <param name="parent">The parent window.</param>
+            <returns>The user selection.</returns>
+        </member>
+        <member name="T:SpiderEye.DialogResult">
+            <summary>
+            The result of a shown dialog.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.FileDialog">
+            <summary>
+            Represents a file dialog.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.FileDialog.InitialDirectory">
+            <summary>
+            Gets or sets the initial directory.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.FileDialog.FileName">
+            <summary>
+            Gets or sets the selected file name.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.FileDialog.FileFilters">
+            <summary>
+            Gets a collection for adding or removing file filters.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.FileDialog.NativeFileDialog">
+            <summary>
+            Gets the native file dialog.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.FileDialog.NativeDialog">
+            <inheritdoc/>
+        </member>
+        <member name="M:SpiderEye.FileDialog.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.FileDialog"/> class.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.FileFilter">
+            <summary>
+            Contains information for filtering files.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.FileFilter.Name">
+            <summary>
+            Gets the filter name.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.FileFilter.Filters">
+            <summary>
+            Gets the file filters.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.FileFilter.#ctor(System.String,System.String[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.FileFilter"/> class.
+            </summary>
+            <param name="name">The filter name.</param>
+            <param name="filters">The file filters.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="name"/> is null.</exception>
+        </member>
+        <member name="T:SpiderEye.FolderSelectDialog">
+            <summary>
+            Represents a folder select dialog.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.FolderSelectDialog.SelectedPath">
+            <summary>
+            Gets or sets the selected path.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.FolderSelectDialog.NativeFolderSelectDialog">
+            <summary>
+            Gets the native folder select dialog.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.FolderSelectDialog.NativeDialog">
+            <inheritdoc/>
+        </member>
+        <member name="M:SpiderEye.FolderSelectDialog.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.FolderSelectDialog"/> class.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.IDialog">
+            <summary>
+            Represents a dialog.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IDialog.Title">
+            <summary>
+            Gets or sets the title of the dialog.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.IDialog.Show">
+            <summary>
+            Shows the dialog.
+            </summary>
+            <returns>The user selection.</returns>
+        </member>
+        <member name="M:SpiderEye.IDialog.Show(SpiderEye.IWindow)">
+            <summary>
+            Shows the dialog.
+            </summary>
+            <param name="parent">The parent window.</param>
+            <returns>The user selection.</returns>
+        </member>
+        <member name="T:SpiderEye.IFileDialog">
+            <summary>
+            Represents a file dialog.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IFileDialog.InitialDirectory">
+            <summary>
+            Gets or sets the initial directory.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IFileDialog.FileName">
+            <summary>
+            Gets or sets the selected file name.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IFileDialog.FileFilters">
+            <summary>
+            Gets a collection for adding or removing file filters.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.IFolderSelectDialog">
+            <summary>
+            Represents a dialog to select a folder.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IFolderSelectDialog.SelectedPath">
+            <summary>
+            Gets or sets the selected path.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.IMessageBox">
+            <summary>
+            Represents a message box.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IMessageBox.Message">
+            <summary>
+            Gets or sets the message text.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IMessageBox.Buttons">
+            <summary>
+            Gets or sets the displayed buttons.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.IOpenFileDialog">
+            <summary>
+            Represents an open file dialog.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IOpenFileDialog.Multiselect">
+            <summary>
+            Gets or sets a value indicating whether to allow multiple selections.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IOpenFileDialog.SelectedFiles">
+            <summary>
+            Gets the files selected by the user.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.ISaveFileDialog">
+            <summary>
+            Represents a save file dialog.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.ISaveFileDialog.OverwritePrompt">
+            <summary>
+            Gets or sets a value indicating whether to show a prompt if the file already exists.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.MessageBox">
+            <summary>
+            Provides methods to show a message box.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.MessageBox.Show(System.String)">
+            <summary>
+            Shows a message box.
+            </summary>
+            <param name="message">The displayed message.</param>
+            <returns>The user selection.</returns>
+        </member>
+        <member name="M:SpiderEye.MessageBox.Show(System.String,System.String)">
+            <summary>
+            Shows a message box.
+            </summary>
+            <param name="message">The displayed message.</param>
+            <param name="title">The title of the message box.</param>
+            <returns>The user selection.</returns>
+        </member>
+        <member name="M:SpiderEye.MessageBox.Show(System.String,System.String,SpiderEye.MessageBoxButtons)">
+            <summary>
+            Shows a message box.
+            </summary>
+            <param name="message">The displayed message.</param>
+            <param name="title">The title of the message box.</param>
+            <param name="buttons">The displayed buttons.</param>
+            <returns>The user selection.</returns>
+        </member>
+        <member name="M:SpiderEye.MessageBox.Show(SpiderEye.Window,System.String)">
+            <summary>
+            Shows a message box.
+            </summary>
+            <param name="parent">The parent window.</param>
+            <param name="message">The displayed message.</param>
+            <returns>The user selection.</returns>
+        </member>
+        <member name="M:SpiderEye.MessageBox.Show(SpiderEye.Window,System.String,System.String)">
+            <summary>
+            Shows a message box.
+            </summary>
+            <param name="parent">The parent window.</param>
+            <param name="message">The displayed message.</param>
+            <param name="title">The title of the message box.</param>
+            <returns>The user selection.</returns>
+        </member>
+        <member name="M:SpiderEye.MessageBox.Show(SpiderEye.Window,System.String,System.String,SpiderEye.MessageBoxButtons)">
+            <summary>
+            Shows a message box.
+            </summary>
+            <param name="parent">The parent window.</param>
+            <param name="message">The displayed message.</param>
+            <param name="title">The title of the message box.</param>
+            <param name="buttons">The displayed buttons.</param>
+            <returns>The user selection.</returns>
+        </member>
+        <member name="T:SpiderEye.MessageBoxButtons">
+            <summary>
+            The buttons on a message box.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.OpenFileDialog">
+            <summary>
+            Represents an open file dialog.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.OpenFileDialog.Multiselect">
+            <summary>
+            Gets or sets a value indicating whether to allow multiple selections.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.OpenFileDialog.SelectedFiles">
+            <summary>
+            Gets the files selected by the user.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.OpenFileDialog.NativeOpenFileDialog">
+            <summary>
+            Gets the native open file dialog.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.OpenFileDialog.NativeFileDialog">
+            <inheritdoc/>
+        </member>
+        <member name="M:SpiderEye.OpenFileDialog.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.OpenFileDialog"/> class.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.SaveFileDialog">
+            <summary>
+            Represents a save file dialog.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.SaveFileDialog.OverwritePrompt">
+            <summary>
+            Gets or sets a value indicating whether to show a prompt if the file already exists.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.SaveFileDialog.NativeSaveFileDialog">
+            <summary>
+            Gets the native save file dialog.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.SaveFileDialog.NativeFileDialog">
+            <inheritdoc/>
+        </member>
+        <member name="M:SpiderEye.SaveFileDialog.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.SaveFileDialog"/> class.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.CancelableEventHandler">
+            <summary>
+            A delegate for an event of a cancelable operation.
+            </summary>
+            <param name="sender">The sender of the event.</param>
+            <param name="e">The event arguments.</param>
+        </member>
+        <member name="T:SpiderEye.CancelableEventArgs">
+            <summary>
+            Represents the event arguments for an event of a cancelable operation.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.CancelableEventArgs.Cancel">
+            <summary>
+            Gets or sets a value indicating whether the operation should be canceled or not.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.PageLoadEventHandler">
+            <summary>
+            A delegate for a page load event.
+            </summary>
+            <param name="sender">The sender of the event.</param>
+            <param name="e">The event arguments.</param>
+        </member>
+        <member name="T:SpiderEye.PageLoadEventArgs">
+            <summary>
+            Represents the event arguments for page load event.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.PageLoadEventArgs.Successful">
+            <summary>
+            An instance of the <see cref="T:SpiderEye.PageLoadEventArgs"/> that states success.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.PageLoadEventArgs.Failed">
+            <summary>
+            An instance of the <see cref="T:SpiderEye.PageLoadEventArgs"/> that states failure.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.PageLoadEventArgs.Success">
+            <summary>
+            Gets a value indicating whether the page loaded or not.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.PageLoadEventArgs.#ctor(System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.PageLoadEventArgs"/> class.
+            </summary>
+            <param name="success">A value indicating whether the page loaded or not.</param>
+        </member>
+        <member name="M:SpiderEye.PageLoadEventArgs.GetFor(System.Boolean)">
+            <summary>
+            Gets the <see cref="T:SpiderEye.PageLoadEventArgs"/> for the given state.
+            </summary>
+            <param name="success">A value indicating whether the page loaded or not.</param>
+            <returns>The appropriate <see cref="T:SpiderEye.PageLoadEventArgs"/>.</returns>
+        </member>
+        <member name="T:SpiderEye.IUiFactory">
+            <summary>
+            Provides methods to various UI elements like windows and dialogs.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.IUiFactory.CreateWindow(SpiderEye.WindowConfiguration,SpiderEye.Bridge.WebviewBridge)">
+            <summary>
+            Creates a new window.
+            </summary>
+            <param name="config">The window configuration.</param>
+            <param name="bridge">The bridge to the webview.</param>
+            <returns>The created window.</returns>
+        </member>
+        <member name="M:SpiderEye.IUiFactory.CreateStatusIcon(System.String)">
+            <summary>
+            Creates a new status icon.
+            </summary>
+            <param name="title">The status icon title.</param>
+            <returns>The created status icon.</returns>
+        </member>
+        <member name="M:SpiderEye.IUiFactory.CreateMessageBox">
+            <summary>
+            Creates a new message box.
+            </summary>
+            <returns>The created message box.</returns>
+        </member>
+        <member name="M:SpiderEye.IUiFactory.CreateSaveFileDialog">
+            <summary>
+            Creates a new save file dialog.
+            </summary>
+            <returns>The created save file dialog.</returns>
+        </member>
+        <member name="M:SpiderEye.IUiFactory.CreateOpenFileDialog">
+            <summary>
+            Creates a new open file dialog.
+            </summary>
+            <returns>The created open file dialog.</returns>
+        </member>
+        <member name="M:SpiderEye.IUiFactory.CreateFolderSelectDialog">
+            <summary>
+            Creates a new folder select dialog.
+            </summary>
+            <returns>The created folder select dialog.</returns>
+        </member>
+        <member name="M:SpiderEye.IUiFactory.CreateMenu">
+            <summary>
+            Creates a new menu.
+            </summary>
+            <returns>The created menu.</returns>
+        </member>
+        <member name="M:SpiderEye.IUiFactory.CreateLabelMenu(System.String)">
+            <summary>
+            Creates a new label menu item.
+            </summary>
+            <param name="label">The label of the menu item.</param>
+            <returns>The created label menu item.</returns>
+        </member>
+        <member name="M:SpiderEye.IUiFactory.CreateMenuSeparator">
+            <summary>
+            Creates a new menu separator item.
+            </summary>
+            <returns>The created menu separator item.</returns>
+        </member>
+        <member name="T:SpiderEye.IWebview">
+            <summary>
+            Represents a webview.
+            </summary>
+        </member>
+        <member name="E:SpiderEye.IWebview.PageLoaded">
+            <summary>
+            Fires once the content in this webview has loaded.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.IWebview.LoadUri(System.Uri)">
+            <summary>
+            Loads the given URI.
+            </summary>
+            <param name="uri">The URI to load.</param>
+        </member>
+        <member name="M:SpiderEye.IWebview.ExecuteScriptAsync(System.String)">
+            <summary>
+            Executes the given JavaScript within the webview and gets the result.
+            </summary>
+            <param name="script">The JavaScript to execute.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> with the result of the script.</returns>
+        </member>
+        <member name="T:SpiderEye.Key">
+            <summary>
+            Describes keys.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.KeyMask">
+            <summary>
+            Defines mask for different types of keys in <see cref="T:SpiderEye.Key"/>.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.ILabelMenuItem">
+            <summary>
+            Represents an item in a menu with a label.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.ILabelMenuItem.Label">
+            <summary>
+            Gets or sets the label of this menu.
+            </summary>
+        </member>
+        <member name="E:SpiderEye.ILabelMenuItem.Click">
+            <summary>
+            Fires when the menu item is clicked on or otherwise activated.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.ILabelMenuItem.Enabled">
+            <summary>
+            Gets or sets a value indicating whether the menu item is enabled or not.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.ILabelMenuItem.SetShortcut(SpiderEye.ModifierKey,SpiderEye.Key)">
+            <summary>
+            Sets a keyboard shortcut to the menu item.
+            </summary>
+            <param name="modifier">The shortcut modifier key.</param>
+            <param name="key">The shortcut key.</param>
+        </member>
+        <member name="T:SpiderEye.IMenu">
+            <summary>
+            Represents a menu.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.IMenu.AddItem(SpiderEye.IMenuItem)">
+            <summary>
+            Adds a new menu item to this menu.
+            </summary>
+            <param name="item">The item to add.</param>
+        </member>
+        <member name="T:SpiderEye.IMenuItem">
+            <summary>
+            Represents an item in a menu.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.IMenuItem.CreateSubMenu">
+            <summary>
+            Creates a new sub-menu for this item.
+            </summary>
+            <returns>The created sub-menu.</returns>
+        </member>
+        <member name="T:SpiderEye.LabelMenuItem">
+            <summary>
+            Represents an item in a menu with a label.
+            </summary>
+        </member>
+        <member name="E:SpiderEye.LabelMenuItem.Click">
+            <summary>
+            Fires when the menu item is clicked on or otherwise activated.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.LabelMenuItem.Label">
+            <summary>
+            Gets or sets the label of this menu.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.LabelMenuItem.Enabled">
+            <summary>
+            Gets or sets a value indicating whether the menu item is enabled or not.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.LabelMenuItem.NativeLabelMenuItem">
+            <summary>
+            Gets the native menu item.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.LabelMenuItem.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.LabelMenuItem"/> class.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.LabelMenuItem.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.LabelMenuItem"/> class.
+            </summary>
+            <param name="label">Gets or sets the label of this menu item.</param>
+        </member>
+        <member name="M:SpiderEye.LabelMenuItem.SetShortcut(SpiderEye.ModifierKey,SpiderEye.Key)">
+            <summary>
+            Sets a keyboard shortcut to the menu item.
+            </summary>
+            <param name="modifier">The shortcut modifier key.</param>
+            <param name="key">The shortcut key.</param>
+        </member>
+        <member name="T:SpiderEye.Menu">
+            <summary>
+            Represents a menu.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Menu.MenuItems">
+            <summary>
+            Gets the menu sub-items.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Menu.NativeMenu">
+            <summary>
+            Gets the native menu.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Menu.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.Menu"/> class.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Menu.Dispose">
+            <inheritdoc/>
+        </member>
+        <member name="T:SpiderEye.MenuItem">
+            <summary>
+            Represents an item in a menu.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.MenuItem.MenuItems">
+            <summary>
+            Gets the sub-menu items.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.MenuItem.NativeMenuItem">
+            <summary>
+            Gets the native menu item.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.MenuItemCollection">
+            <summary>
+            Represents a collection of menu items.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.MenuItemCollection.Count">
+            <inheritdoc/>
+        </member>
+        <member name="M:SpiderEye.MenuItemCollection.Add(SpiderEye.MenuItem)">
+            <summary>
+            Adds a new menu item to this menu.
+            </summary>
+            <param name="item">The item to add.</param>
+        </member>
+        <member name="M:SpiderEye.MenuItemCollection.AddLabelItem(System.String)">
+            <summary>
+            Adds a new label menu item and returns it.
+            </summary>
+            <param name="label">The label text.</param>
+            <returns>The created menu item.</returns>
+        </member>
+        <member name="M:SpiderEye.MenuItemCollection.AddSeparatorItem">
+            <summary>
+            Adds a new separator menu item.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.MenuItemCollection.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:SpiderEye.MenuItemCollection.System#Collections#IEnumerable#GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="T:SpiderEye.SeparatorMenuItem">
+            <summary>
+            Represents a separator in a menu.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.SeparatorMenuItem.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.SeparatorMenuItem"/> class.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.ModifierKey">
+            <summary>
+            Describes modifier keys.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.ModifierKey.None">
+            <summary>
+            No key.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.ModifierKey.Shift">
+            <summary>
+            Shift key.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.ModifierKey.Control">
+            <summary>
+            Control key.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.ModifierKey.Alt">
+            <summary>
+            Alt/Option key.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.ModifierKey.Super">
+            <summary>
+            Super key (e.g. Windows or Command key).
+            </summary>
+        </member>
+        <member name="F:SpiderEye.ModifierKey.Primary">
+            <summary>
+            Control key on Windows and Linux, Command key on macOS.
+            Using this key makes it easier to define a shortcut that is appropriate for all platforms.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.Size">
+            <summary>
+            Stores a width and height of something.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.Size.Zero">
+            <summary>
+            A <see cref="T:SpiderEye.Size"/> with <see cref="F:SpiderEye.Size.Width"/> and <see cref="F:SpiderEye.Size.Height"/> set to zero.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.Size.Width">
+            <summary>
+            The width.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.Size.Height">
+            <summary>
+            The height.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Size.#ctor(System.Double,System.Double)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.Size"/> struct.
+            </summary>
+            <param name="width">The width.</param>
+            <param name="height">The height.</param>
+        </member>
+        <member name="M:SpiderEye.Size.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SpiderEye.Size.Equals(SpiderEye.Size)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SpiderEye.Size.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:SpiderEye.Size.op_Equality(SpiderEye.Size,SpiderEye.Size)">
+            <summary>
+            Compares if two <see cref="T:SpiderEye.Size"/> are equal.
+            </summary>
+            <param name="left">The left size.</param>
+            <param name="right">The right size.</param>
+            <returns>True if they are equal; False otherwise.</returns>
+        </member>
+        <member name="M:SpiderEye.Size.op_Inequality(SpiderEye.Size,SpiderEye.Size)">
+            <summary>
+            Compares if two <see cref="T:SpiderEye.Size"/> are not equal.
+            </summary>
+            <param name="left">The left size.</param>
+            <param name="right">The right size.</param>
+            <returns>True if they are not equal; False otherwise.</returns>
+        </member>
+        <member name="T:SpiderEye.IStatusIcon">
+            <summary>
+            Represents a status icon.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IStatusIcon.Title">
+            <summary>
+            Gets or sets the status icon title.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IStatusIcon.Icon">
+            <summary>
+            Gets or sets the icon.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IStatusIcon.Menu">
+            <summary>
+            Gets or sets the icon menu.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.StatusIcon">
+            <summary>
+            Represents a status icon.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.StatusIcon.Title">
+            <summary>
+            Gets or sets the status icon title.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.StatusIcon.Icon">
+            <summary>
+            Gets or sets the icon.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.StatusIcon.Menu">
+            <summary>
+            Gets or sets the icon menu.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.StatusIcon.NativeStatusIcon">
+            <summary>
+            Gets the native status icon.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.StatusIcon.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.StatusIcon"/> class.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.StatusIcon.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="T:SpiderEye.WindowCollection">
+            <summary>
+            Represents a collections of windows.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.WindowCollection.Item(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="P:SpiderEye.WindowCollection.Count">
+            <inheritdoc/>
+        </member>
+        <member name="M:SpiderEye.WindowCollection.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:SpiderEye.WindowCollection.System#Collections#IEnumerable#GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="T:SpiderEye.IWindow">
+            <summary>
+            Represents a window.
+            </summary>
+        </member>
+        <member name="E:SpiderEye.IWindow.Shown">
+            <summary>
+            Fires when the window is shown.
+            </summary>
+        </member>
+        <member name="E:SpiderEye.IWindow.Closing">
+            <summary>
+            Fires before the window gets closed.
+            </summary>
+        </member>
+        <member name="E:SpiderEye.IWindow.Closed">
+            <summary>
+            Fires after the window has closed.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IWindow.Title">
+            <summary>
+            Gets or sets the window title.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IWindow.Size">
+            <summary>
+            Gets or sets the window size.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IWindow.MinSize">
+            <summary>
+            Gets or sets the minimum window size.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IWindow.MaxSize">
+            <summary>
+            Gets or sets the maximum window size.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IWindow.BackgroundColor">
+            <summary>
+            Gets or sets the background color of the window.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IWindow.CanResize">
+            <summary>
+            Gets or sets a value indicating whether the window can be resized or not.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IWindow.UseBrowserTitle">
+            <summary>
+            Gets or sets a value indicating whether the window title
+            should be updated when the browser title does.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IWindow.Icon">
+            <summary>
+            Gets or sets the default window icon.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IWindow.EnableScriptInterface">
+            <summary>
+            Gets or sets a value indicating whether the scripting interface
+            between browser and window is enabled.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IWindow.EnableDevTools">
+            <summary>
+            Gets or sets a value indicating whether dev tools are enabled or not.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.IWindow.Webview">
+            <summary>
+            Gets the webview of this window.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.IWindow.Show">
+            <summary>
+            Shows this window.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.IWindow.Close">
+            <summary>
+            Closes this window.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.IWindow.SetWindowState(SpiderEye.WindowState)">
+            <summary>
+            Sets the window state.
+            </summary>
+            <param name="state">The state to set.</param>
+        </member>
+        <member name="T:SpiderEye.Window">
+            <summary>
+            Represents a window.
+            </summary>
+        </member>
+        <member name="E:SpiderEye.Window.PageLoaded">
+            <summary>
+            Fires once the content in the webview has loaded.
+            </summary>
+        </member>
+        <member name="E:SpiderEye.Window.Shown">
+            <summary>
+            Fires when the window is shown.
+            </summary>
+        </member>
+        <member name="E:SpiderEye.Window.Closing">
+            <summary>
+            Fires before the window gets closed.
+            </summary>
+        </member>
+        <member name="E:SpiderEye.Window.Closed">
+            <summary>
+            Fires after the window has closed.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Window.Title">
+            <summary>
+            Gets or sets the window title.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Window.Size">
+            <summary>
+            Gets or sets the window size.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Window.MinSize">
+            <summary>
+            Gets or sets the minimum window size.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Window.MaxSize">
+            <summary>
+            Gets or sets the maximum window size. Set to <see cref="F:SpiderEye.Size.Zero"/> to reset.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Window.BackgroundColor">
+            <summary>
+            Gets or sets the background color of the window.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Window.CanResize">
+            <summary>
+            Gets or sets a value indicating whether the window can be resized or not.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Window.UseBrowserTitle">
+            <summary>
+            Gets or sets a value indicating whether the window title should
+            be updated when the browser title does.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Window.Icon">
+            <summary>
+            Gets or sets the default window icon. Default is null.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Window.EnableScriptInterface">
+            <summary>
+            Gets or sets a value indicating whether the scripting interface between
+            browser and window is enabled.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Window.EnableDevTools">
+            <summary>
+            Gets or sets a value indicating whether dev tools are enabled or not.
+            Note that this has a different or no effect depending on the used webview.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Window.Bridge">
+            <summary>
+            Gets a bridge to the webview.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Window.NativeWindow">
+            <summary>
+            Gets the native window.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Window.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.Window"/> class.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Window.Show">
+            <summary>
+            Shows this window.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Window.Close">
+            <summary>
+            Closes this window.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Window.SetWindowState(SpiderEye.WindowState)">
+            <summary>
+            Sets the window state.
+            </summary>
+            <param name="state">The state to set.</param>
+        </member>
+        <member name="M:SpiderEye.Window.LoadUrl(System.String)">
+            <summary>
+            Loads the given URL.
+            </summary>
+            <param name="url">The URL to load.</param>
+        </member>
+        <member name="M:SpiderEye.Window.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="T:SpiderEye.WindowState">
+            <summary>
+            Window state.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.WindowState.Normal">
+            <summary>
+            Normal state.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.WindowState.Maximized">
+            <summary>
+            The window is maximized.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.WindowState.Minimized">
+            <summary>
+            The window is minimized.
+            </summary>
+        </member>
+    </members>
+</doc>

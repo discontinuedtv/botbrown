@@ -1,8 +1,8 @@
-﻿namespace BotBrownCore.Workers
+﻿namespace BotBrown.Workers
 {
-    using BotBrownCore.Configuration;
-    using BotBrownCore.Events;
-    using BotBrownCore.Workers.TextToSpeech;
+    using BotBrown.Configuration;
+    using BotBrown.Events;
+    using BotBrown.Workers.TextToSpeech;
     using System;
     using System.Threading;
     using System.Threading.Tasks;

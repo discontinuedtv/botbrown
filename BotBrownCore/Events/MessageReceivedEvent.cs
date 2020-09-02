@@ -1,8 +1,8 @@
 ﻿using System;
-using BotBrownCore.Configuration;
-using BotBrownCore.Events.Twitch;
+using BotBrown.Configuration;
+using BotBrown.Events.Twitch;
 
-namespace BotBrownCore.Events
+namespace BotBrown.Events
 {
     public sealed class MessageReceivedEvent : UserSpecificEvent
     {

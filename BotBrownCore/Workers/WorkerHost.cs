@@ -1,12 +1,12 @@
-﻿using BotBrownCore.Configuration;
-using BotBrownCore.Workers.TextToSpeech;
-using BotBrownCore.Workers.Twitch;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace BotBrownCore.Workers
+﻿namespace BotBrown.Workers
 {
-    public class WorkerHost
+    using BotBrown.Configuration;
+    using BotBrown.Workers.TextToSpeech;
+    using BotBrown.Workers.Twitch;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    public class WorkerHost : IWorkerHost
     {
         private readonly IEventBus bus;
         private readonly ITextToSpeechProcessor textToSpeechProcessor;

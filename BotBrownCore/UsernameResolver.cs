@@ -1,6 +1,6 @@
-﻿namespace BotBrownCore
+﻿namespace BotBrown
 {
-    using BotBrownCore.Configuration;
+    using BotBrown.Configuration;
     using System.Text;
 
     public sealed class UsernameResolver : IUsernameResolver

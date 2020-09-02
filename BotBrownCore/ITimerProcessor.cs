@@ -1,4 +1,4 @@
-﻿namespace BotBrownCore
+﻿namespace BotBrown
 {
     public interface ITimerProcessor
     {

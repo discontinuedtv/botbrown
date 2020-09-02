@@ -1,8 +1,9 @@
 ﻿namespace BotBrownCore.Tests
 {
-    using BotBrownCore.Configuration;
-    using BotBrownCore.Workers.TextToSpeech;
-    using BotBrownCore.Workers.Twitch;
+    using BotBrown;
+    using BotBrown.Configuration;
+    using BotBrown.Workers.TextToSpeech;
+    using BotBrown.Workers.Twitch;
     using Moq;
 
     public sealed partial class BotTest

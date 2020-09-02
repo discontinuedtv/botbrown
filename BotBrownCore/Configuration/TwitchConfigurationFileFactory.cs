@@ -1,4 +1,4 @@
-﻿namespace BotBrownCore.Configuration
+﻿namespace BotBrown.Configuration
 {
     public class TwitchConfigurationFileFactory : IConfigurationFileFactory<TwitchConfiguration>
     {

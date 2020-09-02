@@ -1,6 +1,6 @@
-﻿using BotBrownCore.Configuration;
+﻿using BotBrown.Configuration;
 
-namespace BotBrownCore.Events
+namespace BotBrown.Events
 {
     public sealed class NewSubscriberEvent : UserSpecificEvent
     {

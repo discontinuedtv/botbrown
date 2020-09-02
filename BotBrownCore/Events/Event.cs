@@ -1,4 +1,4 @@
-﻿namespace BotBrownCore.Events
+﻿namespace BotBrown.Events
 {
     public abstract class Event
     {

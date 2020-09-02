@@ -1,7 +1,7 @@
-﻿namespace BotBrownCore.Workers.Twitch
+﻿namespace BotBrown.Workers.Twitch
 {
-    using BotBrownCore.Configuration;
-    using BotBrownCore.Events;
+    using BotBrown.Configuration;
+    using BotBrown.Events;
     using System;
     using System.Collections.Generic;
     using System.Linq;

@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SpiderEye.Windows</name>
+    </assembly>
+    <members>
+        <member name="T:SpiderEye.ContentServer">
+            <summary>
+            A simple HTTP server to run inside a SpiderEye app.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.ContentServer.HostAddress">
+            <summary>
+            Gets the servers host address.
+            If no explicit port number was provided in the constructor,
+            this value is only valid after calling <see cref="M:SpiderEye.ContentServer.Start"/>.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.ContentServer.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.ContentServer"/> class.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.ContentServer.#ctor(System.Nullable{System.Int32})">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpiderEye.ContentServer"/> class.
+            </summary>
+            <param name="port">The port number the server should listen to. If set to zero or null, it will be auto-assigned.</param>
+        </member>
+        <member name="M:SpiderEye.ContentServer.Start">
+            <summary>
+            Starts the server.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.ContentServer.Dispose">
+            <summary>
+            Closes the server.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.Windows.IWinFormsWebview">
+            <summary>
+            Represents a Windows Forms webview.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Windows.IWinFormsWebview.Control">
+            <summary>
+            Gets the webview control.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Windows.IWinFormsWebview.EnableScriptInterface">
+            <summary>
+            Gets or sets a value indicating whether the scripting interface
+            between browser and window is enabled.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Windows.IWinFormsWebview.UpdateBackgroundColor(System.Byte,System.Byte,System.Byte)">
+            <summary>
+            Updates the background color of the webview.
+            </summary>
+            <param name="r">The red channel.</param>
+            <param name="g">The green channel.</param>
+            <param name="b">The blue channel.</param>
+        </member>
+        <member name="T:SpiderEye.Windows.Internal.ScriptInterface">
+            <summary>
+            Script interface for the WebBrowser control.
+            Not meant for public consumption.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Windows.Internal.ScriptInterface.notify(System.String)">
+            <summary>
+            Script invoke hook.
+            </summary>
+            <param name="data">The sent data.</param>
+        </member>
+        <member name="T:SpiderEye.Windows.WebviewType">
+            <summary>
+            Defines the different types of webviews on Windows.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.Windows.WebviewType.Latest">
+            <summary>
+            Latest version available.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.Windows.WebviewType.InternetExplorer">
+            <summary>
+            Internet Explorer.
+            </summary>
+        </member>
+        <member name="F:SpiderEye.Windows.WebviewType.Edge">
+            <summary>
+            Edge based on EdgeHTML and Chakra.
+            </summary>
+        </member>
+        <member name="T:SpiderEye.Windows.WindowsApplication">
+            <summary>
+            Provides Windows specific application methods.
+            </summary>
+        </member>
+        <member name="P:SpiderEye.Windows.WindowsApplication.WebviewType">
+            <summary>
+            Gets or sets which webview version should be used at most.
+            </summary>
+        </member>
+        <member name="M:SpiderEye.Windows.WindowsApplication.Init">
+            <summary>
+            Initializes the application.
+            </summary>
+        </member>
+    </members>
+</doc>

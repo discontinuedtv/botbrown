@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BotBrownCore.Workers.Timers
+namespace BotBrown.Workers.Timers
 {
     public sealed class TimerCommand
     {

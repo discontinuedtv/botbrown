@@ -7,7 +7,7 @@
     <ProjectGuid>{6DEDBFF9-4BD8-4A83-A7ED-B06D7246A6DA}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>BotBrown</RootNamespace>
-    <AssemblyName>BotBrown</AssemblyName>
+    <AssemblyName>BotBrownCli</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
