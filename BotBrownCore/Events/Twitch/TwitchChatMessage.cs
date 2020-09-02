@@ -1,4 +1,4 @@
-﻿namespace BotBrownCore
+﻿namespace BotBrownCore.Events.Twitch
 {
     using System;
     using System.Collections.Generic;

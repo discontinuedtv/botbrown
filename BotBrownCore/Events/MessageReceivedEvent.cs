@@ -1,5 +1,6 @@
 ﻿using System;
 using BotBrownCore.Configuration;
+using BotBrownCore.Events.Twitch;
 
 namespace BotBrownCore.Events
 {

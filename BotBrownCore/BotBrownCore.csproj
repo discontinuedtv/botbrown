@@ -172,11 +172,10 @@
     <Compile Include="IEventSubscriber.cs" />
     <Compile Include="IEventSubscriber1.cs" />
     <Compile Include="ILogger.cs" />
-    <Compile Include="ISubscriber.cs" />
     <Compile Include="Workers\TextToSpeech\ITextToSpeechProcessor.cs" />
     <Compile Include="Workers\Twitch\ITwitchApiWrapper.cs" />
     <Compile Include="Workers\Twitch\ITwitchClientWrapper.cs" />
-    <Compile Include="TwitchChatMessage.cs" />
+    <Compile Include="Events\Twitch\TwitchChatMessage.cs" />
     <Compile Include="Messaging\ITopic.cs" />
     <Compile Include="Messaging\Topic.cs" />
     <Compile Include="PresenceStore.cs" />
@@ -188,9 +187,8 @@
     <Compile Include="Configuration\UsernameConfigurationFileFactory.cs" />
     <Compile Include="Configuration\SentenceConfiguration.cs" />
     <Compile Include="SoundCommand.cs" />
-    <Compile Include="Subscriber.cs" />
     <Compile Include="Workers\TextToSpeech\TextToSpeechProcessor.cs" />
-    <Compile Include="TimerProcessor.cs" />
+    <Compile Include="Workers\Timers\TimerProcessor.cs" />
     <Compile Include="Workers\Twitch\TwitchApiWrapper.cs" />
     <Compile Include="Workers\Twitch\TwitchClientWrapper.cs" />
     <Compile Include="UsernameResolver.cs" />

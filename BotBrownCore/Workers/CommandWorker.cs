@@ -2,6 +2,7 @@
 {
     using BotBrownCore.Configuration;
     using BotBrownCore.Events;
+    using BotBrownCore.Events.Twitch;
     using BotBrownCore.Workers.TextToSpeech;
     using BotBrownCore.Workers.Timers;
     using System;
