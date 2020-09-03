@@ -1,4 +1,6 @@
-﻿namespace BotBrown.Configuration
+﻿using System.ComponentModel;
+
+namespace BotBrown.Configuration
 {
     public class SentenceConfiguration : IConfiguration
     {
@@ -11,6 +13,8 @@
         public string ResubscriberAlert { get; set; }
 
         public string SubBombAlert { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
 

@@ -39,7 +39,7 @@
 
         public void Stop()
         {
-            followerService.Stop();
+            followerService?.Stop();
         }
 
         private TwitchAPI InitializeTwitchApi(TwitchConfiguration twitchConfiguration)

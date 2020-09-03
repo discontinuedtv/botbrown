@@ -1,12 +1,12 @@
-﻿using BotBrown.Configuration;
-using BotBrown.Events;
-using BotBrown.Workers.Twitch;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace BotBrown.Workers
+﻿namespace BotBrown.Workers
 {
+    using BotBrown.Configuration;
+    using BotBrown.Events;
+    using BotBrown.Workers.Twitch;
+    using System;
+    using System.Threading;
+    using System.Threading.Tasks;
+
     public sealed class TwitchInterfaceWorker : IDisposable
     {
         private readonly IEventBus bus;
@@ -31,11 +31,11 @@ namespace BotBrown.Workers
             try
             {
                 twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
-                logger.Log("Twitch Konfiguration wurden geladen.");
+                logger.Log("Twitch Konfiguration wurde geladen.");
 
                 if (!twitchConfiguration.IsValid())
                 {
-                    logger.Log("Die Twitch Konfiguration ist nich valide");
+                    logger.Log("Die Twitch Konfiguration ist nicht valide");
                     return false;
                 }
 

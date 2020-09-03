@@ -5,10 +5,10 @@
     using BotBrown.Events.Twitch;
     using BotBrown.Workers.TextToSpeech;
     using BotBrown.Workers.Timers;
+    using BotBrownCore.Configuration;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -113,9 +113,11 @@
         {
             soundsPerCommand.Clear();
             CommandConfiguration commandConfiguration = configurationManager.LoadConfiguration<CommandConfiguration>(ConfigurationFileConstants.Commands);
+            AudioConfiguration audioConfiguration = configurationManager.LoadConfiguration<AudioConfiguration>(ConfigurationFileConstants.Audio);
+            
             foreach (CommandDefinition commandDefinition in commandConfiguration.CommandsDefinitions)
             {
-                SoundCommand command = commandDefinition.CreateCommand();
+                SoundCommand command = commandDefinition.CreateCommand(audioConfiguration);
                 soundsPerCommand.Add(command.Shortcut, command);
 
                 logger.Log($"Kommando {command.Shortcut} hinzugefügt.");
@@ -284,7 +286,7 @@
 
             string timerName = string.Join(" ", parameters.Skip(1));
 
-            
+
             bus.Publish(new TextToSpeechEvent(user, $"Der Timer {timerName} wurde gestartet."));
 
             TimeSpan timerLength = TimeSpan.FromSeconds(timeInSeconds);

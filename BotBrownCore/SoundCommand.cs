@@ -1,22 +1,22 @@
 ﻿namespace BotBrown
 {
+    using BotBrownCore.Configuration;
+    using NAudio.Wave;
     using System;
-    using System.Media;
+    using System.Threading;
 
     public class SoundCommand : ICommand, IDisposable
     {
-        private SoundPlayer player;
+        private readonly AudioConfiguration configuration;
 
-        public SoundCommand(string shortcut, string name, int cooldownInSeconds, string filename, int volume)
+        public SoundCommand(string shortcut, string name, int cooldownInSeconds, string filename, float volume, AudioConfiguration audioConfiguration)
         {
             Shortcut = shortcut;
             Name = name;
             CooldownInSeconds = cooldownInSeconds;
             Filename = filename;
-            player = new SoundPlayer
-            {
-                SoundLocation = Environment.CurrentDirectory + $"/{filename}"
-            };
+            Volume = volume;
+            configuration = audioConfiguration;
         }
 
         public string Name { get; }
@@ -29,9 +29,10 @@
 
         public string Shortcut { get; }
 
+        public float Volume { get; }
+
         public void Dispose()
         {
-            player.Dispose();
         }
 
         public void Execute()
@@ -42,7 +43,19 @@
             }
 
             Cooldown = DateTimeOffset.Now.AddSeconds(CooldownInSeconds);
-            player.Play();
+
+            using (var reader = new MediaFoundationReader(Filename))
+            using (var outputStream = new WasapiOut(configuration.SelectedSoundCommandDevice, NAudio.CoreAudioApi.AudioClientShareMode.Shared, false, 10))
+            {
+                outputStream.Init(reader);
+                outputStream.Volume = Volume;
+                outputStream.Play();
+
+                while(outputStream.PlaybackState != PlaybackState.Stopped)
+                {
+                    Thread.Sleep(5);
+                }
+            }
         }
     }
 }

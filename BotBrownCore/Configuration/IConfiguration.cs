@@ -1,6 +1,8 @@
 ﻿namespace BotBrown.Configuration
 {
-    public interface IConfiguration
+    using System.ComponentModel;
+
+    public interface IConfiguration : INotifyPropertyChanged
     {
     }
 }
