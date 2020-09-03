@@ -22,9 +22,14 @@
             workerHost = container.Resolve<IWorkerHost>();
         }
 
-        public void Execute()
+        public void Execute(bool dontConnectToTwitch)
         {
-            workerHost.Execute(cancellationTokenSource.Token);
+            workerHost.Execute(cancellationTokenSource.Token, dontConnectToTwitch);
+        }
+
+        public void PublishTestTTSMessage(string message)
+        {
+            workerHost.PublishTTSMessage(message);
         }
 
         public void Dispose()

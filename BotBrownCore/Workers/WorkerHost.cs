@@ -1,8 +1,10 @@
 ﻿namespace BotBrown.Workers
 {
     using BotBrown.Configuration;
+    using BotBrown.Events;
     using BotBrown.Workers.TextToSpeech;
     using BotBrown.Workers.Twitch;
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -27,12 +29,17 @@
             this.presenceStore = presenceStore;
         }
 
-        public void Execute(CancellationToken cancellationToken)
+        public void Execute(CancellationToken cancellationToken, bool dontConnectToTwitch)
         {
-            SpawnTextToSpeechWorker(cancellationToken);
+            SpawnWorkerTasks(cancellationToken, dontConnectToTwitch);
         }
 
-        private void SpawnTextToSpeechWorker(CancellationToken cancellationToken)
+        public void PublishTTSMessage(string message)
+        {
+            bus.Publish<TextToSpeechEvent>(new SpeakEvent(new ChannelUser("46409199", "discontinuedman", "discontinjudmän"), message));
+        }
+
+        private void SpawnWorkerTasks(CancellationToken cancellationToken, bool dontConnectToTwitch)
         {
             Task.Run(async () =>
             {
@@ -40,19 +47,29 @@
                 return await ttsWorker.Execute(cancellationToken);
             });
 
-            Task.Run(async () =>
-            {
-                using (var ttsWorker = new TwitchInterfaceWorker(bus, clientWrapper, apiWrapper, logger, configurationManager))
-                {
-                    return await ttsWorker.Execute(cancellationToken);
-                }
-            });
+            SpawnTwitchWorker(cancellationToken, dontConnectToTwitch);
 
             Task.Run(async () =>
             {
                 using (var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, textToSpeechProcessor, logger))
                 {
                     return await commandWorker.Execute(cancellationToken);
+                }
+            });
+        }
+
+        private void SpawnTwitchWorker(CancellationToken cancellationToken, bool dontConnectToTwitch)
+        {
+            if (dontConnectToTwitch)
+            {
+                return;
+            }
+
+            Task.Run(async () =>
+            {
+                using (var ttsWorker = new TwitchInterfaceWorker(bus, clientWrapper, apiWrapper, logger, configurationManager))
+                {
+                    return await ttsWorker.Execute(cancellationToken);
                 }
             });
         }

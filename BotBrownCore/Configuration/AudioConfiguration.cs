@@ -31,12 +31,12 @@
         {
             foreach (var audioEndpoint in deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active))
             {
-                if (audioEndpoint.DeviceFriendlyName == TTSAudioDeviceName)
+                if (audioEndpoint.FriendlyName == TTSAudioDeviceName)
                 {
                     SelectedTTSDevice = audioEndpoint;
                 }
 
-                if (audioEndpoint.DeviceFriendlyName == SoundCommandDeviceName)
+                if (audioEndpoint.FriendlyName == SoundCommandDeviceName)
                 {
                     SelectedSoundCommandDevice = audioEndpoint;
                 }
@@ -50,14 +50,14 @@
             if (SelectedTTSDevice == null)
             {
                 SelectedTTSDevice = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
-                TTSAudioDeviceName = SelectedTTSDevice.DeviceFriendlyName;
+                TTSAudioDeviceName = SelectedTTSDevice.FriendlyName;
                 isDirty = true;
             }
 
             if (SelectedSoundCommandDevice == null)
             {
                 SelectedSoundCommandDevice = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
-                SoundCommandDeviceName = SelectedSoundCommandDevice.DeviceFriendlyName;
+                SoundCommandDeviceName = SelectedSoundCommandDevice.FriendlyName;
                 isDirty = true;
             }
 

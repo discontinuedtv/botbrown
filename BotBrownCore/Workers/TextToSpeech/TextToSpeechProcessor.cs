@@ -15,9 +15,12 @@
 
     public class TextToSpeechProcessor : ITextToSpeechProcessor
     {
+        private const int BitResolution = 16;
+
         private readonly IConfigurationManager configurationManager;
         private readonly IDictionary<string, string> availableLanguages = new Dictionary<string, string>();
         private readonly AudioConfiguration audioConfiguration;
+        private bool isInitialized;
         private string languages;
 
         public TextToSpeechProcessor(IConfigurationManager configurationManager)
@@ -26,7 +29,6 @@
             RegisterAvailableLanguages();
 
             audioConfiguration = configurationManager.LoadConfiguration<AudioConfiguration>(ConfigurationFileConstants.Audio);
-            audioConfiguration.InitializeConfiguration();
         }
 
         public string TextToSpeechLanguages
@@ -50,9 +52,11 @@
                 return;
             }
 
+            InitializeAudioDevices();
+
             using (var stream = new MemoryStream())
-            using (var output = new WasapiOut(audioConfiguration.SelectedTTSDevice, AudioClientShareMode.Shared, false, 10))
-            using (var provider = new RawSourceWaveStream(stream, new WaveFormat(44100, 16, 2)))
+            using (var output = new WasapiOut(audioConfiguration.SelectedTTSDevice, AudioClientShareMode.Shared, false, 100))
+            using (var provider = new RawSourceWaveStream(stream, new WaveFormat(44100, BitResolution, 2)))
             using (var synth = new SpeechSynthesizer())
             {
                 synth.SetOutputToAudioStream(stream, new SpeechAudioFormatInfo(44100, AudioBitsPerSample.Sixteen, AudioChannel.Stereo));
@@ -61,6 +65,7 @@
 
                 stream.Seek(0, SeekOrigin.Begin);
 
+                //output.Volume = 0.25f;
                 output.Init(provider);
                 output.Play();
 
@@ -79,9 +84,11 @@
                 return;
             }
 
+            InitializeAudioDevices();
+
             using (var stream = new MemoryStream())
-            using (var output = new WasapiOut(audioConfiguration.SelectedTTSDevice, AudioClientShareMode.Shared, false, 10))
-            using (var provider = new RawSourceWaveStream(stream, new WaveFormat(44100, 16, 2)))
+            using (var output = new WasapiOut(audioConfiguration.SelectedTTSDevice, AudioClientShareMode.Shared, true, 100))
+            using (var provider = new RawSourceWaveStream(stream, new WaveFormat(44100, BitResolution, 2)))
             using (var synth = new SpeechSynthesizer())
             {
                 synth.SetOutputToAudioStream(stream, new SpeechAudioFormatInfo(44100, AudioBitsPerSample.Sixteen, AudioChannel.Stereo));
@@ -89,6 +96,7 @@
 
                 stream.Seek(0, SeekOrigin.Begin);
 
+                output.Volume = 0.25f;
                 output.Init(provider);
                 output.Play();
 
@@ -102,6 +110,16 @@
         public bool TryGetLanguage(string requestedLanguage, out string language)
         {
             return availableLanguages.TryGetValue(requestedLanguage, out language);
+        }
+
+        private void InitializeAudioDevices()
+        {
+            if (isInitialized)
+            {
+                return;
+            }
+
+            audioConfiguration.InitializeConfiguration();
         }
 
         private string GetDesiredLanguage(ChannelUser user)
