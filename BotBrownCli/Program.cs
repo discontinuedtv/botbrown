@@ -25,6 +25,11 @@
                 bot.PublishTestTTSMessage("Testnachricht");
             }
 
+            if (theLine == "cmd")
+            {
+                bot.PublishSoundCommand("scoddiNice");
+            }
+
             if (theLine != "exit")
             {
                 LookForExit(bot);

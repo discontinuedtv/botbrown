@@ -57,6 +57,7 @@
             bus.SubscribeToTopic<ResubscriberEvent>(identifier);
             bus.SubscribeToTopic<CommunitySubscriptionEvent>(identifier);
             bus.SubscribeToTopic<TwitchChannelJoinedEvent>(identifier);
+            bus.SubscribeToTopic<PlaySoundRequestedEvent>(identifier);
 
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -93,6 +94,11 @@
                 if (bus.TryConsume(identifier, out TwitchChannelJoinedEvent channelJoinedEvent))
                 {
                     ProcessChannelJoinedEvent(channelJoinedEvent);
+                }
+
+                if (bus.TryConsume(identifier, out PlaySoundRequestedEvent playSoundRequestedEvent))
+                {
+                    ProcessPlaySoundRequestedEvent(playSoundRequestedEvent);
                 }
 
                 await Task.Delay(100);
@@ -202,6 +208,14 @@
             if (SpeakIfNecessary(message))
             {
                 return;
+            }
+        }
+
+        private void ProcessPlaySoundRequestedEvent(PlaySoundRequestedEvent @event)
+        {
+            if (soundsPerCommand.TryGetValue(@event.CommandName, out SoundCommand command))
+            {
+                command.Execute();
             }
         }
 

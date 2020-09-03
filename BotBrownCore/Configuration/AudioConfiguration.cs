@@ -7,6 +7,7 @@
 
     public class AudioConfiguration : IConfiguration
     {
+        private bool isInitialized;
         private readonly MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -29,6 +30,11 @@
 
         public void InitializeConfiguration()
         {
+            if (isInitialized)
+            {
+                return;
+            }
+
             foreach (var audioEndpoint in deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active))
             {
                 if (audioEndpoint.FriendlyName == TTSAudioDeviceName)
@@ -70,6 +76,8 @@
 
                 isDirty = false;
             }
+
+            isInitialized = true;
         }
     }
 }

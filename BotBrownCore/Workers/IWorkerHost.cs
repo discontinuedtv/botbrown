@@ -7,5 +7,7 @@ namespace BotBrown.Workers
         void Execute(CancellationToken cancellationToken, bool dontConnectToTwitch);
 
         void PublishTTSMessage(string message);
+
+        void PublishSoundCommand(string message);
     }
 }

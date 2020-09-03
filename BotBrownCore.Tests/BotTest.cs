@@ -20,7 +20,7 @@
             fixture.PrepareTwitchApiThrowsExceptionOnConnect();
             Bot testObject = fixture.CreateTestObject();
 
-            testObject.Execute();
+            testObject.Execute(false);
         }
     }
 }

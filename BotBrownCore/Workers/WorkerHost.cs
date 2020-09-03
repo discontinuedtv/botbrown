@@ -4,7 +4,6 @@
     using BotBrown.Events;
     using BotBrown.Workers.TextToSpeech;
     using BotBrown.Workers.Twitch;
-    using System;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -37,6 +36,11 @@
         public void PublishTTSMessage(string message)
         {
             bus.Publish<TextToSpeechEvent>(new SpeakEvent(new ChannelUser("46409199", "discontinuedman", "discontinjudmän"), message));
+        }
+
+        public void PublishSoundCommand(string message)
+        {
+            bus.Publish(new PlaySoundRequestedEvent(message));
         }
 
         private void SpawnWorkerTasks(CancellationToken cancellationToken, bool dontConnectToTwitch)

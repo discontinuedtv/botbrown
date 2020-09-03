@@ -32,6 +32,11 @@
             workerHost.PublishTTSMessage(message);
         }
 
+        public void PublishSoundCommand(string message)
+        {
+            workerHost.PublishSoundCommand(message);
+        }
+
         public void Dispose()
         {
             cancellationTokenSource.Cancel();

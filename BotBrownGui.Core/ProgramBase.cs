@@ -3,7 +3,6 @@
     using SpiderEye;
     using System;
     using System.Diagnostics;
-    using System.Threading;
 
     public abstract class ProgramBase
     {
@@ -12,7 +11,7 @@
             using (var bot = new Bot())
             using (var window = new Window())
             {
-                bot.Execute();
+                bot.Execute(false);
 
                 window.Icon = AppIcon.FromFile("botbrown", ".");
                 window.EnableDevTools = true;

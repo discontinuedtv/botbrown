@@ -52,20 +52,21 @@
                 return;
             }
 
-            InitializeAudioDevices();
+            audioConfiguration.InitializeConfiguration();
 
             using (var stream = new MemoryStream())
             using (var output = new WasapiOut(audioConfiguration.SelectedTTSDevice, AudioClientShareMode.Shared, false, 100))
             using (var provider = new RawSourceWaveStream(stream, new WaveFormat(44100, BitResolution, 2)))
             using (var synth = new SpeechSynthesizer())
             {
+                synth.Volume = 100;
                 synth.SetOutputToAudioStream(stream, new SpeechAudioFormatInfo(44100, AudioBitsPerSample.Sixteen, AudioChannel.Stereo));
                 synth.SelectVoice(GetDesiredLanguage(user));
                 synth.Speak(messageAction(user));
 
                 stream.Seek(0, SeekOrigin.Begin);
 
-                //output.Volume = 0.25f;
+                output.Volume = 1f;
                 output.Init(provider);
                 output.Play();
 
@@ -84,7 +85,7 @@
                 return;
             }
 
-            InitializeAudioDevices();
+            audioConfiguration.InitializeConfiguration();
 
             using (var stream = new MemoryStream())
             using (var output = new WasapiOut(audioConfiguration.SelectedTTSDevice, AudioClientShareMode.Shared, true, 100))
@@ -110,16 +111,6 @@
         public bool TryGetLanguage(string requestedLanguage, out string language)
         {
             return availableLanguages.TryGetValue(requestedLanguage, out language);
-        }
-
-        private void InitializeAudioDevices()
-        {
-            if (isInitialized)
-            {
-                return;
-            }
-
-            audioConfiguration.InitializeConfiguration();
         }
 
         private string GetDesiredLanguage(ChannelUser user)

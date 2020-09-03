@@ -158,6 +158,7 @@
     <Compile Include="DefaultTimeProvider.cs" />
     <Compile Include="Events\AvailableLanguagesRequestedEvent.cs" />
     <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\PlaySoundRequestedEvent.cs" />
     <Compile Include="Events\SendChannelMessageEvent.cs" />
     <Compile Include="Events\SendWhisperMessageEvent.cs" />
     <Compile Include="Events\SpeakEvent.cs" />

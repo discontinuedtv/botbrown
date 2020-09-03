@@ -42,6 +42,8 @@
                 return;
             }
 
+            configuration.InitializeConfiguration();
+
             Cooldown = DateTimeOffset.Now.AddSeconds(CooldownInSeconds);
 
             using (var reader = new MediaFoundationReader(Filename))
