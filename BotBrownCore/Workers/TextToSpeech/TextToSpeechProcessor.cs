@@ -3,22 +3,30 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.IO;
+    using System.Speech.AudioFormat;
     using System.Speech.Synthesis;
     using System.Text;
+    using System.Threading;
     using BotBrown.Configuration;
+    using BotBrownCore.Configuration;
+    using NAudio.CoreAudioApi;
+    using NAudio.Wave;
 
     public class TextToSpeechProcessor : ITextToSpeechProcessor
     {
         private readonly IConfigurationManager configurationManager;
-        private readonly SpeechSynthesizer synth = new SpeechSynthesizer();
         private readonly IDictionary<string, string> availableLanguages = new Dictionary<string, string>();
+        private readonly AudioConfiguration audioConfiguration;
         private string languages;
 
         public TextToSpeechProcessor(IConfigurationManager configurationManager)
         {
             this.configurationManager = configurationManager;
-            synth.SetOutputToDefaultAudioDevice();
             RegisterAvailableLanguages();
+
+            audioConfiguration = configurationManager.LoadConfiguration<AudioConfiguration>(ConfigurationFileConstants.Audio);
+            audioConfiguration.InitializeConfiguration();
         }
 
         public string TextToSpeechLanguages
@@ -42,10 +50,25 @@
                 return;
             }
 
-            string languageForProcessing = GetDesiredLanguage(user);
+            using (var stream = new MemoryStream())
+            using (var output = new WasapiOut(audioConfiguration.SelectedTTSDevice, AudioClientShareMode.Shared, false, 10))
+            using (var provider = new RawSourceWaveStream(stream, new WaveFormat(44100, 16, 2)))
+            using (var synth = new SpeechSynthesizer())
+            {
+                synth.SetOutputToAudioStream(stream, new SpeechAudioFormatInfo(44100, AudioBitsPerSample.Sixteen, AudioChannel.Stereo));
+                synth.SelectVoice(GetDesiredLanguage(user));
+                synth.Speak(messageAction(user));
 
-            synth.SelectVoice(languageForProcessing);
-            synth.Speak(messageAction(user));
+                stream.Seek(0, SeekOrigin.Begin);
+
+                output.Init(provider);
+                output.Play();
+
+                while (output.PlaybackState == PlaybackState.Playing)
+                {
+                    Thread.Sleep(10);
+                }
+            }
         }
 
         public void Speak(string message)
@@ -56,7 +79,24 @@
                 return;
             }
 
-            synth.Speak(message);
+            using (var stream = new MemoryStream())
+            using (var output = new WasapiOut(audioConfiguration.SelectedTTSDevice, AudioClientShareMode.Shared, false, 10))
+            using (var provider = new RawSourceWaveStream(stream, new WaveFormat(44100, 16, 2)))
+            using (var synth = new SpeechSynthesizer())
+            {
+                synth.SetOutputToAudioStream(stream, new SpeechAudioFormatInfo(44100, AudioBitsPerSample.Sixteen, AudioChannel.Stereo));
+                synth.Speak(message);
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                output.Init(provider);
+                output.Play();
+
+                while (output.PlaybackState == PlaybackState.Playing)
+                {
+                    Thread.Sleep(10);
+                }
+            }
         }
 
         public bool TryGetLanguage(string requestedLanguage, out string language)
@@ -86,12 +126,15 @@
 
         private void RegisterAvailableLanguages()
         {
-            ReadOnlyCollection<InstalledVoice> voices = synth.GetInstalledVoices();
-
-            foreach (InstalledVoice voice in voices)
+            using (var synth = new SpeechSynthesizer())
             {
-                string[] languageName = voice.VoiceInfo.Culture.DisplayName.ToLower().Split(' ');
-                availableLanguages.Add(languageName[0], voice.VoiceInfo.Name);
+                ReadOnlyCollection<InstalledVoice> voices = synth.GetInstalledVoices();
+
+                foreach (InstalledVoice voice in voices)
+                {
+                    string[] languageName = voice.VoiceInfo.Culture.DisplayName.ToLower().Split(' ');
+                    availableLanguages.Add(languageName[0], voice.VoiceInfo.Name);
+                }
             }
         }
     }

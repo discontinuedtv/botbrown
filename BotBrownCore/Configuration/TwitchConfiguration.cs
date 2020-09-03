@@ -1,4 +1,6 @@
-﻿namespace BotBrown.Configuration
+﻿using System.ComponentModel;
+
+namespace BotBrown.Configuration
 {
     public class TwitchConfiguration : IConfiguration
     {
@@ -15,6 +17,8 @@
         public string Channel { get; set; }
 
         public string TextToSpeechRewardId { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         internal bool IsValid()
         {

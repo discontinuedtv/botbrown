@@ -2,10 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
 
     public sealed class UsernameConfiguration : IConfiguration
     {
         public Dictionary<string, ChannelUser> Users { get; set; } = new Dictionary<string, ChannelUser>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         internal void AddUsername(string userId, string realUsername, string username)
         {

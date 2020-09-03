@@ -8,5 +8,6 @@
         public const string Greetings = "greetings.json";
         public const string Usernames = "usernames.json";
         public const string Sentences = "sentences.json";
+        public const string Audio = "audio.json";
     }
 }

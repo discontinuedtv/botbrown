@@ -1,10 +1,13 @@
 ﻿namespace BotBrown.Configuration
 {
     using System.Collections.Generic;
+    using System.ComponentModel;
 
     public class GreetingConfiguration : IConfiguration
     {
         public Dictionary<string, string> Greetings { get; set; } = new Dictionary<string, string>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         internal void AddGreeting(ChannelUser user, string language)
         {
