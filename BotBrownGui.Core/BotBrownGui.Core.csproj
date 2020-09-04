@@ -4,21 +4,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- The App folder is where all our html, css, js, etc. files are (change if you use a different folder) -->
-    <EmbeddedResource Include="App\**">
-      <!-- this retains the original filename of the embedded files (required to located them later) -->
-      <LogicalName>%(RelativeDir)%(Filename)%(Extension)</LogicalName>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="App\App.js" />
-    <None Remove="App\index.js" />
-    <None Remove="App\material-ui.production.min.js" />
-    <None Remove="App\Sidebar.js" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Bildstein.SpiderEye.Core" Version="1.0.0-beta.1" />
   </ItemGroup>
 

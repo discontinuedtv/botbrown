@@ -6,6 +6,7 @@
     using BotBrown.Workers.Twitch;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Owin.Hosting;
 
     public class WorkerHost : IWorkerHost
     {
@@ -58,6 +59,22 @@
                 using (var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, textToSpeechProcessor, logger))
                 {
                     return await commandWorker.Execute(cancellationToken);
+                }
+            });
+
+            SpawnWebserver(cancellationToken);
+        }
+
+        private static void SpawnWebserver(CancellationToken cancellationToken)
+        {
+            Task.Run(async () =>
+            {
+                using (WebApp.Start<WebserverStartup>("http://localhost:12345"))
+                {
+                    while (!cancellationToken.IsCancellationRequested)
+                    {
+                        await Task.Delay(1000);
+                    }
                 }
             });
         }
