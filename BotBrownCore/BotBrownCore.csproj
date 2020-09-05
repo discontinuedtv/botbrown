@@ -240,25 +240,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="www\index.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="www\index.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="www\Sidebar.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="www\styles.css" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="www\material-ui.production.min.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="www\react-dom.production.min.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="www\react.production.min.js" />
+    <EmbeddedResource Include="www\package.json" />
+    <EmbeddedResource Include="www\package-lock.json" />
+    <EmbeddedResource Include="www\tsconfig.json" />
+    <EmbeddedResource Include="www\src\styles.css" />
+    <EmbeddedResource Include="www\src\index.html" />
+    <TypeScriptCompile Include="www\src\index.tsx" />
+    <TypeScriptCompile Include="www\src\Sidebar.tsx" />
+    <TypeScriptCompile Include="www\src\App.tsx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
