@@ -365,3 +365,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# IntelliJ based IDEs
+.idea/
+
+# Parcel files
+dist/
+.cache/
