@@ -7,6 +7,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Owin.Hosting;
+    using System;
 
     public class WorkerHost : IWorkerHost
     {
@@ -46,14 +47,33 @@
 
         private void SpawnWorkerTasks(CancellationToken cancellationToken, bool dontConnectToTwitch)
         {
+            SpawnTTSWorker(cancellationToken);
+            SpawnTwitchWorker(cancellationToken, dontConnectToTwitch);
+            SpawnCommandWorker(cancellationToken);
+            SpawnWebserver(cancellationToken);
+            SpawnConfigurationWatcher(cancellationToken);
+        }
+
+        private void SpawnConfigurationWatcher(CancellationToken cancellationToken)
+        {
+            Task.Run(async () =>
+            {
+                var configurationWatcher = new ConfigurationWatcher(bus, configurationManager, logger);
+                return await configurationWatcher.StartWatch(cancellationToken);
+            });
+        }
+
+        private void SpawnTTSWorker(CancellationToken cancellationToken)
+        {
             Task.Run(async () =>
             {
                 var ttsWorker = new TextToSpeechWorker(bus, textToSpeechProcessor);
                 return await ttsWorker.Execute(cancellationToken);
             });
+        }
 
-            SpawnTwitchWorker(cancellationToken, dontConnectToTwitch);
-
+        private void SpawnCommandWorker(CancellationToken cancellationToken)
+        {
             Task.Run(async () =>
             {
                 using (var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, textToSpeechProcessor, logger))
@@ -61,8 +81,6 @@
                     return await commandWorker.Execute(cancellationToken);
                 }
             });
-
-            SpawnWebserver(cancellationToken);
         }
 
         private static void SpawnWebserver(CancellationToken cancellationToken)

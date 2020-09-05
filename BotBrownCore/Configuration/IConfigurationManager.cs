@@ -2,6 +2,8 @@
 {
     public interface IConfigurationManager
     {
+        void ReloadConfig(string filename);
+
         T LoadConfiguration<T>(string filename)
             where T : IConfiguration;
 
