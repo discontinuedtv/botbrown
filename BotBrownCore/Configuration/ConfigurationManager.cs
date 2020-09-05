@@ -18,6 +18,25 @@
             this.registry = registry;
         }
 
+        public void ReloadConfig(string filename)
+        {
+            filename = Path.GetFileName(filename);
+            Type typeToRemoveFromCache = null;
+            foreach (var config in configurations)
+            {
+                if (config.Value.Item2 == filename)
+                {
+                    typeToRemoveFromCache = config.Key;
+                    break;
+                }
+            }
+
+            if (typeToRemoveFromCache != null)
+            {
+                configurations.Remove(typeToRemoveFromCache);
+            }
+        }
+
         public T LoadConfiguration<T>(string filename)
             where T : IConfiguration
         {

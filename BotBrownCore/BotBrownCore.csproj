@@ -207,6 +207,7 @@
     <Compile Include="IEventSubscriber.cs" />
     <Compile Include="IEventSubscriber1.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="Workers\ConfigurationWatcher.cs" />
     <Compile Include="Workers\IWorkerHost.cs" />
     <Compile Include="Workers\TextToSpeech\ITextToSpeechProcessor.cs" />
     <Compile Include="Workers\Twitch\ITwitchApiWrapper.cs" />
