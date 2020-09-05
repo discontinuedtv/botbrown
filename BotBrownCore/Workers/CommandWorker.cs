@@ -260,7 +260,7 @@
             List<string> expiringTimers = new List<string>();
             foreach (TimerCommand timer in activeTimers)
             {
-                expiringTimers.Add($"{timer.Name}: {timer.TimeLeft}");
+                expiringTimers.Add($"{timer.Name}: {timer.TimeLeft:hh\\:mm\\:ss}");
             }
 
             string expiringTimerOutput = string.Join(", ", expiringTimers);
