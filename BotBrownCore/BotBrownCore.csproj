@@ -257,7 +257,11 @@
     <TypeScriptCompile Include="www\src\App.tsx" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="www\dist\*.*" />
     <Content Include="www\src\logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>powershell -ExecutionPolicy Unrestricted $(ProjectDir)..\Prebuild.ps1 -ProjectDir $(ProjectDir)</PreBuildEvent>
+  </PropertyGroup>
 </Project>

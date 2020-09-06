@@ -10,11 +10,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C2EB7DD9-F2AE-4EA1-A1EC-5C47AF0C7F87}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.gitignore = .gitignore
 		doc-112x112.png = doc-112x112.png
 		doc-2000x2000.png = doc-2000x2000.png
 		doc-28x28.png = doc-28x28.png
 		doc-56x56.png = doc-56x56.png
 		LICENSE = LICENSE
+		Prebuild.ps1 = Prebuild.ps1
 		README.md = README.md
 	EndProjectSection
 EndProject
