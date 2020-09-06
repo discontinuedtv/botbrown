@@ -34,15 +34,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="SpiderEye.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Bildstein.SpiderEye.Core.1.0.0-beta.1\lib\net462\SpiderEye.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SpiderEye.Windows, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Bildstein.SpiderEye.Windows.1.0.0-beta.1\lib\net462\SpiderEye.Windows.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -58,7 +49,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="botbrown.ico">
@@ -66,10 +56,19 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BotBrownCore\BotBrownCore.csproj">
+      <Project>{de6f56dc-6ee9-48bb-8169-ef2e931c94d5}</Project>
+      <Name>BotBrownCore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BotBrownGui.Core\BotBrownGui.Core.csproj">
       <Project>{38a325b1-30b8-4a4f-8d0c-a2a173d11847}</Project>
       <Name>BotBrownGui.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Bildstein.SpiderEye.Windows">
+      <Version>1.0.0-beta.1</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

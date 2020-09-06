@@ -244,7 +244,7 @@
     <EmbeddedResource Include="www\package.json" />
     <EmbeddedResource Include="www\package-lock.json" />
     <EmbeddedResource Include="www\tsconfig.json" />
-    <EmbeddedResource Include="www\src\styles.css" />
+    <EmbeddedResource Include="www\src\styles.scss" />
     <EmbeddedResource Include="www\src\index.html" />
     <TypeScriptCompile Include="www\src\index.tsx" />
     <TypeScriptCompile Include="www\src\Sidebar.tsx" />
