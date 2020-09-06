@@ -30,9 +30,9 @@
             this.presenceStore = presenceStore;
         }
 
-        public void Execute(CancellationToken cancellationToken, bool dontConnectToTwitch)
+        public void Execute(CancellationToken cancellationToken, BotArguments botArguments)
         {
-            SpawnWorkerTasks(cancellationToken, dontConnectToTwitch);
+            SpawnWorkerTasks(cancellationToken, botArguments);
         }
 
         public void PublishTTSMessage(string message)
@@ -45,12 +45,12 @@
             bus.Publish(new PlaySoundRequestedEvent(message));
         }
 
-        private void SpawnWorkerTasks(CancellationToken cancellationToken, bool dontConnectToTwitch)
+        private void SpawnWorkerTasks(CancellationToken cancellationToken, BotArguments botArguments)
         {
             SpawnTTSWorker(cancellationToken);
-            SpawnTwitchWorker(cancellationToken, dontConnectToTwitch);
+            SpawnTwitchWorker(cancellationToken, botArguments.DontConnectToTwitch);
             SpawnCommandWorker(cancellationToken);
-            SpawnWebserver(cancellationToken);
+            SpawnWebserver(cancellationToken, botArguments.IsDebug);
             SpawnConfigurationWatcher(cancellationToken);
         }
 
@@ -83,11 +83,14 @@
             });
         }
 
-        private static void SpawnWebserver(CancellationToken cancellationToken)
+        private static void SpawnWebserver(CancellationToken cancellationToken, bool isDebug)
         {
             Task.Run(async () =>
             {
-                using (WebApp.Start<WebserverStartup>("http://localhost:12345"))
+                string port = isDebug ? WebserverConstants.DebugPort : WebserverConstants.ProductivePort;
+                string webserverUrl = $"http://localhost:{port}";
+
+                using (WebApp.Start<WebserverStartup>(webserverUrl))
                 {
                     while (!cancellationToken.IsCancellationRequested)
                     {

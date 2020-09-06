@@ -1,20 +1,21 @@
 ﻿namespace BotBrown
 {
+    using BotBrown.Workers;
     using SpiderEye;
-    using System;
-    using System.Diagnostics;
 
     public abstract class ProgramBase
     {
-        protected static void Run(bool dontConnectToTwitch)
+        protected static void Run(BotArguments botArguments)
         {
             using (var bot = new Bot())
             using (var window = new Window())
             {
-                bot.Execute(dontConnectToTwitch);
+                bot.Execute(botArguments);
 
                 window.UseBrowserTitle = false;
                 window.Title = "Bot Brown";
+                window.CanResize = true;
+                window.SetWindowState(WindowState.Maximized);
 
                 window.Icon = AppIcon.FromFile("botbrown", ".");
                 window.EnableDevTools = false;
@@ -22,9 +23,8 @@
                 // this relates to the path defined in the .csproj file
                 Application.ContentProvider = new EmbeddedContentProvider("App");
 
-                // runs the application and opens the window with the given page loaded
-                //Application.Run(window, "index.html");
-                Application.Run(window, "http://localhost:12345");
+                string port = botArguments.IsDebug ? WebserverConstants.DebugPort : WebserverConstants.ProductivePort;
+                Application.Run(window, $"http://localhost:{port}");
             }
         }
     }

@@ -1,7 +1,6 @@
 ﻿namespace BotBrown
 {
     using System;
-    using System.Linq;
     using SpiderEye.Windows;
 
     public class Program : ProgramBase
@@ -9,10 +8,28 @@
         [STAThread]
         public static void Main(string[] args)
         {
-            var dontConnectToTwitch = args.Any(x => x == "-notwitch");
+            bool dontConnectToTwitch = false;
+            bool isDebug = false;
+
+            foreach (var arg in args)
+            {
+                if (arg == "-notwitch")
+                {
+                    dontConnectToTwitch = true;
+                    continue;
+                }
+
+                if (arg == "-debug")
+                {
+                    isDebug = true;
+                    continue;
+                }
+            }
+
+            var botArguments = new BotArguments(isDebug, dontConnectToTwitch);
 
             WindowsApplication.Init();
-            Run(dontConnectToTwitch);
+            Run(botArguments);
         }
     }
 }

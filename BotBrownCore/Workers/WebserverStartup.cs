@@ -8,7 +8,8 @@
     {
         public void Configuration(IAppBuilder app)
         {
-            IFileSystem fileSystem = new EmbeddedResourceFileSystem("BotBrown.www");
+            //IFileSystem fileSystem = new EmbeddedResourceFileSystem("BotBrown.www");
+            IFileSystem fileSystem = new PhysicalFileSystem(@"E:\DiscontinuedCoding\botbrown\BotBrownCore\www"); // TODO
 
             app.UseFileServer(new FileServerOptions
             {
