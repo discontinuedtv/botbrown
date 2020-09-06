@@ -8,14 +8,16 @@
 
     public sealed class ConfigurationManager : IConfigurationManager
     {
-        private string configurationBasePath = Environment.CurrentDirectory;
-        private IConfigurationFileFactoryRegistry registry;
-        private Dictionary<Type, (IConfiguration, string)> configurations;
+        private readonly string configurationBasePath = Environment.CurrentDirectory;
+        private readonly IConfigurationFileFactoryRegistry registry;
+        private readonly ILogger logger;
+        private readonly Dictionary<Type, (IConfiguration, string)> configurations;
 
-        public ConfigurationManager(IConfigurationFileFactoryRegistry registry)
+        public ConfigurationManager(IConfigurationFileFactoryRegistry registry, ILogger logger)
         {
             configurations = new Dictionary<Type, (IConfiguration, string)>();
             this.registry = registry;
+            this.logger = logger;
         }
 
         public void ReloadConfig(string filename)
@@ -33,6 +35,7 @@
 
             if (typeToRemoveFromCache != null)
             {
+                logger.Log($"Configuration file '{filename}' changed. Clearing cache.");
                 configurations.Remove(typeToRemoveFromCache);
             }
         }

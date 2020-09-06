@@ -58,7 +58,7 @@
         {
             Task.Run(async () =>
             {
-                var configurationWatcher = new ConfigurationWatcher(bus, configurationManager, logger);
+                var configurationWatcher = new ConfigurationWatcher(configurationManager);
                 return await configurationWatcher.StartWatch(cancellationToken);
             });
         }
