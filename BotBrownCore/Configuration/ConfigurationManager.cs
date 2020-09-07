@@ -20,7 +20,7 @@
             this.logger = logger;
         }
 
-        public void ReloadConfig(string filename)
+        public void ResetCacheFor(string filename)
         {
             filename = Path.GetFileName(filename);
             Type typeToRemoveFromCache = null;

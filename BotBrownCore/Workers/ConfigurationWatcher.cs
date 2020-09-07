@@ -37,7 +37,7 @@
 
         private void HandleFileChanged(object sender, FileSystemEventArgs e)
         {
-            configurationManager.ReloadConfig(e.FullPath);
+            configurationManager.ResetCacheFor(e.FullPath);
         }
     }
 }
