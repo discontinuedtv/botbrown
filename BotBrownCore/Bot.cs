@@ -22,9 +22,9 @@
             workerHost = container.Resolve<IWorkerHost>();
         }
 
-        public void Execute(bool dontConnectToTwitch)
+        public void Execute(BotArguments botArguments)
         {
-            workerHost.Execute(cancellationTokenSource.Token, dontConnectToTwitch);
+            workerHost.Execute(cancellationTokenSource.Token, botArguments);
         }
 
         public void PublishTestTTSMessage(string message)
@@ -59,5 +59,7 @@
         // Commands extrahieren und erweiterbar machen
         // Lautstärke einstellbar        
         // Oberfläche für die Konfiguration
+
+
     }
 }

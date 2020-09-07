@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import {Sidebar} from "./Sidebar";
+import { MainArea } from "./MainArea";
 
 export const App = () => {
     const [liked, setLiked] = useState(false);
@@ -10,10 +11,8 @@ export const App = () => {
         </div>;
     }
     
-    return <div>
+    return <div id="app">
         <Sidebar />
-        <div id="main-area">
-            Main content
-        </div>
+        <MainArea />
     </div>
 }

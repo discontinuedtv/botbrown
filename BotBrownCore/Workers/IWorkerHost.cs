@@ -4,7 +4,7 @@ namespace BotBrown.Workers
 {
     public interface IWorkerHost
     {
-        void Execute(CancellationToken cancellationToken, bool dontConnectToTwitch);
+        void Execute(CancellationToken cancellationToken, BotArguments botArguments);
 
         void PublishTTSMessage(string message);
 

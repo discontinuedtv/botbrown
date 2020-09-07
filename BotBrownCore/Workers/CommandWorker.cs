@@ -58,6 +58,7 @@
             bus.SubscribeToTopic<CommunitySubscriptionEvent>(identifier);
             bus.SubscribeToTopic<TwitchChannelJoinedEvent>(identifier);
             bus.SubscribeToTopic<PlaySoundRequestedEvent>(identifier);
+            bus.SubscribeToTopic<ChatCommandReceivedEvent>(identifier);
 
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -101,10 +102,32 @@
                     ProcessPlaySoundRequestedEvent(playSoundRequestedEvent);
                 }
 
+                if (bus.TryConsume(identifier, out ChatCommandReceivedEvent chatCommandReceivedEvent))
+                {
+                    ProcessChatCommandReceivedEvent(chatCommandReceivedEvent);
+                }
+
                 await Task.Delay(100);
             }
 
             return true;
+        }
+
+        private void ProcessChatCommandReceivedEvent(ChatCommandReceivedEvent @event)
+        {
+            ChannelUser user = @event.User;
+            string channelName = @event.ChannelName;
+
+            if (@event.CommandText == "re")
+            {
+                // TODO: Vielleicht lieber Zurück aus der Zukunft Daten? 1955, 1985, 2015
+
+                Random rand = new Random();
+                int year = rand.Next(1400, 2180);
+
+                bus.Publish(new SendChannelMessageRequestedEvent($"{user.RealUsername} ist zurück von der Zeitreise aus dem Jahr {year}", channelName));
+                return;
+            }
         }
 
         public void Dispose()
@@ -260,7 +283,7 @@
             List<string> expiringTimers = new List<string>();
             foreach (TimerCommand timer in activeTimers)
             {
-                expiringTimers.Add($"{timer.Name}: {timer.TimeLeft}");
+                expiringTimers.Add($"{timer.Name}: {timer.FormattedTimeLeft}");
             }
 
             string expiringTimerOutput = string.Join(", ", expiringTimers);

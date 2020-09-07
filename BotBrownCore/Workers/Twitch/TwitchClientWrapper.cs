@@ -46,6 +46,7 @@
             bus.AddTopic<CommunitySubscriptionEvent>();
             bus.AddTopic<MessageReceivedEvent>();
             bus.AddTopic<TwitchChannelJoinedEvent>();
+            bus.AddTopic<ChatCommandReceivedEvent>();
         }
 
         private void RegisterClientCallbacks()
@@ -72,9 +73,12 @@
             var asd = e;
         }
 
-        private void Client_OnChatCommandReceived(object sender, OnChatCommandReceivedArgs e)
+        private void Client_OnChatCommandReceived(object sender, OnChatCommandReceivedArgs chatCommandReceivedArguments)
         {
-            var asd = e;
+            ChatCommand command = chatCommandReceivedArguments.Command;
+            ChannelUser user = usernameResolver.ResolveUsername(new ChannelUser(command.ChatMessage.UserId, command.ChatMessage.DisplayName, command.ChatMessage.DisplayName));
+
+            bus.Publish(new ChatCommandReceivedEvent(user, command.CommandText, command.ChatMessage.Channel));
         }
 
         private void Client_Log(object sender, OnLogArgs e)

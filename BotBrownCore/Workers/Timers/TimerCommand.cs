@@ -36,20 +36,17 @@ namespace BotBrown.Workers.Timers
 
                 if (timeLeft.Hours > 0)
                 {
-                    string hourUnit = timeLeft.Hours > 1 ? "Stunden" : "Stunde";
-                    parts.Add($"{timeLeft.Hours} {hourUnit}");
+                    parts.Add($"{timeLeft.Hours} Std");
                 }
 
                 if (timeLeft.Minutes > 0)
                 {
-                    string minuteUnit = timeLeft.Minutes > 1 ? "Minuten" : "Minute";
-                    parts.Add($"{timeLeft.Minutes} {minuteUnit}");
+                    parts.Add($"{timeLeft.Minutes} Min");
                 }
 
                 if (timeLeft.Seconds > 0)
                 {
-                    string secondUnit = timeLeft.Seconds > 1 ? "Sekunden" : "Sekunde";
-                    parts.Add($"{timeLeft.Seconds} {secondUnit}");
+                    parts.Add($"{timeLeft.Seconds} Sek");
                 }
 
                 return string.Join(" ", parts);

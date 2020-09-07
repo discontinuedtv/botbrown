@@ -156,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bot.cs" />
+    <Compile Include="BotArguments.cs" />
     <Compile Include="Configuration\AudioConfiguration.cs" />
     <Compile Include="Configuration\AudioConfigurationFactory.cs" />
     <Compile Include="Configuration\BotConfiguration.cs" />
@@ -184,6 +185,7 @@
     <Compile Include="Events\SendWhisperMessageEvent.cs" />
     <Compile Include="Events\SpeakEvent.cs" />
     <Compile Include="Events\TextToSpeechEvent.cs" />
+    <Compile Include="Events\Twitch\ChatCommandReceivedEvent.cs" />
     <Compile Include="Events\Twitch\ConnectedToTwitchEvent.cs" />
     <Compile Include="Events\Twitch\DisconnectedFromTwitchEvent.cs" />
     <Compile Include="Events\Twitch\TwitchChannelLeftEvent.cs" />
@@ -233,6 +235,7 @@
     <Compile Include="Workers\TextToSpeechWorker.cs" />
     <Compile Include="Workers\Timers\TimerCommand.cs" />
     <Compile Include="Workers\TwitchInterfaceWorker.cs" />
+    <Compile Include="Workers\WebserverConstants.cs" />
     <Compile Include="Workers\WebserverStartup.cs" />
     <Compile Include="Workers\WorkerHost.cs" />
   </ItemGroup>
@@ -246,9 +249,19 @@
     <EmbeddedResource Include="www\tsconfig.json" />
     <EmbeddedResource Include="www\src\styles.scss" />
     <EmbeddedResource Include="www\src\index.html" />
+    <TypeScriptCompile Include="www\src\CommandsPage.tsx" />
+    <TypeScriptCompile Include="www\src\HomePage.tsx" />
     <TypeScriptCompile Include="www\src\index.tsx" />
+    <TypeScriptCompile Include="www\src\MainArea.tsx" />
     <TypeScriptCompile Include="www\src\Sidebar.tsx" />
     <TypeScriptCompile Include="www\src\App.tsx" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="www\dist\*.*" />
+    <Content Include="www\src\logo.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>powershell -ExecutionPolicy Unrestricted $(ProjectDir)..\Prebuild.ps1 -ProjectDir $(ProjectDir)</PreBuildEvent>
+  </PropertyGroup>
 </Project>
