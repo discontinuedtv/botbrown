@@ -6,17 +6,17 @@
     {
         public void Debug(string message)
         {
-            Console.WriteLine(message);
+            Console.WriteLine($"[{DateTime.Now:HH\\:mm\\:ss}][D] {message}");
         }
 
         public void Error(Exception e)
         {
-            Console.WriteLine(e);
+            Console.WriteLine($"[{DateTime.Now:HH\\:mm\\:ss}][E] {e}");
         }
 
         public void Log(string message)
         {
-            Console.WriteLine(message);
+            Console.WriteLine($"[{DateTime.Now:HH\\:mm\\:ss}][L] {message}");
         }
     }
 }
