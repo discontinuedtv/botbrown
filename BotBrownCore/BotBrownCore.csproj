@@ -1,247 +1,65 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DE6F56DC-6EE9-48BB-8169-EF2E931C94D5}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BotBrown</RootNamespace>
-    <AssemblyName>BotBrownCore</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>8</LangVersion>
+    <AssemblyTitle>BotBrown</AssemblyTitle>
+    <Product>BotBrown</Product>
+    <Copyright>Copyright ©  2020</Copyright>
+    <OutputPath>..\Build\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\Build\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\Build\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Nullable>annotations</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Core.4.3.1\lib\net45\Castle.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Windsor, Version=5.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Windsor.5.0.1\lib\net45\Castle.Windsor.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.4.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Diagnostics, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Diagnostics.4.1.0\lib\net45\Microsoft.Owin.Diagnostics.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.FileSystems, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.FileSystems.4.1.0\lib\net45\Microsoft.Owin.FileSystems.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Host.HttpListener, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Host.HttpListener.4.1.0\lib\net45\Microsoft.Owin.Host.HttpListener.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Hosting, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Hosting.4.1.0\lib\net45\Microsoft.Owin.Hosting.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.StaticFiles, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.StaticFiles.4.1.0\lib\net45\Microsoft.Owin.StaticFiles.dll</HintPath>
-    </Reference>
-    <Reference Include="NAudio, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NAudio.1.10.0\lib\net35\NAudio.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
+    <PackageReference Include="Castle.Core" Version="4.3.1" />
+    <PackageReference Include="Castle.Windsor" Version="5.0.1" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Owin" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Owin.Diagnostics" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Owin.FileSystems" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Owin.Host.HttpListener" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Owin.Hosting" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Owin.SelfHost" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Owin.StaticFiles" Version="4.1.0" />
+    <PackageReference Include="NAudio" Version="1.10.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Owin" Version="1.0" />
+    <PackageReference Include="System.IO" Version="4.3.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.3" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.0" />
+    <PackageReference Include="System.Security.Cryptography.Encoding" Version="4.3.0" />
+    <PackageReference Include="System.Security.Cryptography.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.0" />
+    <PackageReference Include="TwitchLib.Api" Version="3.1.3" />
+    <PackageReference Include="TwitchLib.Api.Core" Version="3.1.3" />
+    <PackageReference Include="TwitchLib.Api.Core.Enums" Version="3.1.2" />
+    <PackageReference Include="TwitchLib.Api.Core.Interfaces" Version="3.1.2" />
+    <PackageReference Include="TwitchLib.Api.Core.Models" Version="3.1.3" />
+    <PackageReference Include="TwitchLib.Api.Helix" Version="3.1.3" />
+    <PackageReference Include="TwitchLib.Api.Helix.Models" Version="3.1.3" />
+    <PackageReference Include="TwitchLib.Api.V5" Version="3.1.2" />
+    <PackageReference Include="TwitchLib.Api.V5.Models" Version="3.1.2" />
+    <PackageReference Include="TwitchLib.Client" Version="3.1.5" />
+    <PackageReference Include="TwitchLib.Client.Enums" Version="3.1.4" />
+    <PackageReference Include="TwitchLib.Client.Models" Version="3.1.5" />
+    <PackageReference Include="TwitchLib.Communication" Version="1.0.3" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Net.Http, Version=4.1.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Net.Http.4.3.3\lib\net46\System.Net.Http.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Runtime, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Runtime.Remoting" />
-    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Speech" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="TwitchLib.Api, Version=3.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TwitchLib.Api.3.1.3\lib\netstandard2.0\TwitchLib.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="TwitchLib.Api.Core, Version=3.1.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TwitchLib.Api.Core.3.1.3\lib\netstandard2.0\TwitchLib.Api.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="TwitchLib.Api.Core.Enums, Version=3.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TwitchLib.Api.Core.Enums.3.1.2\lib\netstandard2.0\TwitchLib.Api.Core.Enums.dll</HintPath>
-    </Reference>
-    <Reference Include="TwitchLib.Api.Core.Interfaces, Version=3.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TwitchLib.Api.Core.Interfaces.3.1.2\lib\netstandard2.0\TwitchLib.Api.Core.Interfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="TwitchLib.Api.Core.Models, Version=3.1.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TwitchLib.Api.Core.Models.3.1.3\lib\netstandard2.0\TwitchLib.Api.Core.Models.dll</HintPath>
-    </Reference>
-    <Reference Include="TwitchLib.Api.Helix, Version=3.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TwitchLib.Api.Helix.3.1.3\lib\netstandard2.0\TwitchLib.Api.Helix.dll</HintPath>
-    </Reference>
-    <Reference Include="TwitchLib.Api.Helix.Models, Version=3.1.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TwitchLib.Api.Helix.Models.3.1.3\lib\netstandard2.0\TwitchLib.Api.Helix.Models.dll</HintPath>
-    </Reference>
-    <Reference Include="TwitchLib.Api.V5, Version=3.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TwitchLib.Api.V5.3.1.2\lib\netstandard2.0\TwitchLib.Api.V5.dll</HintPath>
-    </Reference>
-    <Reference Include="TwitchLib.Api.V5.Models, Version=3.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TwitchLib.Api.V5.Models.3.1.2\lib\netstandard2.0\TwitchLib.Api.V5.Models.dll</HintPath>
-    </Reference>
-    <Reference Include="TwitchLib.Client, Version=3.1.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TwitchLib.Client.3.1.5\lib\netstandard2.0\TwitchLib.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="TwitchLib.Client.Enums, Version=3.1.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TwitchLib.Client.Enums.3.1.4\lib\netstandard2.0\TwitchLib.Client.Enums.dll</HintPath>
-    </Reference>
-    <Reference Include="TwitchLib.Client.Models, Version=3.1.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TwitchLib.Client.Models.3.1.5\lib\netstandard2.0\TwitchLib.Client.Models.dll</HintPath>
-    </Reference>
-    <Reference Include="TwitchLib.Communication, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TwitchLib.Communication.1.0.3\lib\netstandard2.0\TwitchLib.Communication.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Bot.cs" />
-    <Compile Include="BotArguments.cs" />
-    <Compile Include="Configuration\AudioConfiguration.cs" />
-    <Compile Include="Configuration\AudioConfigurationFactory.cs" />
-    <Compile Include="Configuration\BotConfiguration.cs" />
-    <Compile Include="Command.cs" />
-    <Compile Include="Configuration\CommandConfiguration.cs" />
-    <Compile Include="Configuration\CommandConfigurationFactory.cs" />
-    <Compile Include="Configuration\CommandDefinition.cs" />
-    <Compile Include="Configuration\ConfigurationFileConstants.cs" />
-    <Compile Include="Configuration\ConfigurationFileFactoryRegistry.cs" />
-    <Compile Include="Configuration\ConfigurationManager.cs" />
-    <Compile Include="Configuration\GeneralConfiguration.cs" />
-    <Compile Include="Configuration\GeneralConfigurationFileFactory.cs" />
-    <Compile Include="Configuration\SentenceConfigurationFileFactory.cs" />
-    <Compile Include="ConsoleLogger.cs" />
-    <Compile Include="Configuration\GreetingConfiguration.cs" />
-    <Compile Include="Configuration\GreetingConfigurationFileFactory.cs" />
-    <Compile Include="Configuration\IConfiguration.cs" />
-    <Compile Include="Configuration\IConfigurationFileFactory.cs" />
-    <Compile Include="Configuration\IConfigurationFileFactoryRegistry.cs" />
-    <Compile Include="Configuration\IConfigurationManager.cs" />
-    <Compile Include="DefaultTimeProvider.cs" />
-    <Compile Include="Events\AvailableLanguagesRequestedEvent.cs" />
-    <Compile Include="Events\Event.cs" />
-    <Compile Include="Events\PlaySoundRequestedEvent.cs" />
-    <Compile Include="Events\SendChannelMessageEvent.cs" />
-    <Compile Include="Events\SendWhisperMessageEvent.cs" />
-    <Compile Include="Events\SpeakEvent.cs" />
-    <Compile Include="Events\TextToSpeechEvent.cs" />
-    <Compile Include="Events\Twitch\ChatCommandReceivedEvent.cs" />
-    <Compile Include="Events\Twitch\ConnectedToTwitchEvent.cs" />
-    <Compile Include="Events\Twitch\DisconnectedFromTwitchEvent.cs" />
-    <Compile Include="Events\Twitch\TwitchChannelLeftEvent.cs" />
-    <Compile Include="IPresenceStore.cs" />
-    <Compile Include="ITimeProvider.cs" />
-    <Compile Include="ITimerProcessor.cs" />
-    <Compile Include="IUsernameResolver.cs" />
-    <Compile Include="Messaging\EventBus.cs" />
-    <Compile Include="EventHandler.cs" />
-    <Compile Include="Events\ChannelJoinedEvent.cs" />
-    <Compile Include="Events\CommunitySubscriptionEvent.cs" />
-    <Compile Include="Events\UserSpecificEvent.cs" />
-    <Compile Include="Events\MessageReceivedEvent.cs" />
-    <Compile Include="Events\NewFollowerEvent.cs" />
-    <Compile Include="Events\NewSubscriberEvent.cs" />
-    <Compile Include="Events\ResubscriberEvent.cs" />
-    <Compile Include="Events\SubGiftEvent.cs" />
-    <Compile Include="IBotExecutionContext.cs" />
-    <Compile Include="ICommand.cs" />
-    <Compile Include="IEventBus.cs" />
-    <Compile Include="IEventSubscriber.cs" />
-    <Compile Include="IEventSubscriber1.cs" />
-    <Compile Include="ILogger.cs" />
-    <Compile Include="Workers\ConfigurationWatcher.cs" />
-    <Compile Include="Workers\IWorkerHost.cs" />
-    <Compile Include="Workers\TextToSpeech\ITextToSpeechProcessor.cs" />
-    <Compile Include="Workers\Twitch\ITwitchApiWrapper.cs" />
-    <Compile Include="Workers\Twitch\ITwitchClientWrapper.cs" />
-    <Compile Include="Events\Twitch\TwitchChatMessage.cs" />
-    <Compile Include="Messaging\ITopic.cs" />
-    <Compile Include="Messaging\Topic.cs" />
-    <Compile Include="PresenceStore.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Configuration\TwitchConfiguration.cs" />
-    <Compile Include="Configuration\TwitchConfigurationFileFactory.cs" />
-    <Compile Include="Configuration\ChannelUser.cs" />
-    <Compile Include="Configuration\UsernameConfiguration.cs" />
-    <Compile Include="Configuration\UsernameConfigurationFileFactory.cs" />
-    <Compile Include="Configuration\SentenceConfiguration.cs" />
-    <Compile Include="SoundCommand.cs" />
-    <Compile Include="Workers\TextToSpeech\TextToSpeechProcessor.cs" />
-    <Compile Include="Workers\Timers\TimerProcessor.cs" />
-    <Compile Include="Workers\Twitch\TwitchApiWrapper.cs" />
-    <Compile Include="Workers\Twitch\TwitchClientWrapper.cs" />
-    <Compile Include="UsernameResolver.cs" />
-    <Compile Include="Workers\CommandWorker.cs" />
-    <Compile Include="Workers\TextToSpeechWorker.cs" />
-    <Compile Include="Workers\Timers\TimerCommand.cs" />
-    <Compile Include="Workers\TwitchInterfaceWorker.cs" />
-    <Compile Include="Workers\WebserverConstants.cs" />
-    <Compile Include="Workers\WebserverStartup.cs" />
-    <Compile Include="Workers\WorkerHost.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="www\package.json" />
@@ -249,19 +67,12 @@
     <EmbeddedResource Include="www\tsconfig.json" />
     <EmbeddedResource Include="www\src\styles.scss" />
     <EmbeddedResource Include="www\src\index.html" />
-    <TypeScriptCompile Include="www\src\CommandsPage.tsx" />
-    <TypeScriptCompile Include="www\src\HomePage.tsx" />
-    <TypeScriptCompile Include="www\src\index.tsx" />
-    <TypeScriptCompile Include="www\src\MainArea.tsx" />
-    <TypeScriptCompile Include="www\src\Sidebar.tsx" />
-    <TypeScriptCompile Include="www\src\App.tsx" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="www\dist\*.*" />
     <Content Include="www\src\logo.png" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>powershell -ExecutionPolicy Unrestricted $(ProjectDir)..\Prebuild.ps1 -ProjectDir $(ProjectDir)</PreBuildEvent>
-  </PropertyGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="powershell -ExecutionPolicy Unrestricted $(ProjectDir)..\Prebuild.ps1 -ProjectDir $(ProjectDir)" />
+  </Target>
 </Project>
