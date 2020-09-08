@@ -16,7 +16,7 @@ namespace BotBrownCore.Tests.Workers.Timers
 
             string timeLeft = testObject.FormattedTimeLeft;
 
-            Assert.That(timeLeft, Is.EqualTo("15 Sekunden"));
+            Assert.That(timeLeft, Is.EqualTo("15 Sek"));
         }
 
         [Test]
@@ -27,7 +27,7 @@ namespace BotBrownCore.Tests.Workers.Timers
 
             string timeLeft = testObject.FormattedTimeLeft;
 
-            Assert.That(timeLeft, Is.EqualTo("1 Sekunde"));
+            Assert.That(timeLeft, Is.EqualTo("1 Sek"));
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace BotBrownCore.Tests.Workers.Timers
 
             string timeLeft = testObject.FormattedTimeLeft;
 
-            Assert.That(timeLeft, Is.EqualTo("2 Minuten 20 Sekunden"));
+            Assert.That(timeLeft, Is.EqualTo("2 Min 20 Sek"));
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace BotBrownCore.Tests.Workers.Timers
 
             string timeLeft = testObject.FormattedTimeLeft;
 
-            Assert.That(timeLeft, Is.EqualTo("1 Minute"));
+            Assert.That(timeLeft, Is.EqualTo("1 Min"));
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace BotBrownCore.Tests.Workers.Timers
 
             string timeLeft = testObject.FormattedTimeLeft;
 
-            Assert.That(timeLeft, Is.EqualTo("12 Stunden 10 Minuten 11 Sekunden"));
+            Assert.That(timeLeft, Is.EqualTo("12 Std 10 Min 11 Sek"));
         }
 
         [Test]
@@ -71,7 +71,7 @@ namespace BotBrownCore.Tests.Workers.Timers
 
             string timeLeft = testObject.FormattedTimeLeft;
 
-            Assert.That(timeLeft, Is.EqualTo("1 Stunde 32 Minuten 1 Sekunde"));
+            Assert.That(timeLeft, Is.EqualTo("1 Std 32 Min 1 Sek"));
         }
     }
 }

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "BotBrownCli": {
+      "commandName": "Project",
+      "commandLineArgs": "-notwitch -debug"
+    }
+  }
+}
