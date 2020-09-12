@@ -8,13 +8,22 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@master
-    - uses: nuget/setup-nuget@v1
+    - name: Checkout sources
+      uses: actions/checkout@master
+    
+    - name: Setup nuget
+      uses: nuget/setup-nuget@v1
       with:
             nuget-version: '5.x'
-    - run: nuget restore BotBrown.sln      
+    
+    - name: Restore nuget packages
+      run: nuget restore BotBrown.sln      
+    
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.1
 
-    - name: MSBuild
-      run: msbuild BotBrown.sln
+    - name: Build solution
+      run: msbuild BotBrown.sln /t:Build /p:Configuration=Release
+    
+    - name: Run tests
+      run: dotnet test
