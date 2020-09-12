@@ -1,4 +1,4 @@
-name: .NET Core
+name: CI Build
 
 on: [push]
 
@@ -14,5 +14,4 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.1
 
     - name: MSBuild
-      working-directory: botbrown
       run: msbuild BotBrown.sln
