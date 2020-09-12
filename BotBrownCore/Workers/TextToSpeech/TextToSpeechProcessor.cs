@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.IO;
+    using System.Runtime.InteropServices;
     using System.Speech.AudioFormat;
     using System.Speech.Synthesis;
     using System.Text;
@@ -12,6 +13,7 @@
     using BotBrownCore.Configuration;
     using NAudio.CoreAudioApi;
     using NAudio.Wave;
+    using SpeechLib;
 
     public class TextToSpeechProcessor : ITextToSpeechProcessor
     {
@@ -20,7 +22,6 @@
         private readonly IConfigurationManager configurationManager;
         private readonly IDictionary<string, string> availableLanguages = new Dictionary<string, string>();
         private readonly AudioConfiguration audioConfiguration;
-        private bool isInitialized;
         private string languages;
 
         public TextToSpeechProcessor(IConfigurationManager configurationManager)
@@ -53,18 +54,54 @@
             }
 
             audioConfiguration.InitializeConfiguration();
+            SpeakToOutputDevice(messageAction(user), GetDesiredLanguage(user));
+        }
 
-            using (var stream = new MemoryStream())
-            using (var output = new WasapiOut(audioConfiguration.SelectedTTSDevice, AudioClientShareMode.Shared, false, 100))
-            using (var provider = new RawSourceWaveStream(stream, new WaveFormat(44100, BitResolution, 2)))
-            using (var synth = new SpeechSynthesizer())
+        private void SpeakToOutputDevice(string message, string language)
+        {
+            const SpeechVoiceSpeakFlags speechFlags = SpeechVoiceSpeakFlags.SVSFlagsAsync;
+            SpVoice synth = new SpVoice();
+            SpMemoryStream wave = new SpMemoryStream();
+            ISpeechObjectTokens voices = synth.GetVoices();
+            try
             {
+                synth.Rate = 0;
                 synth.Volume = 100;
-                synth.SetOutputToAudioStream(stream, new SpeechAudioFormatInfo(44100, AudioBitsPerSample.Sixteen, AudioChannel.Stereo));
-                synth.SelectVoice(GetDesiredLanguage(user));
-                synth.Speak(messageAction(user));
 
-                stream.Seek(0, SeekOrigin.Begin);
+                wave.Format.Type = SpeechAudioFormatType.SAFT44kHz16BitStereo;
+                synth.AudioOutputStream = wave;
+
+                if (language != null)
+                {
+                    foreach (SpObjectToken voice in voices)
+                    {
+                        if (voice.GetAttribute("Name") == language)
+                        {
+                            synth.Voice = voice;
+                        }
+                    }
+                }
+
+                synth.Speak(message, speechFlags);
+                synth.WaitUntilDone(Timeout.Infinite);
+
+                OutputWaveStream(wave);
+            }
+            finally
+            {
+                Marshal.ReleaseComObject(voices);
+                Marshal.ReleaseComObject(wave);
+                Marshal.ReleaseComObject(synth);
+            }
+        }
+
+        private void OutputWaveStream(SpMemoryStream waveStream)
+        {
+            using (var sourceStream = new MemoryStream((byte[])waveStream.GetData()))
+            using (var output = new WasapiOut(audioConfiguration.SelectedTTSDevice, AudioClientShareMode.Shared, true, 100))
+            using (var provider = new RawSourceWaveStream(sourceStream, new WaveFormat(44100, BitResolution, 2)))
+            {
+                sourceStream.Seek(0, SeekOrigin.Begin);
 
                 output.Volume = 1f;
                 output.Init(provider);
@@ -86,26 +123,7 @@
             }
 
             audioConfiguration.InitializeConfiguration();
-
-            using (var stream = new MemoryStream())
-            using (var output = new WasapiOut(audioConfiguration.SelectedTTSDevice, AudioClientShareMode.Shared, true, 100))
-            using (var provider = new RawSourceWaveStream(stream, new WaveFormat(44100, BitResolution, 2)))
-            using (var synth = new SpeechSynthesizer())
-            {
-                synth.SetOutputToAudioStream(stream, new SpeechAudioFormatInfo(44100, AudioBitsPerSample.Sixteen, AudioChannel.Stereo));
-                synth.Speak(message);
-
-                stream.Seek(0, SeekOrigin.Begin);
-
-                output.Volume = 0.25f;
-                output.Init(provider);
-                output.Play();
-
-                while (output.PlaybackState == PlaybackState.Playing)
-                {
-                    Thread.Sleep(10);
-                }
-            }
+            SpeakToOutputDevice(message, null);
         }
 
         public bool TryGetLanguage(string requestedLanguage, out string language)

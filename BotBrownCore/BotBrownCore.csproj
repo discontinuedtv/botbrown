@@ -70,6 +70,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="www\dist\*.*" />
+    <COMReference Include="{c866ca3a-32f7-11d2-9602-00c04f8ee628}">
+      <Guid>c866ca3a-32f7-11d2-9602-00c04f8ee628</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>4</VersionMinor>
+      <WrapperTool>tlbimp</WrapperTool>
+    </COMReference>
     <Content Include="www\src\logo.png" />
   </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
