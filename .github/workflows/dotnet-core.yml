@@ -9,7 +9,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
-      
+    - uses: nuget/setup-nuget@v1
+      with:
+            nuget-version: '5.x'
+    - run: nuget restore BotBrown.sln      
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.1
 
