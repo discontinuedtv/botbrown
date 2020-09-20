@@ -30,6 +30,12 @@ jobs:
         mkdir artifact
         dir
         7z a artifact/botbrown.zip ./Build/Release/net48/*
+    
+    - name: Upload zip 
+      uses: actions/upload-artifact@v2
+      with:
+        name: botbrown.zip
+        path: artifact/botbrown.zip
 
     - name: Run tests
       run: dotnet test --no-build --configuration Release
