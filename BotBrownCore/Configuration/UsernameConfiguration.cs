@@ -6,7 +6,7 @@
 
     public sealed class UsernameConfiguration : IChangeableConfiguration
     {
-        public Dictionary<string, ChannelUser> Users { get; set; }
+        public Dictionary<string, ChannelUser> Users { get; set; } = new Dictionary<string, ChannelUser>();
         public event PropertyChangedEventHandler PropertyChanged;
 
         internal void AddUsername(string userId, string realUsername, string username)

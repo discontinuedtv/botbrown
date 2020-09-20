@@ -8,28 +8,18 @@
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Dictionary<string, string> Commands { get; set; }
+        public Dictionary<string, string> Commands { get; set; } = new Dictionary<string, string>();
 
         public void AddOrUpdateCommand(string command, string commandText)
         {
-            InitDictionary();
             Commands[command] = commandText;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Commands)));
         }
 
         public void DeleteCommand(string command)
         {
-            InitDictionary();
             Commands.Remove(command);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Commands)));
-        }
-
-        private void InitDictionary()
-        {
-            if (Commands == null)
-            {
-                Commands = new Dictionary<string, string>();
-            }
         }
 
         internal void ProcessMessage(string message)
