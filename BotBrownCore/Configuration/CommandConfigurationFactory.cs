@@ -1,6 +1,6 @@
 ﻿namespace BotBrown.Configuration
 {
-    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
 
     public class CommandConfigurationFileFactory : IConfigurationFileFactory<CommandConfiguration>
     {
@@ -8,7 +8,7 @@
         {
             return new CommandConfiguration
             {
-                CommandsDefinitions = new List<CommandDefinition>
+                CommandsDefinitions = new ObservableCollection<CommandDefinition>
                 {
                     new CommandDefinition
                     {

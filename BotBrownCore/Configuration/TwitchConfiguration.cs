@@ -18,8 +18,6 @@ namespace BotBrown.Configuration
 
         public string TextToSpeechRewardId { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         internal bool IsValid()
         {
             return !string.IsNullOrWhiteSpace(Username) &&

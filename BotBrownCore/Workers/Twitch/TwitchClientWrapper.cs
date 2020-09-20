@@ -77,8 +77,14 @@
         {
             ChatCommand command = chatCommandReceivedArguments.Command;
             ChannelUser user = usernameResolver.ResolveUsername(new ChannelUser(command.ChatMessage.UserId, command.ChatMessage.DisplayName, command.ChatMessage.DisplayName));
+            string optionalUser = null;
 
-            bus.Publish(new ChatCommandReceivedEvent(user, command.CommandText, command.ChatMessage.Channel));
+            if(chatCommandReceivedArguments.Command.ArgumentsAsString.StartsWith("@"))
+            {
+                optionalUser = chatCommandReceivedArguments.Command.ArgumentsAsString;
+            }
+
+            bus.Publish(new ChatCommandReceivedEvent(user, command.CommandText, command.ChatMessage.Channel, optionalUser));
         }
 
         private void Client_Log(object sender, OnLogArgs e)
