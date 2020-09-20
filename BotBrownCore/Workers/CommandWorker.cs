@@ -11,6 +11,7 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using TwitchLib.Client.Enums;
 
     public sealed class CommandWorker : IDisposable
     {
@@ -35,7 +36,6 @@
 
         public async Task<bool> Execute(CancellationToken cancellationToken)
         {
-
             RefreshCommands();
 
             bus.SubscribeToTopic<MessageReceivedEvent>(identifier);
@@ -120,7 +120,12 @@
                 return;
             }
 
-            if(simpleTextCommandConfiguration.Commands.ContainsKey(commandText))
+            if(IsChannelUpdate(@event, out UpdateChannelEvent channelUpdate))
+            {
+                bus.Publish(channelUpdate);
+            }
+
+            if (simpleTextCommandConfiguration.Commands.ContainsKey(commandText))
             {
                 string optionalUser = @event.OptionalUser;
                 if (string.IsNullOrEmpty(optionalUser))
@@ -132,6 +137,29 @@
                 bus.Publish(new SendChannelMessageRequestedEvent($"{optionalUser}: {simpleTextCommandConfiguration.Commands[commandText]}", channelName));
                 return;
             }
+        }
+
+        private bool IsChannelUpdate(ChatCommandReceivedEvent @event, out UpdateChannelEvent channelUpdate)
+        {
+            if (@event.UserType != UserType.Broadcaster && @event.UserType != UserType.Moderator)
+            {
+                channelUpdate = null;
+                return false;
+            }
+
+            if (@event.CommandText != "title" && @event.CommandText != "game")
+            {
+                channelUpdate = null;
+                return false;
+            }
+
+            channelUpdate = new UpdateChannelEvent
+            {
+                Title = @event.CommandText == "title" ? @event.CommandArgs : null,
+                Game = @event.CommandText == "game" ? @event.CommandArgs : null
+            };
+
+            return true;
         }
 
         public void Dispose()
@@ -147,7 +175,7 @@
             soundsPerCommand.Clear();
             CommandConfiguration commandConfiguration = configurationManager.LoadConfiguration<CommandConfiguration>(ConfigurationFileConstants.Commands);
             AudioConfiguration audioConfiguration = configurationManager.LoadConfiguration<AudioConfiguration>(ConfigurationFileConstants.Audio);
-            
+
             foreach (CommandDefinition commandDefinition in commandConfiguration.CommandsDefinitions)
             {
                 SoundCommand command = commandDefinition.CreateCommand(audioConfiguration);
@@ -282,12 +310,12 @@
             TwitchChatMessage message = @event.Message;
             ChannelUser user = @event.User;
 
-            if(!message.IsMessageFromModerator && !message.IsMessageFromBroadcaster)
+            if (!message.IsMessageFromModerator && !message.IsMessageFromBroadcaster)
             {
                 return false;
             }
 
-            if(!message.MessageStartsWith("+!") && !message.MessageStartsWith("-!"))
+            if (!message.MessageStartsWith("+!") && !message.MessageStartsWith("-!"))
             {
                 return false;
             }

@@ -14,19 +14,22 @@
     {
         private readonly IUsernameResolver usernameResolver;
         private readonly IEventBus bus;
+        private readonly IConfigurationManager configurationManager;
         private FollowerService followerService;
+        private TwitchAPI api;
 
-        public TwitchApiWrapper(IUsernameResolver usernameResolver, IEventBus bus)
+        public TwitchApiWrapper(IUsernameResolver usernameResolver, IEventBus bus, IConfigurationManager configurationManager)
         {
             this.usernameResolver = usernameResolver;
             this.bus = bus;
+            this.configurationManager = configurationManager;
         }
 
         public void ConnectToTwitch(TwitchConfiguration twitchConfiguration)
         {
             SetUpEvents();
 
-            TwitchAPI api = InitializeTwitchApi(twitchConfiguration);
+            api = InitializeTwitchApi(twitchConfiguration);
             CreateFollowerService(twitchConfiguration, api);
             RegisterFollowerServiceCallback();
             followerService.Start();
@@ -73,6 +76,14 @@
 
             NewFollowerEvent newFollowerEvent = new NewFollowerEvent(newFollowers);
             bus.Publish(newFollowerEvent);
+        }
+
+        public void UpdateChannel(UpdateChannelEvent updateChannelEvent)
+        {
+            TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
+            api.V5.Channels.GetChannelByIDAsync(twitchConfiguration.Channel)
+                .ContinueWith(task => updateChannelEvent.Update(task.Result))
+                .ContinueWith(task => api.V5.Channels.UpdateChannelAsync(twitchConfiguration.Channel, updateChannelEvent.Title, updateChannelEvent.Game, null, null, twitchConfiguration.ApiAccessToken));
         }
     }
 }

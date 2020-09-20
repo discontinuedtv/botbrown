@@ -4,6 +4,7 @@
     using BotBrown.Events;
     using BotBrown.Events.Twitch;
     using System;
+    using TwitchLib.Api.Core.Enums;
     using TwitchLib.Client;
     using TwitchLib.Client.Events;
     using TwitchLib.Client.Models;
@@ -84,7 +85,7 @@
                 optionalUser = chatCommandReceivedArguments.Command.ArgumentsAsString;
             }
 
-            bus.Publish(new ChatCommandReceivedEvent(user, command.CommandText, command.ChatMessage.Channel, optionalUser));
+            bus.Publish(new ChatCommandReceivedEvent(user, command.CommandText, command.ArgumentsAsString, command.ChatMessage.Channel, optionalUser, command.ChatMessage.UserType));
         }
 
         private void Client_Log(object sender, OnLogArgs e)
