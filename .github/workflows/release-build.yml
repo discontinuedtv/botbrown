@@ -28,7 +28,7 @@ jobs:
     - name: Zip build results
       run: |
         mkdir artifact
-        7z a artifact/botbrown.zip ./Build/net48
+        7z a artifact/botbrown.zip ./Build/net48/*
 
     - name: Run tests
       run: dotnet test --no-build --configuration Release
