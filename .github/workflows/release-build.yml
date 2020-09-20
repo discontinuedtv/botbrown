@@ -28,6 +28,7 @@ jobs:
     - name: Zip build results
       run: |
         mkdir artifact
+        dir
         7z a artifact/botbrown.zip ./Build/net48/*
 
     - name: Run tests
