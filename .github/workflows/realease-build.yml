@@ -1,0 +1,36 @@
+name: Release Build
+
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout sources
+      uses: actions/checkout@master
+    
+    - name: Setup nuget
+      uses: nuget/setup-nuget@v1
+      with:
+            nuget-version: '5.x'
+    
+    - name: Restore nuget packages
+      run: nuget restore BotBrown.sln      
+    
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.1
+
+    - name: Build solution
+      run: msbuild BotBrown.sln /t:Build /p:Configuration=Release
+
+    - name: Zip build results
+      run: dir
+
+    - name: Run tests
+      run: dotnet test --no-build --configuration Release
