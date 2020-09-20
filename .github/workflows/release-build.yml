@@ -26,7 +26,9 @@ jobs:
       run: msbuild BotBrown.sln /t:Build /p:Configuration=Release
 
     - name: Zip build results
-      run: zip -r botbrown.zip ./Build/net48
+      run: |
+        mkdir artifact
+        7z ./Build/net48 artifact/botbrown.zip
 
     - name: Run tests
       run: dotnet test --no-build --configuration Release
