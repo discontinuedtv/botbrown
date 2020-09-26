@@ -1,7 +1,7 @@
 ﻿namespace BotBrown.Events.Twitch
 {
-    using BotBrown.Configuration;
     using BotBrown.Models;
+    using BotBrown;
 
     public class ChatCommandReceivedEvent : UserSpecificEvent
     {

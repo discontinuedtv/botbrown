@@ -1,7 +1,7 @@
-﻿using BotBrown.Configuration;
-
-namespace BotBrown.Events
+﻿namespace BotBrown.Events
 {
+    using BotBrown;
+
     public class SendWhisperMessageRequestedEvent : UserSpecificEvent
     {
         public SendWhisperMessageRequestedEvent(ChannelUser user, string message)

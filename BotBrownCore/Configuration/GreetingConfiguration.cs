@@ -1,11 +1,14 @@
 ﻿namespace BotBrown.Configuration
 {
+    using BotBrown;
     using System.Collections.Generic;
     using System.ComponentModel;
 
+    [ConfigurationFile(ConfigurationFileConstants.Greetings)]
     public class GreetingConfiguration : IChangeableConfiguration
     {
         public Dictionary<string, string> Greetings { get; set; } = new Dictionary<string, string>();
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         internal void AddGreeting(ChannelUser user, string language)
@@ -27,6 +30,11 @@
             }
 
             return desiredLanguage;
+        }
+
+        public bool IsValid()
+        {
+            return true;
         }
     }
 }

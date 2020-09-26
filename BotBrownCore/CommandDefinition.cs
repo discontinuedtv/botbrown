@@ -1,9 +1,9 @@
-﻿using BotBrownCore.Configuration;
-
-namespace BotBrown.Configuration
+﻿namespace BotBrown
 {
     public class CommandDefinition
     {
+        private SoundCommand soundCommand;
+
         public string Shortcut { get; set; }
 
         public string Name { get; set; }
@@ -16,7 +16,7 @@ namespace BotBrown.Configuration
 
         internal SoundCommand CreateCommand()
         {
-            return new SoundCommand(Shortcut, Name, CooldownInSeconds, Filename, Volume);
+            return soundCommand ??= new SoundCommand(Shortcut, Name, CooldownInSeconds, Filename, Volume);
         }
     }
 }

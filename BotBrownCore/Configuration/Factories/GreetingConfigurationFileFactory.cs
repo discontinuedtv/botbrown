@@ -1,4 +1,4 @@
-﻿namespace BotBrown.Configuration
+﻿namespace BotBrown.Configuration.Factories
 {
     using System.Collections.Generic;
 

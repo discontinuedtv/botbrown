@@ -1,4 +1,4 @@
-﻿namespace BotBrown.Workers
+﻿namespace BotBrown.Workers.Webserver
 {
     public class WebserverConstants
     {

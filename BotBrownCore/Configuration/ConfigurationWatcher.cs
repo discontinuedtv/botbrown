@@ -1,14 +1,13 @@
-﻿namespace BotBrown.Workers
+﻿namespace BotBrown.Configuration
 {
-    using BotBrown.Configuration;
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
 
-    class ConfigurationWatcher
+    class ConfigurationWatcher : IConfigurationWatcher
     {
         private const int ConfigurationWatchWaitTime = 5000;
-        private IConfigurationManager configurationManager;
+        private readonly IConfigurationManager configurationManager;
 
         public ConfigurationWatcher(IConfigurationManager configurationManager)
         {

@@ -28,7 +28,7 @@
 
         public override Task ConsumeCommandSpecific(ChatCommandReceivedEvent chatCommandReceivedEvent)
         {
-            var facts = configurationManager.LoadConfiguration<FactConfiguration>(ConfigurationFileConstants.Facts);
+            var facts = configurationManager.LoadConfiguration<FactConfiguration>();
             facts.RemoveFact(chatCommandReceivedEvent.CommandArgs);
             eventBus.Publish(
                 new SendChannelMessageRequestedEvent($"Fakt zu {chatCommandReceivedEvent.CommandArgs} entfernt.", chatCommandReceivedEvent.ChannelName));
