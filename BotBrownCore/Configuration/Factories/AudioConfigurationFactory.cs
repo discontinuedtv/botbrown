@@ -1,7 +1,7 @@
-﻿using BotBrownCore.Configuration;
-
-namespace BotBrown.Configuration
+﻿namespace BotBrown.Configuration.Factories
 {
+    using BotBrownCore.Configuration;
+
     public class AudioConfigurationFactory : IConfigurationFileFactory<AudioConfiguration>
     {
         public AudioConfiguration CreateDefaultConfiguration()

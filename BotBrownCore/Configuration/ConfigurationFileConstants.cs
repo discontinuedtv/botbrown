@@ -1,4 +1,6 @@
-﻿namespace BotBrown.Configuration
+﻿using System;
+
+namespace BotBrown.Configuration
 {
     public static class ConfigurationFileConstants
     {

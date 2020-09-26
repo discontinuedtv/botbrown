@@ -1,6 +1,6 @@
 ﻿namespace BotBrown.Workers.TextToSpeech
 {
-    using BotBrown.Configuration;
+    using BotBrown;
     using System;
 
     public interface ITextToSpeechProcessor

@@ -1,10 +1,13 @@
 ﻿namespace BotBrown.Configuration
 {
+    using BotBrown.Configuration.Factories;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
+    using System.Linq;
+    using System.Reflection;
 
     public sealed class ConfigurationManager : IConfigurationManager
     {
@@ -92,6 +95,39 @@
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
                 serializer.Serialize(writer, configurationValue);
+            }
+        }
+
+        public IEnumerable<ConfigurationStatus> CheckConfigurationStatus()
+        {
+            ResolveConfigurationTypes();
+
+            var status = new List<ConfigurationStatus>();
+
+            foreach (KeyValuePair<Type, (IConfiguration, string)> configuration in configurations)
+            {
+                status.Add(new ConfigurationStatus(configuration.Value.Item2, configuration.Value.Item1.IsValid()));
+            }
+
+            return status;
+        }
+
+        private void ResolveConfigurationTypes()
+        {
+            foreach (Type type in GetType().Assembly.GetTypes())
+            {
+                var asd = type.GetCustomAttributes(typeof(ConfigurationFileAttribute), true).Cast<ConfigurationFileAttribute>().ToArray();
+                if (asd.Length > 0)
+                {
+                    if (!configurations.TryGetValue(type, out (IConfiguration, string) _))
+                    {
+
+                        MethodInfo method = GetType().GetMethod(nameof(LoadConfiguration));
+
+                        MethodInfo genericMethod = method.MakeGenericMethod(GetType());
+                        genericMethod.Invoke(null, new object[] { asd[0].Filename });
+                    }
+                }
             }
         }
     }

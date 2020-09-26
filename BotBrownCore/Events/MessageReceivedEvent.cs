@@ -1,9 +1,9 @@
-﻿using System;
-using BotBrown.Configuration;
-using BotBrown.Events.Twitch;
-
-namespace BotBrown.Events
+﻿namespace BotBrown.Events
 {
+    using System;
+    using BotBrown;
+    using BotBrown.Events.Twitch;
+
     public sealed class MessageReceivedEvent : UserSpecificEvent
     {
         public MessageReceivedEvent(ChannelUser user, TwitchChatMessage message)

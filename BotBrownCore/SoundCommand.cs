@@ -5,18 +5,15 @@
     using System;
     using System.Threading;
 
-    public class SoundCommand : ICommand, IDisposable
+    public class SoundCommand : IDisposable
     {
-        private readonly AudioConfiguration configuration;
-
-        public SoundCommand(string shortcut, string name, int cooldownInSeconds, string filename, float volume, AudioConfiguration audioConfiguration)
+        public SoundCommand(string shortcut, string name, int cooldownInSeconds, string filename, float volume)
         {
             Shortcut = shortcut;
             Name = name;
             CooldownInSeconds = cooldownInSeconds;
             Filename = filename;
             Volume = volume;
-            configuration = audioConfiguration;
         }
 
         public string Name { get; }
@@ -35,7 +32,7 @@
         {
         }
 
-        public void Execute()
+        public void Execute(AudioConfiguration configuration)
         {
             if (Cooldown > DateTimeOffset.Now)
             {

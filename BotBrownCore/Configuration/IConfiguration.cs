@@ -4,5 +4,6 @@
 
     public interface IConfiguration : INotifyPropertyChanged
     {
+        bool IsValid();
     }
 }

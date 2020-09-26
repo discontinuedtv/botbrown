@@ -1,7 +1,8 @@
-﻿using System.ComponentModel;
-
-namespace BotBrown.Configuration
+﻿namespace BotBrown.Configuration
 {
+    using System.ComponentModel;
+
+    [ConfigurationFile(ConfigurationFileConstants.Twitch)]
     public class TwitchConfiguration : IConfiguration
     {
         public string Username { get; set; }
@@ -20,7 +21,7 @@ namespace BotBrown.Configuration
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal bool IsValid()
+        public bool IsValid()
         {
             return !string.IsNullOrWhiteSpace(Username) &&
                 !string.IsNullOrWhiteSpace(AccessToken) &&

@@ -9,6 +9,7 @@
         {
             bool dontConnectToTwitch = false;
             bool isDebug = false;
+            string port = null;
 
             foreach (var arg in args)
             {
@@ -23,9 +24,14 @@
                     isDebug = true;
                     continue;
                 }
+
+                if (arg.StartsWith("-port:"))
+                {
+                    port = arg.Split(':')[1];
+                }
             }
 
-            var botArguments = new BotArguments(isDebug, dontConnectToTwitch);
+            var botArguments = new BotArguments(isDebug, dontConnectToTwitch, port);
 
             using (var bot = new Bot())
             {

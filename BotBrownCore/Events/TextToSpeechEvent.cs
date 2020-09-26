@@ -1,6 +1,6 @@
 ﻿namespace BotBrown.Events
 {
-    using BotBrown.Configuration;
+    using BotBrown;
 
     public class TextToSpeechEvent : UserSpecificEvent
     {

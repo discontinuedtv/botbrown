@@ -1,6 +1,5 @@
 ﻿namespace BotBrown
 {
-    using BotBrown.Configuration;
     using System.Collections.Generic;
 
     public class PresenceStore : IPresenceStore

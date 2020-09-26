@@ -1,5 +1,6 @@
 ﻿namespace BotBrown.Workers
 {
+    using BotBrown;
     using BotBrown.Configuration;
     using BotBrown.Events;
     using BotBrown.Events.Twitch;
@@ -25,11 +26,13 @@
 
         private Guid identifier = Guid.NewGuid();
 
+        private AudioConfiguration audioConfiguration;
         private SentenceConfiguration sentenceConfiguration;
         private GeneralConfiguration generalConfiguration;
         private TwitchConfiguration twitchConfiguration;
         private GreetingConfiguration greetingConfiguration;
         private UsernameConfiguration usernameConfiguration;
+        private CommandConfiguration commandConfiguration;
 
         public CommandWorker(IEventBus bus, IConfigurationManager configurationManager, IPresenceStore presenceStore, ITextToSpeechProcessor textToSpeechProcessor, ILogger logger)
         {
@@ -42,13 +45,13 @@
 
         public async Task<bool> Execute(CancellationToken cancellationToken)
         {
+            audioConfiguration = configurationManager.LoadConfiguration<AudioConfiguration>(ConfigurationFileConstants.Audio);
             sentenceConfiguration = configurationManager.LoadConfiguration<SentenceConfiguration>(ConfigurationFileConstants.Sentences);
             generalConfiguration = configurationManager.LoadConfiguration<GeneralConfiguration>(ConfigurationFileConstants.General);
             twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
             greetingConfiguration = configurationManager.LoadConfiguration<GreetingConfiguration>(ConfigurationFileConstants.Greetings);
             usernameConfiguration = configurationManager.LoadConfiguration<UsernameConfiguration>(ConfigurationFileConstants.Usernames);
-
-            RefreshCommands();
+            commandConfiguration = configurationManager.LoadConfiguration<CommandConfiguration>(ConfigurationFileConstants.Commands);
 
             bus.SubscribeToTopic<MessageReceivedEvent>(identifier);
             bus.SubscribeToTopic<NewFollowerEvent>(identifier);
@@ -138,23 +141,6 @@
             }
         }
 
-        private void RefreshCommands()
-        {
-            soundsPerCommand.Clear();
-            CommandConfiguration commandConfiguration = configurationManager.LoadConfiguration<CommandConfiguration>(ConfigurationFileConstants.Commands);
-            AudioConfiguration audioConfiguration = configurationManager.LoadConfiguration<AudioConfiguration>(ConfigurationFileConstants.Audio);
-            
-            foreach (CommandDefinition commandDefinition in commandConfiguration.CommandsDefinitions)
-            {
-                SoundCommand command = commandDefinition.CreateCommand(audioConfiguration);
-                soundsPerCommand.Add(command.Shortcut, command);
-
-                logger.Log($"Kommando {command.Shortcut} hinzugefügt.");
-            }
-
-            logger.Log("Kommandos wurden geladen.");
-        }
-
         private void ProcessNewFollowerEvent(NewFollowerEvent newFollowerEvent)
         {
             foreach (ChannelUser newFollow in newFollowerEvent.NewFollowers)
@@ -221,10 +207,11 @@
 
             SayByeIfNecessary(message);
 
-            string commandName = message.Message.MessageContainsAnyCommand(soundsPerCommand.Keys);
+            
+            string commandName = message.Message.MessageContainsAnyCommand(commandConfiguration.AllDefinitionKeys);
             if (commandName != null)
             {
-                soundsPerCommand[commandName].Execute();
+                ProcessPlaySoundRequestedEvent(new PlaySoundRequestedEvent(commandName));
                 return;
             }
 
@@ -236,10 +223,16 @@
 
         private void ProcessPlaySoundRequestedEvent(PlaySoundRequestedEvent @event)
         {
-            if (soundsPerCommand.TryGetValue(@event.CommandName, out SoundCommand command))
+            commandConfiguration = configurationManager.LoadConfiguration<CommandConfiguration>(ConfigurationFileConstants.Commands);
+
+            CommandDefinition commandDefinition = commandConfiguration.CommandsDefinitions.SingleOrDefault(x => x.Shortcut == @event.CommandName);
+            if (commandDefinition == null)
             {
-                command.Execute();
+                return;
             }
+
+            SoundCommand soundCommand = commandDefinition.CreateCommand();
+            soundCommand.Execute(audioConfiguration);
         }
 
         private bool WhatsTheTime(MessageReceivedEvent @event)

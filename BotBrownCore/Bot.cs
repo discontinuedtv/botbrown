@@ -3,6 +3,7 @@
     using System;
     using System.Threading;
     using BotBrown.Configuration;
+    using BotBrown.Configuration.Factories;
     using BotBrown.Workers;
     using Castle.MicroKernel.Registration;
     using Castle.MicroKernel.Resolvers.SpecializedResolvers;
@@ -19,7 +20,9 @@
             container.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel));
             container.Register(Classes.FromThisAssembly().InNamespace("BotBrown", true).WithServiceAllInterfaces());
             container.Register(Classes.FromThisAssembly().BasedOn(typeof(IConfigurationFileFactory<>)).WithService.Base());
+
             workerHost = container.Resolve<IWorkerHost>();
+            workerHost.Container = container;
         }
 
         public void Execute(BotArguments botArguments)

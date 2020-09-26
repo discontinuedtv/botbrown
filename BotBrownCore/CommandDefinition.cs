@@ -1,6 +1,4 @@
-﻿using BotBrownCore.Configuration;
-
-namespace BotBrown.Configuration
+﻿namespace BotBrown
 {
     public class CommandDefinition
     {
@@ -14,9 +12,9 @@ namespace BotBrown.Configuration
 
         public float Volume { get; set; }
 
-        internal SoundCommand CreateCommand(AudioConfiguration configuration)
+        internal SoundCommand CreateCommand()
         {
-            return new SoundCommand(Shortcut, Name, CooldownInSeconds, Filename, Volume, configuration);
+            return new SoundCommand(Shortcut, Name, CooldownInSeconds, Filename, Volume);
         }
     }
 }
