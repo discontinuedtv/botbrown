@@ -11,7 +11,7 @@ namespace BotBrown
         public void ResolveUsername_UsernameNotCached_GivenUsernameWithUnderscoreAndNumbers_ShouldResolveNameProperlyAndChangeConfiguration()
         {
             bool configurationChanged = false;
-            Configuration.ChannelUser user = fixture.PrepareResolve((sender, eventArgs) => { configurationChanged = true; });
+            ChannelUser user = fixture.PrepareResolve((sender, eventArgs) => { configurationChanged = true; });
             UsernameResolver testObject = fixture.CreateTestObject();
 
             var result = testObject.ResolveUsername(user);
@@ -26,7 +26,7 @@ namespace BotBrown
         public void ResolveUsername_UsernameCached_ShouldReturnCachedConfiguration()
         {
             bool configurationChanged = false;
-            Configuration.ChannelUser user = fixture.PrepareCachedResolve((sender, eventArgs) => { configurationChanged = true; });
+            ChannelUser user = fixture.PrepareCachedResolve((sender, eventArgs) => { configurationChanged = true; });
             UsernameResolver testObject = fixture.CreateTestObject();
 
             var result = testObject.ResolveUsername(user);

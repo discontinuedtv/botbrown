@@ -6,10 +6,10 @@
     using BotBrown.Workers.Twitch;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Owin.Hosting;
     using BotBrown.ChatCommands;
     using Serilog;
-    using System;
+    using Castle.Windsor;
+    using BotBrown;
 
     public class WorkerHost : IWorkerHost
     {
@@ -45,6 +45,8 @@
             this.soundProcessor = soundProcessor;
         }
 
+        public WindsorContainer Container { get; set; }
+
         public void Execute(CancellationToken cancellationToken, BotArguments botArguments)
         {
             SpawnWorkerTasks(cancellationToken, botArguments);
@@ -55,17 +57,11 @@
             bus.Publish<TextToSpeechEvent>(new SpeakEvent(new ChannelUser("46409199", "discontinuedman", "discontinjudmän"), message));
         }
 
-        public void PublishSoundCommand(string message)
-        {
-            bus.Publish(new PlaySoundRequestedEvent(message));
-        }
-
         private void SpawnWorkerTasks(CancellationToken cancellationToken, BotArguments botArguments)
         {
             SpawnTTSWorker(cancellationToken);
             SpawnTwitchWorker(cancellationToken, botArguments.DontConnectToTwitch);
             SpawnCommandWorker(cancellationToken);
-            SpawnWebserver(cancellationToken, botArguments.IsDebug);
             SpawnConfigurationWatcher(cancellationToken);
         }
 
@@ -94,23 +90,6 @@
                 using (var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, textToSpeechProcessor, logger, chatCommandResolver))
                 {
                     return await commandWorker.Execute(cancellationToken);
-                }
-            });
-        }
-
-        private static void SpawnWebserver(CancellationToken cancellationToken, bool isDebug)
-        {
-            Task.Run(async () =>
-            {
-                string port = isDebug ? WebserverConstants.DebugPort : WebserverConstants.ProductivePort;
-                string webserverUrl = $"http://localhost:{port}";
-
-                using (WebApp.Start<WebserverStartup>(webserverUrl))
-                {
-                    while (!cancellationToken.IsCancellationRequested)
-                    {
-                        await Task.Delay(1000);
-                    }
                 }
             });
         }

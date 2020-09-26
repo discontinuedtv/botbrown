@@ -85,7 +85,7 @@
 
         public void UpdateChannel(UpdateChannelEvent updateChannelEvent)
         {
-            TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
+            TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>();
             api.V5.Channels.GetChannelByIDAsync(twitchConfiguration.BroadcasterUserId)
                 .ContinueWith(task =>
                 {
@@ -97,7 +97,7 @@
 
         public async Task<string> GetCurrentGame()
         {
-            TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
+            TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>();
             var channel = await api.V5.Channels.GetChannelByIDAsync(twitchConfiguration.BroadcasterUserId);
             return channel.Game;
         }
@@ -120,7 +120,7 @@
 
         private void PublishFeedbackMessage(string message)
         {
-            TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
+            TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>();
             bus.Publish(new SendChannelMessageRequestedEvent(message, twitchConfiguration.Channel));
         }
     }

@@ -4,6 +4,7 @@
     using System.ComponentModel;
     using System.Linq;
 
+    [ConfigurationFile(ConfigurationFileConstants.TextCommands)]
     public class SimpleTextCommandConfiguration : IChangeableConfiguration
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -37,6 +38,11 @@
                     DeleteCommand(command);
                     return;
             }
+        }
+
+        public bool IsValid()
+        {
+            return true;
         }
     }
 }

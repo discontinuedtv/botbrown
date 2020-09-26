@@ -7,6 +7,7 @@
     using BotBrown.Configuration;
     using BotBrown.DI;
     using BotBrown.Workers;
+    using BotBrown.Configuration.Factories;
     using Castle.MicroKernel.Registration;
     using Castle.MicroKernel.Resolvers.SpecializedResolvers;
     using Castle.Windsor;
@@ -83,11 +84,6 @@
         public void PublishTestTTSMessage(string message)
         {
             workerHost.PublishTTSMessage(message);
-        }
-
-        public void PublishSoundCommand(string message)
-        {
-            workerHost.PublishSoundCommand(message);
         }
 
         public void Dispose()

@@ -1,6 +1,5 @@
 ﻿namespace BotBrown
 {
-    using BotBrown.Workers;
     using SpiderEye;
 
     public abstract class ProgramBase
@@ -23,7 +22,7 @@
                 // this relates to the path defined in the .csproj file
                 Application.ContentProvider = new EmbeddedContentProvider("App");
 
-                string port = botArguments.IsDebug ? WebserverConstants.DebugPort : WebserverConstants.ProductivePort;
+                string port = botArguments.Port == null ? (botArguments.IsDebug ? WebserverConstants.DebugPort : WebserverConstants.ProductivePort) : botArguments.Port;
                 Application.Run(window, $"http://localhost:{port}");
             }
         }

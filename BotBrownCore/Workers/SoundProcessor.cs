@@ -20,7 +20,7 @@
 
         public void Play(string filename, float volume)
         {
-            var configuration = configurationManager.LoadConfiguration<AudioConfiguration>(ConfigurationFileConstants.Audio);
+            var configuration = configurationManager.LoadConfiguration<AudioConfiguration>();
 
             var pathToFile = Path.Combine(soundPathProvider.Path, filename);
 

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace BotBrown.Configuration
+﻿namespace BotBrown.Configuration.Factories
 {
+    using System.Collections.Generic;
+
     public class GeneralConfigurationFileFactory : IConfigurationFileFactory<GeneralConfiguration>
     {
         public GeneralConfiguration CreateDefaultConfiguration()

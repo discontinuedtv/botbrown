@@ -1,5 +1,7 @@
 ﻿namespace BotBrown.Configuration
 {
+    using BotBrown.Configuration.Factories;
+
     public class SimpleTextCommandConfigurationFactory : IConfigurationFileFactory<SimpleTextCommandConfiguration>
     {
         public SimpleTextCommandConfiguration CreateDefaultConfiguration()

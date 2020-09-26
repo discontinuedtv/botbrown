@@ -1,6 +1,6 @@
 ﻿namespace BotBrown.Events
 {
-    using BotBrown.Configuration;
+    using BotBrown;
     using System.Collections.Generic;
 
     public class NewFollowerEvent : Event

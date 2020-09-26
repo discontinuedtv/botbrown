@@ -28,7 +28,7 @@
 
         public override Task ConsumeCommandSpecific(ChatCommandReceivedEvent chatCommandReceivedEvent)
         {
-            var facts = configurationManager.LoadConfiguration<FactConfiguration>(ConfigurationFileConstants.Facts);
+            var facts = configurationManager.LoadConfiguration<FactConfiguration>();
             if (string.IsNullOrEmpty(chatCommandReceivedEvent.CommandArgs))
             {
                 var randomFact = facts.GetRandomFact();

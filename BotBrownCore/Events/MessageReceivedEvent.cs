@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using BotBrown.Configuration;
     using BotBrown.Events.Twitch;
+    using BotBrown;
 
     public sealed class MessageReceivedEvent : UserSpecificEvent
     {

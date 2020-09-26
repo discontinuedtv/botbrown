@@ -1,11 +1,15 @@
 ﻿namespace BotBrown.Configuration
 {
+    using BotBrown.Configuration.Factories;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Concurrent;
     using System.ComponentModel;
     using System.IO;
     using Serilog;
+    using System.Linq;
+    using System.Reflection;
+    using System.Collections.Generic;
 
     public sealed class ConfigurationManager : IConfigurationManager
     {
@@ -44,7 +48,7 @@
             }
         }
 
-        public T LoadConfiguration<T>(string filename)
+        public T LoadConfiguration<T>()
             where T : IConfiguration
         {
             if (configurations.ContainsKey(typeof(T)))
@@ -52,6 +56,8 @@
                 return (T)configurations[typeof(T)].Item1;
             }
 
+            var configurationFile = typeof(T).GetCustomAttribute<ConfigurationFileAttribute>();
+            var filename = configurationFile.Filename;
             string pathToFile = $"{ConfigurationBasePath}/{filename}";
 
             if (!File.Exists(pathToFile))
@@ -62,7 +68,7 @@
 
                 configurations.TryAdd(typeof(T), (defaultConfiguration, filename));
 
-                if(defaultConfiguration is IChangeableConfiguration changeableConfiguration)
+                if (defaultConfiguration is IChangeableConfiguration changeableConfiguration)
                     changeableConfiguration.PropertyChanged += ConfigurationChanged;
 
                 return defaultConfiguration;
@@ -98,6 +104,39 @@
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
                 serializer.Serialize(writer, configurationValue);
+            }
+        }
+
+        public IEnumerable<ConfigurationStatus> CheckConfigurationStatus()
+        {
+            ResolveConfigurationTypes();
+
+            var status = new List<ConfigurationStatus>();
+
+            foreach (KeyValuePair<Type, (IConfiguration, string)> configuration in configurations)
+            {
+                status.Add(new ConfigurationStatus(configuration.Value.Item2, configuration.Value.Item1.IsValid()));
+            }
+
+            return status;
+        }
+
+        private void ResolveConfigurationTypes()
+        {
+            foreach (Type type in GetType().Assembly.GetTypes())
+            {
+                var asd = type.GetCustomAttributes(typeof(ConfigurationFileAttribute), true).Cast<ConfigurationFileAttribute>().ToArray();
+                if (asd.Length > 0)
+                {
+                    if (!configurations.TryGetValue(type, out (IConfiguration, string) _))
+                    {
+
+                        MethodInfo method = GetType().GetMethod(nameof(LoadConfiguration));
+
+                        MethodInfo genericMethod = method.MakeGenericMethod(GetType());
+                        genericMethod.Invoke(null, new object[] { asd[0].Filename });
+                    }
+                }
             }
         }
     }

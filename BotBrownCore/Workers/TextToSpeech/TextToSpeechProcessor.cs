@@ -8,6 +8,7 @@
     using System.Speech.Synthesis;
     using System.Text;
     using System.Threading;
+    using BotBrown;
     using BotBrown.Configuration;
     using BotBrownCore.Configuration;
     using NAudio.CoreAudioApi;
@@ -28,7 +29,7 @@
             this.configurationManager = configurationManager;
             RegisterAvailableLanguages();
 
-            audioConfiguration = configurationManager.LoadConfiguration<AudioConfiguration>(ConfigurationFileConstants.Audio);
+            audioConfiguration = configurationManager.LoadConfiguration<AudioConfiguration>();
         }
 
         public string TextToSpeechLanguages
@@ -132,13 +133,13 @@
 
         private string GetDesiredLanguage(ChannelUser user)
         {
-            GreetingConfiguration greetingConfiguration = configurationManager.LoadConfiguration<GreetingConfiguration>(ConfigurationFileConstants.Greetings);
+            GreetingConfiguration greetingConfiguration = configurationManager.LoadConfiguration<GreetingConfiguration>();
             return greetingConfiguration.RetrieveDesiredLanguage(user.UserId);
         }
 
         private bool CheckIfTextToSpeechIsActive()
         {
-            GeneralConfiguration generalConfiguration = configurationManager.LoadConfiguration<GeneralConfiguration>(ConfigurationFileConstants.General);
+            GeneralConfiguration generalConfiguration = configurationManager.LoadConfiguration<GeneralConfiguration>();
             return generalConfiguration.ActivateTextToSpeech;
         }
 

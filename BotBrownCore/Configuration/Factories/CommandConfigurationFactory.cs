@@ -1,6 +1,7 @@
-﻿namespace BotBrown.Configuration
+namespace BotBrown.Configuration.Factories
 {
     using System.Collections.ObjectModel;
+    using BotBrown;
 
     public class CommandConfigurationFileFactory : IConfigurationFileFactory<CommandConfiguration>
     {

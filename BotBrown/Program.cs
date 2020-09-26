@@ -3,7 +3,7 @@
     using System;
     using SpiderEye.Windows;
 
-    public class Program : ProgramBase
+    public class Program
     {
         [STAThread]
         public static void Main(string[] args)
@@ -48,9 +48,8 @@
             }
 
             var botArguments = new BotArguments(isDebug, dontConnectToTwitch, customConfigurationPath, customSoundsPath, logPath);
-
             WindowsApplication.Init();
-            Run(botArguments);
+            //Run(botArguments);
         }
     }
 }
