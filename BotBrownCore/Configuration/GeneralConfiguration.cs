@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-
-namespace BotBrown.Configuration
+﻿namespace BotBrown.Configuration
 {
+    using System.Collections.Generic;
+
     public class GeneralConfiguration : IConfiguration
     {
         public bool ActivateTextToSpeech { get; set; }
@@ -12,7 +11,5 @@ namespace BotBrown.Configuration
         public string ByePhrase { get; set; }
 
         public HashSet<string> ByePhrases { get; set; } = new HashSet<string>();
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

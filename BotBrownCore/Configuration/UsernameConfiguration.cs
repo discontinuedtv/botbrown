@@ -4,15 +4,15 @@
     using System.Collections.Generic;
     using System.ComponentModel;
 
-    public sealed class UsernameConfiguration : IConfiguration
+    public sealed class UsernameConfiguration : IChangeableConfiguration
     {
         public Dictionary<string, ChannelUser> Users { get; set; } = new Dictionary<string, ChannelUser>();
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         internal void AddUsername(string userId, string realUsername, string username)
         {
             Users[userId] = new ChannelUser(userId, realUsername, username);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Users)));
         }
 
         internal bool TryGetValue(string userId, out string username)

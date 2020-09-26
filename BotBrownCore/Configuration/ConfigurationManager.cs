@@ -58,7 +58,8 @@
 
                 configurations.Add(typeof(T), (defaultConfiguration, filename));
 
-                defaultConfiguration.PropertyChanged += ConfigurationChanged;
+                if(defaultConfiguration is IChangeableConfiguration changeableConfiguration)
+                    changeableConfiguration.PropertyChanged += ConfigurationChanged;
 
                 return defaultConfiguration;
             }
@@ -69,7 +70,8 @@
                 var configuration = JsonConvert.DeserializeObject<T>(serialzedConfiguration);
                 configurations.Add(typeof(T), (configuration, filename));
 
-                configuration.PropertyChanged += ConfigurationChanged;
+                if (configuration is IChangeableConfiguration changeableConfiguration)
+                    changeableConfiguration.PropertyChanged += ConfigurationChanged;
 
                 return configuration;
             }

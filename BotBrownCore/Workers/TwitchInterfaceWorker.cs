@@ -50,6 +50,7 @@
 
             bus.SubscribeToTopic<SendChannelMessageRequestedEvent>(identifier);
             bus.SubscribeToTopic<SendWhisperMessageRequestedEvent>(identifier);
+            bus.SubscribeToTopic<UpdateChannelEvent>(identifier);
           
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -61,6 +62,11 @@
                 if (bus.TryConsume(identifier, out SendWhisperMessageRequestedEvent whisper))
                 {
                     SendWhisperMessage(whisper);
+                }
+
+                if(bus.TryConsume(identifier, out UpdateChannelEvent channelUpdate))
+                {
+                    apiWrapper.UpdateChannel(channelUpdate);
                 }
 
                 await Task.Delay(100);

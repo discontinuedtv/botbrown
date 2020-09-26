@@ -18,13 +18,14 @@ namespace BotBrown.Configuration
 
         public string TextToSpeechRewardId { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public string BroadcasterUserId { get; set; }
 
         internal bool IsValid()
         {
             return !string.IsNullOrWhiteSpace(Username) &&
                 !string.IsNullOrWhiteSpace(AccessToken) &&
-                !string.IsNullOrWhiteSpace(Channel);
+                !string.IsNullOrWhiteSpace(Channel) &&
+                !string.IsNullOrWhiteSpace(BroadcasterUserId);
         }
     }
 }

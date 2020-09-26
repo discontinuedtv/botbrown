@@ -1,11 +1,21 @@
 ﻿namespace BotBrown.Configuration
 {
-    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.ComponentModel;
 
-    public class CommandConfiguration : IConfiguration
+    public class CommandConfiguration : IChangeableConfiguration
     {
-        public List<CommandDefinition> CommandsDefinitions { get; set; } = new List<CommandDefinition>();
+        public CommandConfiguration()
+        {
+            CommandsDefinitions.CollectionChanged += CommandsDefinitions_CollectionChanged;
+        }
+
+        private void CommandsDefinitions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CommandsDefinitions)));
+        }
+
+        public ObservableCollection<CommandDefinition> CommandsDefinitions { get; set; } = new ObservableCollection<CommandDefinition>();
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

@@ -3,6 +3,7 @@
     using BotBrownCore.Configuration;
     using NAudio.Wave;
     using System;
+    using System.IO;
     using System.Threading;
 
     public class SoundCommand : ICommand, IDisposable
@@ -38,6 +39,11 @@
         public void Execute()
         {
             if (Cooldown > DateTimeOffset.Now)
+            {
+                return;
+            }
+
+            if (!File.Exists(Filename))
             {
                 return;
             }

@@ -4,6 +4,7 @@
     using BotBrown.Events;
     using BotBrown.Events.Twitch;
     using System;
+    using TwitchLib.Api.Core.Enums;
     using TwitchLib.Client;
     using TwitchLib.Client.Events;
     using TwitchLib.Client.Models;
@@ -77,8 +78,14 @@
         {
             ChatCommand command = chatCommandReceivedArguments.Command;
             ChannelUser user = usernameResolver.ResolveUsername(new ChannelUser(command.ChatMessage.UserId, command.ChatMessage.DisplayName, command.ChatMessage.DisplayName));
+            string optionalUser = null;
 
-            bus.Publish(new ChatCommandReceivedEvent(user, command.CommandText, command.ChatMessage.Channel));
+            if(chatCommandReceivedArguments.Command.ArgumentsAsString.StartsWith("@"))
+            {
+                optionalUser = chatCommandReceivedArguments.Command.ArgumentsAsString;
+            }
+
+            bus.Publish(new ChatCommandReceivedEvent(user, command.CommandText, command.ArgumentsAsString, command.ChatMessage.Channel, optionalUser, command.ChatMessage.UserType));
         }
 
         private void Client_Log(object sender, OnLogArgs e)
