@@ -8,11 +8,10 @@ namespace BotBrown.Events
         public string Game { get; set; }
         public string Title { get; set; }
 
-        public Task<UpdateChannelEvent> Update(Channel channel)
+        public void Update(Channel channel)
         {
             Game ??= channel.Game;
             Title ??= channel.Status;
-            return new Task<UpdateChannelEvent>(() => this);
         }
     }
 }

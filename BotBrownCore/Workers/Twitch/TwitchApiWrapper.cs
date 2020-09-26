@@ -5,24 +5,28 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using TwitchLib.Api;
     using TwitchLib.Api.Core;
     using TwitchLib.Api.Services;
     using TwitchLib.Api.Services.Events.FollowerService;
+    using TwitchLib.Api.V5.Models.Channels;
 
     public class TwitchApiWrapper : ITwitchApiWrapper
     {
         private readonly IUsernameResolver usernameResolver;
         private readonly IEventBus bus;
         private readonly IConfigurationManager configurationManager;
+        private readonly ILogger logger;
         private FollowerService followerService;
         private TwitchAPI api;
 
-        public TwitchApiWrapper(IUsernameResolver usernameResolver, IEventBus bus, IConfigurationManager configurationManager)
+        public TwitchApiWrapper(IUsernameResolver usernameResolver, IEventBus bus, IConfigurationManager configurationManager, ILogger logger)
         {
             this.usernameResolver = usernameResolver;
             this.bus = bus;
             this.configurationManager = configurationManager;
+            this.logger = logger;
         }
 
         public void ConnectToTwitch(TwitchConfiguration twitchConfiguration)
@@ -50,7 +54,16 @@
             return new TwitchAPI(null, null, new ApiSettings
             {
                 ClientId = twitchConfiguration.ApiClientId,
-                AccessToken = twitchConfiguration.ApiAccessToken
+                AccessToken = twitchConfiguration.ApiAccessToken,
+                Scopes = new List<TwitchLib.Api.Core.Enums.AuthScopes>
+                {
+                    TwitchLib.Api.Core.Enums.AuthScopes.Channel_Editor,
+                    TwitchLib.Api.Core.Enums.AuthScopes.Channel_Subscriptions,
+                    TwitchLib.Api.Core.Enums.AuthScopes.Chat_Login,
+                    TwitchLib.Api.Core.Enums.AuthScopes.Helix_User_Edit_Broadcast,
+                    TwitchLib.Api.Core.Enums.AuthScopes.Helix_User_Read_Broadcast,
+                    TwitchLib.Api.Core.Enums.AuthScopes.Helix_Moderation_Read
+                }
             });
         }
 
@@ -81,9 +94,33 @@
         public void UpdateChannel(UpdateChannelEvent updateChannelEvent)
         {
             TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
-            api.V5.Channels.GetChannelByIDAsync(twitchConfiguration.Channel)
-                .ContinueWith(task => updateChannelEvent.Update(task.Result))
-                .ContinueWith(task => api.V5.Channels.UpdateChannelAsync(twitchConfiguration.Channel, updateChannelEvent.Title, updateChannelEvent.Game, null, null, twitchConfiguration.ApiAccessToken));
+            api.V5.Channels.GetChannelByIDAsync(twitchConfiguration.BroadcasterUserId)
+                .ContinueWith(task => 
+                {
+                    updateChannelEvent.Update(task.Result);
+                    return api.V5.Channels.UpdateChannelAsync(twitchConfiguration.BroadcasterUserId, updateChannelEvent.Title, updateChannelEvent.Game);
+                })
+                .ContinueWith(task => task.Result.ContinueWith(x => PublishSuccessMessageOnCompletion(x)));
+        }
+
+        private void PublishSuccessMessageOnCompletion(Task<Channel> task)
+        {
+            task.ContinueWith(t => {
+                PublishFeedbackMessage("Titel oder Game konnte nicht geändert werden.");
+                logger.Error(t.Exception);
+            },
+            TaskContinuationOptions.OnlyOnFaulted);
+
+            task.ContinueWith(t => {
+                PublishFeedbackMessage("Titel oder Game wurden geändert.");
+            },
+            TaskContinuationOptions.OnlyOnRanToCompletion);            
+        }
+
+        private void PublishFeedbackMessage(string message)
+        {
+            TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
+            bus.Publish(new SendChannelMessageRequestedEvent(message, twitchConfiguration.Channel));
         }
     }
 }

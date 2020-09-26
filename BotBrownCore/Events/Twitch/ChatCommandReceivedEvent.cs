@@ -12,6 +12,7 @@
             ChannelName = channelName;
             OptionalUser = optionalUser;
             UserType = userType;
+            CommandArgs = commandArgs;
         }
 
         public string CommandText { get; }
