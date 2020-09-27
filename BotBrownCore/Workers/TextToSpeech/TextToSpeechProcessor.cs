@@ -5,7 +5,6 @@
     using System.Collections.ObjectModel;
     using System.IO;
     using System.Runtime.InteropServices;
-    using System.Speech.AudioFormat;
     using System.Speech.Synthesis;
     using System.Text;
     using System.Threading;

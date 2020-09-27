@@ -18,8 +18,9 @@
         private readonly ILogger logger;
         private readonly IConfigurationManager configurationManager;
         private readonly IPresenceStore presenceStore;
+        private readonly ISoundProcessor soundProcessor;
 
-        public WorkerHost(IEventBus bus, ITextToSpeechProcessor textToSpeechProcessor, ITwitchClientWrapper clientWrapper, ITwitchApiWrapper apiWrapper, ILogger logger, IConfigurationManager configurationManager, IPresenceStore presenceStore)
+        public WorkerHost(IEventBus bus, ITextToSpeechProcessor textToSpeechProcessor, ITwitchClientWrapper clientWrapper, ITwitchApiWrapper apiWrapper, ILogger logger, IConfigurationManager configurationManager, IPresenceStore presenceStore, ISoundProcessor soundProcessor)
         {
             this.bus = bus;
             this.textToSpeechProcessor = textToSpeechProcessor;
@@ -28,6 +29,7 @@
             this.logger = logger;
             this.configurationManager = configurationManager;
             this.presenceStore = presenceStore;
+            this.soundProcessor = soundProcessor;
         }
 
         public void Execute(CancellationToken cancellationToken, BotArguments botArguments)
@@ -67,7 +69,7 @@
         {
             Task.Run(async () =>
             {
-                var ttsWorker = new TextToSpeechWorker(bus, textToSpeechProcessor);
+                var ttsWorker = new SoundWorker(bus, textToSpeechProcessor, soundProcessor, logger);
                 return await ttsWorker.Execute(cancellationToken);
             });
         }

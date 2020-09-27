@@ -1,23 +1,17 @@
 ﻿namespace BotBrown
 {
-    using BotBrownCore.Configuration;
-    using NAudio.Wave;
     using System;
     using System.IO;
-    using System.Threading;
 
-    public class SoundCommand : ICommand, IDisposable
+    public class SoundCommand : ICommand
     {
-        private readonly AudioConfiguration configuration;
-
-        public SoundCommand(string shortcut, string name, int cooldownInSeconds, string filename, float volume, AudioConfiguration audioConfiguration)
+        public SoundCommand(string shortcut, string name, int cooldownInSeconds, string filename, float volume)
         {
             Shortcut = shortcut;
             Name = name;
             CooldownInSeconds = cooldownInSeconds;
             Filename = filename;
             Volume = volume;
-            configuration = audioConfiguration;
         }
 
         public string Name { get; }
@@ -32,38 +26,27 @@
 
         public float Volume { get; }
 
-        public void Dispose()
+        public bool ShouldExecute
         {
+            get
+            {
+                if (Cooldown > DateTimeOffset.Now)
+                {
+                    return false;
+                }
+
+                if (!File.Exists(Filename))
+                {
+                    return false;
+                }
+
+                return true;
+            }
         }
 
-        public void Execute()
+        public void MarkAsExecuted()
         {
-            if (Cooldown > DateTimeOffset.Now)
-            {
-                return;
-            }
-
-            if (!File.Exists(Filename))
-            {
-                return;
-            }
-
-            configuration.InitializeConfiguration();
-
             Cooldown = DateTimeOffset.Now.AddSeconds(CooldownInSeconds);
-
-            using (var reader = new MediaFoundationReader(Filename))
-            using (var outputStream = new WasapiOut(configuration.SelectedSoundCommandDevice, NAudio.CoreAudioApi.AudioClientShareMode.Shared, false, 10))
-            {
-                outputStream.Init(reader);
-                outputStream.Volume = Volume;
-                outputStream.Play();
-
-                while(outputStream.PlaybackState != PlaybackState.Stopped)
-                {
-                    Thread.Sleep(5);
-                }
-            }
         }
     }
 }
