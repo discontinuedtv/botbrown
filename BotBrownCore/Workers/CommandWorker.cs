@@ -120,7 +120,13 @@
                 return;
             }
 
-            if(IsChannelUpdate(@event, out UpdateChannelEvent channelUpdate))
+            if (commandText == "so")
+            {
+                ProcessShoutOutCommand(@event);
+                return;
+            }
+
+            if (IsChannelUpdate(@event, out UpdateChannelEvent channelUpdate))
             {
                 bus.Publish(channelUpdate);
             }
@@ -137,6 +143,19 @@
                 bus.Publish(new SendChannelMessageRequestedEvent($"{optionalUser}: {simpleTextCommandConfiguration.Commands[commandText]}", channelName));
                 return;
             }
+        }
+
+        private void ProcessShoutOutCommand(ChatCommandReceivedEvent @event)
+        {
+            // tbd: This could be enriched with logo and other informations of the streamer if this should be shown on screen
+
+            var args = @event.CommandArgs;
+            if (args.StartsWith("@"))
+            {
+                args = args.Substring(1);
+            }
+
+            bus.Publish(new SendChannelMessageRequestedEvent($"Schaut euch auch {args} an und lasst eventuell einen Follow da: https://twitch.tv/{args}", @event.ChannelName));
         }
 
         private bool IsChannelUpdate(ChatCommandReceivedEvent @event, out UpdateChannelEvent channelUpdate)
