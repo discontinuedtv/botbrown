@@ -11,6 +11,8 @@
     using TwitchLib.Communication.Clients;
     using TwitchLib.Communication.Events;
     using TwitchLib.Communication.Models;
+    using Emote = Events.Twitch.Emote;
+    using UserType = Models.UserType;
 
     public class TwitchClientWrapper : ITwitchClientWrapper
     {
@@ -85,7 +87,33 @@
                 optionalUser = chatCommandReceivedArguments.Command.ArgumentsAsString;
             }
 
-            bus.Publish(new ChatCommandReceivedEvent(user, command.CommandText, command.ArgumentsAsString, command.ChatMessage.Channel, optionalUser, command.ChatMessage.UserType));
+            var userType = ConvertToInternalUserType(command.ChatMessage);
+            bus.Publish(new ChatCommandReceivedEvent(user, command.CommandText, command.ArgumentsAsString, command.ChatMessage.Channel, optionalUser, userType));
+        }
+
+        private UserType ConvertToInternalUserType(ChatMessage chatMessage)
+        {
+            if(chatMessage.IsBroadcaster)
+            {
+                return UserType.Broadcaster;
+            }
+
+            if(chatMessage.IsModerator)
+            {
+                return UserType.Moderator;
+            }
+
+            if(chatMessage.IsVip)
+            {
+                return UserType.Vip;
+            }
+
+            if(chatMessage.IsSubscriber)
+            {
+                return UserType.Subscriber;
+            }
+
+            return UserType.Viewer;
         }
 
         private void Client_Log(object sender, OnLogArgs e)
@@ -139,11 +167,11 @@
                 return;
             }
 
-            var emotesInMessage = new List<Events.Twitch.Emote>();
+            var emotesInMessage = new List<Emote>();
 
             foreach (TwitchLib.Client.Models.Emote emote in e.ChatMessage.EmoteSet.Emotes)
             {
-                emotesInMessage.Add(new Events.Twitch.Emote(emote.Name));
+                emotesInMessage.Add(new Emote(emote.Name));
             }
 
             ChannelUser user = usernameResolver.ResolveUsername(new ChannelUser(e.ChatMessage.UserId, e.ChatMessage.DisplayName, e.ChatMessage.DisplayName));

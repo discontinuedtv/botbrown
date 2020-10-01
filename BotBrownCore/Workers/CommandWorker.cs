@@ -1,5 +1,6 @@
 ﻿namespace BotBrown.Workers
 {
+    using BotBrown.ChatCommands;
     using BotBrown.Configuration;
     using BotBrown.Events;
     using BotBrown.Events.Twitch;
@@ -10,7 +11,6 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using TwitchLib.Client.Enums;
 
     public sealed class CommandWorker : IDisposable
     {
@@ -18,18 +18,26 @@
         private readonly IConfigurationManager configurationManager;
         private readonly IPresenceStore presenceStore;
         private readonly ILogger logger;
+        private readonly IChatCommandResolver chatCommandResolver;
         private readonly ITextToSpeechProcessor textToSpeechProcessor; // TODO !
         private readonly List<TimerCommand> timerCommands = new List<TimerCommand>();
 
         private Dictionary<string, SoundCommand> soundsPerCommand = new Dictionary<string, SoundCommand>();
         private Guid identifier = Guid.NewGuid();
 
-        public CommandWorker(IEventBus bus, IConfigurationManager configurationManager, IPresenceStore presenceStore, ITextToSpeechProcessor textToSpeechProcessor, ILogger logger)
+        public CommandWorker(
+            IEventBus bus,
+            IConfigurationManager configurationManager,
+            IPresenceStore presenceStore,
+            ITextToSpeechProcessor textToSpeechProcessor,
+            ILogger logger,
+            IChatCommandResolver chatCommandResolver)
         {
             this.bus = bus;
             this.configurationManager = configurationManager;
             this.presenceStore = presenceStore;
             this.logger = logger;
+            this.chatCommandResolver = chatCommandResolver;
             this.textToSpeechProcessor = textToSpeechProcessor;
         }
 
@@ -103,85 +111,36 @@
         private void ProcessChatCommandReceivedEvent(ChatCommandReceivedEvent @event)
         {
             var simpleTextCommandConfiguration = configurationManager.LoadConfiguration<SimpleTextCommandConfiguration>(ConfigurationFileConstants.TextCommands);
+            var chatCommands = chatCommandResolver.ResolveAllChatCommands();
 
-            ChannelUser user = @event.User;
-            string channelName = @event.ChannelName;
-            string commandText = @event.CommandText;
-
-            if (commandText == "re")
+            foreach(var command in chatCommands)
             {
-                // TODO: Vielleicht lieber Zurück aus der Zukunft Daten? 1955, 1985, 2015
-
-                Random rand = new Random();
-                int year = rand.Next(1400, 2180);
-
-                bus.Publish(new SendChannelMessageRequestedEvent($"{user.RealUsername} ist zurück von der Zeitreise aus dem Jahr {year}", channelName));
-                return;
+                if(command.CanConsume(@event))
+                {
+                    var shouldContinue = command.Consume(@event).Result;
+                    if(!shouldContinue)
+                    {
+                        return;
+                    }
+                }
             }
 
-            if (commandText == "so")
-            {
-                ProcessShoutOutCommand(@event);
-                return;
-            }
-
-            if (IsChannelUpdate(@event, out UpdateChannelEvent channelUpdate))
-            {
-                bus.Publish(channelUpdate);
-            }
-
-            if (simpleTextCommandConfiguration.Commands.ContainsKey(commandText))
+            if (simpleTextCommandConfiguration.Commands.ContainsKey(@event.CommandText))
             {
                 string optionalUser = @event.OptionalUser;
                 if (string.IsNullOrEmpty(optionalUser))
                 {
-                    bus.Publish(new SendChannelMessageRequestedEvent(simpleTextCommandConfiguration.Commands[commandText], channelName));
+                    bus.Publish(new SendChannelMessageRequestedEvent(simpleTextCommandConfiguration.Commands[@event.CommandText], @event.ChannelName));
                     return;
                 }
 
-                bus.Publish(new SendChannelMessageRequestedEvent($"{optionalUser}: {simpleTextCommandConfiguration.Commands[commandText]}", channelName));
+                bus.Publish(new SendChannelMessageRequestedEvent($"{optionalUser}: {simpleTextCommandConfiguration.Commands[@event.CommandText]}", @event.ChannelName));
                 return;
             }
         }
 
-        private void ProcessShoutOutCommand(ChatCommandReceivedEvent @event)
-        {
-            // tbd: This could be enriched with logo and other informations of the streamer if this should be shown on screen
-
-            var args = @event.CommandArgs;
-            if (args.StartsWith("@"))
-            {
-                args = args.Substring(1);
-            }
-
-            bus.Publish(new SendChannelMessageRequestedEvent($"Schaut euch auch {args} an und lasst eventuell einen Follow da: https://twitch.tv/{args}", @event.ChannelName));
-        }
-
-        private bool IsChannelUpdate(ChatCommandReceivedEvent @event, out UpdateChannelEvent channelUpdate)
-        {
-            if (@event.UserType != UserType.Broadcaster && @event.UserType != UserType.Moderator)
-            {
-                channelUpdate = null;
-                return false;
-            }
-
-            if (@event.CommandText != "title" && @event.CommandText != "game")
-            {
-                channelUpdate = null;
-                return false;
-            }
-
-            channelUpdate = new UpdateChannelEvent
-            {
-                Title = @event.CommandText == "title" ? @event.CommandArgs : null,
-                Game = @event.CommandText == "game" ? @event.CommandArgs : null
-            };
-
-            return true;
-        }
-
         public void Dispose()
-        {
+        { 
         }
 
         private void RefreshCommands()

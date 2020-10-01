@@ -2,7 +2,7 @@
 {
     using Newtonsoft.Json;
     using System;
-    using System.Collections.Generic;
+    using System.Collections.Concurrent;
     using System.ComponentModel;
     using System.IO;
 
@@ -11,13 +11,13 @@
         private readonly IConfigurationPathProvider configurationPathProvider;
         private readonly IConfigurationFileFactoryRegistry registry;
         private readonly ILogger logger;
-        private readonly Dictionary<Type, (IConfiguration, string)> configurations;
+        private readonly ConcurrentDictionary<Type, (IConfiguration, string)> configurations;
 
         private string ConfigurationBasePath => configurationPathProvider.Path;
 
         public ConfigurationManager(IConfigurationFileFactoryRegistry registry, ILogger logger, IConfigurationPathProvider configurationPathProvider)
         {
-            configurations = new Dictionary<Type, (IConfiguration, string)>();
+            configurations = new ConcurrentDictionary<Type, (IConfiguration, string)>();
             this.registry = registry;
             this.logger = logger;
             this.configurationPathProvider = configurationPathProvider;
@@ -39,7 +39,7 @@
             if (typeToRemoveFromCache != null)
             {
                 logger.Log($"Configuration file '{filename}' changed. Clearing cache.");
-                configurations.Remove(typeToRemoveFromCache);
+                configurations.TryRemove(typeToRemoveFromCache, out var _);
             }
         }
 
@@ -59,7 +59,7 @@
                 T defaultConfiguration = factory.CreateDefaultConfiguration();
                 WriteConfiguration(defaultConfiguration, filename);
 
-                configurations.Add(typeof(T), (defaultConfiguration, filename));
+                configurations.TryAdd(typeof(T), (defaultConfiguration, filename));
 
                 if(defaultConfiguration is IChangeableConfiguration changeableConfiguration)
                     changeableConfiguration.PropertyChanged += ConfigurationChanged;
@@ -71,7 +71,7 @@
             {
                 string serialzedConfiguration = reader.ReadToEnd();
                 var configuration = JsonConvert.DeserializeObject<T>(serialzedConfiguration);
-                configurations.Add(typeof(T), (configuration, filename));
+                configurations.TryAdd(typeof(T), (configuration, filename));
 
                 if (configuration is IChangeableConfiguration changeableConfiguration)
                     changeableConfiguration.PropertyChanged += ConfigurationChanged;

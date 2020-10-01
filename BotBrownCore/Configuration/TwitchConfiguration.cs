@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace BotBrown.Configuration
+﻿namespace BotBrown.Configuration
 {
     public class TwitchConfiguration : IConfiguration
     {

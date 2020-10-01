@@ -2,6 +2,7 @@
 {
     using System;
     using System.Threading;
+    using BotBrown.ChatCommands;
     using BotBrown.Configuration;
     using BotBrown.Workers;
     using Castle.MicroKernel.Registration;
@@ -19,12 +20,11 @@
             container.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel));
             container.Register(Classes.FromThisAssembly().InNamespace("BotBrown", true).WithServiceAllInterfaces());
             container.Register(Classes.FromThisAssembly().BasedOn(typeof(IConfigurationFileFactory<>)).WithService.Base());
-
+            container.Register(Classes.FromThisAssembly().BasedOn(typeof(IChatCommand)).WithService.Base());
             RegisterConfigurationPathProvider(botArguments);
             RegisterSoundPathProvider(botArguments);
 
             workerHost = container.Resolve<IWorkerHost>();
-
             workerHost.Execute(cancellationTokenSource.Token, botArguments);
         }
 
@@ -86,7 +86,5 @@
         // Commands extrahieren und erweiterbar machen
         // Lautstärke einstellbar        
         // Oberfläche für die Konfiguration
-
-
     }
 }
