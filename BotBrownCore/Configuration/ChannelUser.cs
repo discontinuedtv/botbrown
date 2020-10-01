@@ -9,10 +9,15 @@
             Username = username;
         }
 
-        public string UserId { get; set; }
+        public string UserId { get; }
 
-        public string RealUsername { get; set; }
+        public string RealUsername { get; }
 
-        public string Username { get; set; }
+        public string Username { get; }
+
+        internal ChannelUser WithResolvedUsername(string resolvedUsername)
+        {
+            return new ChannelUser(UserId, RealUsername, resolvedUsername);
+        }
     }
 }

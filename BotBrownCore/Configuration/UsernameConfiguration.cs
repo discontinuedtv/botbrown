@@ -4,18 +4,18 @@
     using System.Collections.Generic;
     using System.ComponentModel;
 
-    public sealed class UsernameConfiguration : IChangeableConfiguration
+    public sealed class UsernameConfiguration : IUsernameConfiguration
     {
         public Dictionary<string, ChannelUser> Users { get; set; } = new Dictionary<string, ChannelUser>();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal void AddUsername(string userId, string realUsername, string username)
+        public void AddUsername(ChannelUser user)
         {
-            Users[userId] = new ChannelUser(userId, realUsername, username);
+            Users[user.UserId] = user;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Users)));
         }
 
-        internal bool TryGetValue(string userId, out string username)
+        public bool TryGetValue(string userId, out string username)
         {
             if (Users.TryGetValue(userId, out ChannelUser user))
             {
@@ -27,7 +27,7 @@
             return false;
         }
 
-        internal bool FindUserByRealUsername(string realUsername, out ChannelUser user)
+        public bool FindUserByRealUsername(string realUsername, out ChannelUser user)
         {
             foreach (var userEntry in Users)
             {
