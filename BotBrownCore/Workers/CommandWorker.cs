@@ -6,7 +6,6 @@
     using BotBrown.Events.Twitch;
     using BotBrown.Workers.TextToSpeech;
     using BotBrown.Workers.Timers;
-    using BotBrownCore.Configuration;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -141,22 +140,17 @@
         }
 
         public void Dispose()
-        {
-            foreach (var command in soundsPerCommand)
-            {
-                command.Value.Dispose();
-            }
+        { 
         }
 
         private void RefreshCommands()
         {
             soundsPerCommand.Clear();
             CommandConfiguration commandConfiguration = configurationManager.LoadConfiguration<CommandConfiguration>(ConfigurationFileConstants.Commands);
-            AudioConfiguration audioConfiguration = configurationManager.LoadConfiguration<AudioConfiguration>(ConfigurationFileConstants.Audio);
 
             foreach (CommandDefinition commandDefinition in commandConfiguration.CommandsDefinitions)
             {
-                SoundCommand command = commandDefinition.CreateCommand(audioConfiguration);
+                SoundCommand command = commandDefinition.CreateCommand();
                 soundsPerCommand.Add(command.Shortcut, command);
 
                 logger.Log($"Kommando {command.Shortcut} hinzugefügt.");
@@ -241,13 +235,7 @@
             }
 
             SayByeIfNecessary(message);
-
-            string commandName = message.Message.MessageContainsAnyCommand(soundsPerCommand.Keys);
-            if (commandName != null)
-            {
-                soundsPerCommand[commandName].Execute();
-                return;
-            }
+            CheckForSoundCommands(message);
 
             if (SpeakIfNecessary(message))
             {
@@ -255,11 +243,35 @@
             }
         }
 
+        private void CheckForSoundCommands(MessageReceivedEvent message)
+        {
+            if (!message.HasEmotesInMessage)
+            {
+                return;
+            }
+
+            foreach (var emoteInMessage in message.EmotesInMessage)
+            {
+                if (!soundsPerCommand.TryGetValue(emoteInMessage.Name, out SoundCommand command))
+                {
+                    continue;
+                }
+
+                if (!command.ShouldExecute)
+                {
+                    continue;
+                }
+
+                bus.Publish(new PlaySoundEvent(command.Filename, command.Volume));
+                command.MarkAsExecuted();
+            }
+        }
+
         private void ProcessPlaySoundRequestedEvent(PlaySoundRequestedEvent @event)
         {
             if (soundsPerCommand.TryGetValue(@event.CommandName, out SoundCommand command))
             {
-                command.Execute();
+                command.MarkAsExecuted();
             }
         }
 
@@ -364,7 +376,6 @@
 
             string timerName = string.Join(" ", parameters.Skip(1));
 
-
             bus.Publish(new TextToSpeechEvent(user, $"Der Timer {timerName} wurde gestartet."));
 
             TimeSpan timerLength = TimeSpan.FromSeconds(timeInSeconds);
@@ -434,7 +445,6 @@
                 return false;
             }
 
-
             string requestedLanguage = chatMessage.ReplaceInNormalizedMessage("!sprache:", string.Empty);
 
             if (textToSpeechProcessor.TryGetLanguage(requestedLanguage, out string language)) // TODO !!
@@ -467,7 +477,7 @@
                 return false;
             }
 
-            if (!chatMessage.IsMessageFromModerator)
+            if (!chatMessage.IsMessageFromModerator && !chatMessage.IsMessageFromBroadcaster)
             {
                 return false;
             }
@@ -486,8 +496,7 @@
                 return false;
             }
 
-            user.Username = namechangeParameters[1];
-            configurationManager.WriteConfiguration(usernameConfiguration, ConfigurationFileConstants.Usernames);
+            usernameConfiguration.AddUsername(user.WithResolvedUsername(namechangeParameters[1]));
             return true;
         }
 

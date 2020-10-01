@@ -2,7 +2,7 @@
   "profiles": {
     "BotBrownCli": {
       "commandName": "Project",
-      "commandLineArgs": "-debug"
+      "commandLineArgs": "-notwitch -debug -ccp:..\\..\\..\\..\\Configurations -csp:..\\..\\..\\..\\Sounds"
     }
   }
 }

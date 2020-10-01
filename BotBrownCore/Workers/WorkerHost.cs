@@ -20,6 +20,7 @@
         private readonly IConfigurationManager configurationManager;
         private readonly IPresenceStore presenceStore;
         private readonly IChatCommandResolver chatCommandResolver;
+        private readonly ISoundProcessor soundProcessor;
 
         public WorkerHost(
             IEventBus bus,
@@ -29,7 +30,8 @@
             ILogger logger,
             IConfigurationManager configurationManager,
             IPresenceStore presenceStore,
-            IChatCommandResolver chatCommandResolver)
+            IChatCommandResolver chatCommandResolver,
+            ISoundProcessor soundProcessor)
         {
             this.bus = bus;
             this.textToSpeechProcessor = textToSpeechProcessor;
@@ -39,6 +41,7 @@
             this.configurationManager = configurationManager;
             this.presenceStore = presenceStore;
             this.chatCommandResolver = chatCommandResolver;
+            this.soundProcessor = soundProcessor;
         }
 
         public void Execute(CancellationToken cancellationToken, BotArguments botArguments)
@@ -78,7 +81,7 @@
         {
             Task.Run(async () =>
             {
-                var ttsWorker = new TextToSpeechWorker(bus, textToSpeechProcessor);
+                var ttsWorker = new SoundWorker(bus, textToSpeechProcessor, soundProcessor, logger);
                 return await ttsWorker.Execute(cancellationToken);
             });
         }

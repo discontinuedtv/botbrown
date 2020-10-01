@@ -4,12 +4,14 @@
     using BotBrown.Events;
     using BotBrown.Events.Twitch;
     using System;
+    using System.Collections.Generic;
     using TwitchLib.Client;
     using TwitchLib.Client.Events;
     using TwitchLib.Client.Models;
     using TwitchLib.Communication.Clients;
     using TwitchLib.Communication.Events;
     using TwitchLib.Communication.Models;
+    using Emote = Events.Twitch.Emote;
     using UserType = Models.UserType;
 
     public class TwitchClientWrapper : ITwitchClientWrapper
@@ -165,9 +167,16 @@
                 return;
             }
 
+            var emotesInMessage = new List<Emote>();
+
+            foreach (TwitchLib.Client.Models.Emote emote in e.ChatMessage.EmoteSet.Emotes)
+            {
+                emotesInMessage.Add(new Emote(emote.Name));
+            }
+
             ChannelUser user = usernameResolver.ResolveUsername(new ChannelUser(e.ChatMessage.UserId, e.ChatMessage.DisplayName, e.ChatMessage.DisplayName));
             TwitchChatMessage chatMessage = new TwitchChatMessage(e.ChatMessage.Message, e.ChatMessage.IsBroadcaster, e.ChatMessage.IsModerator, e.ChatMessage.CustomRewardId, e.ChatMessage.Channel);
-            MessageReceivedEvent message = new MessageReceivedEvent(user, chatMessage);
+            MessageReceivedEvent message = new MessageReceivedEvent(user, chatMessage, emotesInMessage);
 
             bus.Publish(message);
         }

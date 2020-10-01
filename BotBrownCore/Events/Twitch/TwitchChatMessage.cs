@@ -8,9 +8,9 @@
         private string customRewardId;
         private string normalizedMessage;
 
-        public bool IsMessageFromModerator { get; internal set; }
+        public bool IsMessageFromModerator { get; }
 
-        public bool IsMessageFromBroadcaster { get; internal set; }
+        public bool IsMessageFromBroadcaster { get; }
 
         public string Message { get; }
 
@@ -25,6 +25,7 @@
             IsMessageFromModerator = isMessageFromModerator;
             Message = message;
         }
+
         public bool MessageStartsWith(string expectedStartOfString)
         {
             return normalizedMessage.StartsWith(expectedStartOfString);
@@ -45,11 +46,6 @@
             return customRewardId != null && customRewardId.Equals(expectedRewardId, StringComparison.OrdinalIgnoreCase);
         }
 
-        internal IEnumerable<string> Split(char charToSplitBy)
-        {
-            return Message.Split(charToSplitBy);
-        }
-
         internal bool IsGoodbyeMessage(HashSet<string> byePhrases)
         {
             if (Message.Contains("@"))
@@ -66,19 +62,6 @@
             }
 
             return false;
-        }
-
-        public string MessageContainsAnyCommand(IEnumerable<string> commandsToScanFor)
-        {
-            foreach (string command in commandsToScanFor)
-            {
-                if (Message.Contains(command))
-                {
-                    return command;
-                }
-            }
-
-            return null;
         }
     }
 }
