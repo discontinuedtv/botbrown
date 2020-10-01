@@ -4,13 +4,13 @@
     using BotBrown.Events;
     using BotBrown.Events.Twitch;
     using System;
-    using TwitchLib.Api.Core.Enums;
     using TwitchLib.Client;
     using TwitchLib.Client.Events;
     using TwitchLib.Client.Models;
     using TwitchLib.Communication.Clients;
     using TwitchLib.Communication.Events;
     using TwitchLib.Communication.Models;
+    using UserType = Models.UserType;
 
     public class TwitchClientWrapper : ITwitchClientWrapper
     {
@@ -85,7 +85,33 @@
                 optionalUser = chatCommandReceivedArguments.Command.ArgumentsAsString;
             }
 
-            bus.Publish(new ChatCommandReceivedEvent(user, command.CommandText, command.ArgumentsAsString, command.ChatMessage.Channel, optionalUser, command.ChatMessage.UserType));
+            var userType = ConvertToInternalUserType(command.ChatMessage);
+            bus.Publish(new ChatCommandReceivedEvent(user, command.CommandText, command.ArgumentsAsString, command.ChatMessage.Channel, optionalUser, userType));
+        }
+
+        private UserType ConvertToInternalUserType(ChatMessage chatMessage)
+        {
+            if(chatMessage.IsBroadcaster)
+            {
+                return UserType.Broadcaster;
+            }
+
+            if(chatMessage.IsModerator)
+            {
+                return UserType.Moderator;
+            }
+
+            if(chatMessage.IsVip)
+            {
+                return UserType.Vip;
+            }
+
+            if(chatMessage.IsSubscriber)
+            {
+                return UserType.Subscriber;
+            }
+
+            return UserType.Viewer;
         }
 
         private void Client_Log(object sender, OnLogArgs e)

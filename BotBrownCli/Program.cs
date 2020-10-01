@@ -1,7 +1,6 @@
 ﻿namespace BotBrown
 {
     using System;
-    using System.Linq;
 
     class Program
     {

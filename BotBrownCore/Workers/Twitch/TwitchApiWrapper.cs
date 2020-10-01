@@ -54,16 +54,16 @@
             return new TwitchAPI(null, null, new ApiSettings
             {
                 ClientId = twitchConfiguration.ApiClientId,
-                AccessToken = twitchConfiguration.ApiAccessToken,
-                Scopes = new List<TwitchLib.Api.Core.Enums.AuthScopes>
-                {
-                    TwitchLib.Api.Core.Enums.AuthScopes.Channel_Editor,
-                    TwitchLib.Api.Core.Enums.AuthScopes.Channel_Subscriptions,
-                    TwitchLib.Api.Core.Enums.AuthScopes.Chat_Login,
-                    TwitchLib.Api.Core.Enums.AuthScopes.Helix_User_Edit_Broadcast,
-                    TwitchLib.Api.Core.Enums.AuthScopes.Helix_User_Read_Broadcast,
-                    TwitchLib.Api.Core.Enums.AuthScopes.Helix_Moderation_Read
-                }
+                AccessToken = twitchConfiguration.ApiAccessToken
+                //                Scopes = new List<TwitchLib.Api.Core.Enums.AuthScopes>
+                //                {
+                ////                    TwitchLib.Api.Core.Enums.AuthScopes.Channel_Editor,
+                ////                    TwitchLib.Api.Core.Enums.AuthScopes.Channel_Subscriptions,
+                //                    TwitchLib.Api.Core.Enums.AuthScopes.Chat_Login,
+                ////                    TwitchLib.Api.Core.Enums.AuthScopes.Helix_User_Edit_Broadcast,
+                //                    TwitchLib.Api.Core.Enums.AuthScopes.Helix_User_Read_Broadcast,
+                //                    TwitchLib.Api.Core.Enums.AuthScopes.Helix_Moderation_Read
+                //                }
             });
         }
 
@@ -95,7 +95,7 @@
         {
             TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
             api.V5.Channels.GetChannelByIDAsync(twitchConfiguration.BroadcasterUserId)
-                .ContinueWith(task => 
+                .ContinueWith(task =>
                 {
                     updateChannelEvent.Update(task.Result);
                     return api.V5.Channels.UpdateChannelAsync(twitchConfiguration.BroadcasterUserId, updateChannelEvent.Title, updateChannelEvent.Game);
@@ -103,18 +103,27 @@
                 .ContinueWith(task => task.Result.ContinueWith(x => PublishSuccessMessageOnCompletion(x)));
         }
 
+        public async Task<string> GetCurrentGame()
+        {
+            TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
+            var channel = await api.V5.Channels.GetChannelByIDAsync(twitchConfiguration.BroadcasterUserId);
+            return channel.Game;
+        }
+
         private void PublishSuccessMessageOnCompletion(Task<Channel> task)
         {
-            task.ContinueWith(t => {
+            task.ContinueWith(t =>
+            {
                 PublishFeedbackMessage("Titel oder Game konnte nicht geändert werden.");
                 logger.Error(t.Exception);
             },
             TaskContinuationOptions.OnlyOnFaulted);
 
-            task.ContinueWith(t => {
+            task.ContinueWith(t =>
+            {
                 PublishFeedbackMessage("Titel oder Game wurden geändert.");
             },
-            TaskContinuationOptions.OnlyOnRanToCompletion);            
+            TaskContinuationOptions.OnlyOnRanToCompletion);
         }
 
         private void PublishFeedbackMessage(string message)

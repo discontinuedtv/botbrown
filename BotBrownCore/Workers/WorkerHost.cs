@@ -8,6 +8,7 @@
     using System.Threading.Tasks;
     using Microsoft.Owin.Hosting;
     using System;
+    using BotBrown.ChatCommands;
 
     public class WorkerHost : IWorkerHost
     {
@@ -18,8 +19,17 @@
         private readonly ILogger logger;
         private readonly IConfigurationManager configurationManager;
         private readonly IPresenceStore presenceStore;
+        private readonly IChatCommandResolver chatCommandResolver;
 
-        public WorkerHost(IEventBus bus, ITextToSpeechProcessor textToSpeechProcessor, ITwitchClientWrapper clientWrapper, ITwitchApiWrapper apiWrapper, ILogger logger, IConfigurationManager configurationManager, IPresenceStore presenceStore)
+        public WorkerHost(
+            IEventBus bus,
+            ITextToSpeechProcessor textToSpeechProcessor,
+            ITwitchClientWrapper clientWrapper,
+            ITwitchApiWrapper apiWrapper,
+            ILogger logger,
+            IConfigurationManager configurationManager,
+            IPresenceStore presenceStore,
+            IChatCommandResolver chatCommandResolver)
         {
             this.bus = bus;
             this.textToSpeechProcessor = textToSpeechProcessor;
@@ -28,6 +38,7 @@
             this.logger = logger;
             this.configurationManager = configurationManager;
             this.presenceStore = presenceStore;
+            this.chatCommandResolver = chatCommandResolver;
         }
 
         public void Execute(CancellationToken cancellationToken, BotArguments botArguments)
@@ -76,7 +87,7 @@
         {
             Task.Run(async () =>
             {
-                using (var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, textToSpeechProcessor, logger))
+                using (var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, textToSpeechProcessor, logger, chatCommandResolver))
                 {
                     return await commandWorker.Execute(cancellationToken);
                 }

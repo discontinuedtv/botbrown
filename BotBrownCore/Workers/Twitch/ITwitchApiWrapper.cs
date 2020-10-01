@@ -2,6 +2,7 @@
 {
     using BotBrown.Configuration;
     using BotBrown.Events;
+    using System.Threading.Tasks;
 
     public interface ITwitchApiWrapper
     {
@@ -9,5 +10,7 @@
 
         void Stop();
         void UpdateChannel(UpdateChannelEvent channelUpdate);
+
+        Task<string> GetCurrentGame();
     }
 }
