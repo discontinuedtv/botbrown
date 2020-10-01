@@ -14,13 +14,12 @@
 
             foreach (var arg in args)
             {
-                /*
                 if (arg == "-notwitch")
                 {
                     dontConnectToTwitch = true;
                     continue;
                 }
-                */
+
                 if (arg == "-debug")
                 {
                     isDebug = true;
