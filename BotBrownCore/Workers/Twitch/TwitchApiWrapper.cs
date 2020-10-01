@@ -55,15 +55,6 @@
             {
                 ClientId = twitchConfiguration.ApiClientId,
                 AccessToken = twitchConfiguration.ApiAccessToken
-                //                Scopes = new List<TwitchLib.Api.Core.Enums.AuthScopes>
-                //                {
-                ////                    TwitchLib.Api.Core.Enums.AuthScopes.Channel_Editor,
-                ////                    TwitchLib.Api.Core.Enums.AuthScopes.Channel_Subscriptions,
-                //                    TwitchLib.Api.Core.Enums.AuthScopes.Chat_Login,
-                ////                    TwitchLib.Api.Core.Enums.AuthScopes.Helix_User_Edit_Broadcast,
-                //                    TwitchLib.Api.Core.Enums.AuthScopes.Helix_User_Read_Broadcast,
-                //                    TwitchLib.Api.Core.Enums.AuthScopes.Helix_Moderation_Read
-                //                }
             });
         }
 
