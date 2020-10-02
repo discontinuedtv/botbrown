@@ -7,6 +7,7 @@
     using BotBrown.Workers.Twitch;
     using System;
     using System.Threading.Tasks;
+    using Serilog;
 
     public class ViewDeathCommand : BaseChatCommand
     {
@@ -55,7 +56,7 @@
             }
             catch (Exception e)
             {
-                logger.Error(e);
+                logger.Error("Ein Fehler ist in ViewDeathCommand aufgetreten. Exception: {e}", e);
             }
 
             return;

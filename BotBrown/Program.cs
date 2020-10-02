@@ -12,6 +12,7 @@
             bool isDebug = false;
             string customConfigurationPath = null;
             string customSoundsPath = null;
+            string logPath = "log/";
 
             foreach (var arg in args)
             {
@@ -38,9 +39,15 @@
                     customSoundsPath = arg.Split(':')[1];
                     continue;
                 }
+
+                if (arg.StartsWith("-l:"))
+                {
+                    logPath = arg.Split(':')[1];
+                    continue;
+                }
             }
 
-            var botArguments = new BotArguments(isDebug, dontConnectToTwitch, customConfigurationPath, customSoundsPath);
+            var botArguments = new BotArguments(isDebug, dontConnectToTwitch, customConfigurationPath, customSoundsPath, logPath);
 
             WindowsApplication.Init();
             Run(botArguments);

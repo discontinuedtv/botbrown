@@ -11,6 +11,7 @@
     using TwitchLib.Api.Services;
     using TwitchLib.Api.Services.Events.FollowerService;
     using TwitchLib.Api.V5.Models.Channels;
+    using Serilog;
 
     public class TwitchApiWrapper : ITwitchApiWrapper
     {
@@ -106,7 +107,7 @@
             task.ContinueWith(t =>
             {
                 PublishFeedbackMessage("Titel oder Game konnte nicht geändert werden.");
-                logger.Error(t.Exception);
+                logger.Error("Beim ändern der Kanaleinstellungen ist ein Fehler aufgetreten: {Exception}", t.Exception);
             },
             TaskContinuationOptions.OnlyOnFaulted);
 

@@ -7,8 +7,9 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Owin.Hosting;
-    using System;
     using BotBrown.ChatCommands;
+    using Serilog;
+    using System;
 
     public class WorkerHost : IWorkerHost
     {
@@ -37,7 +38,7 @@
             this.textToSpeechProcessor = textToSpeechProcessor;
             this.clientWrapper = clientWrapper;
             this.apiWrapper = apiWrapper;
-            this.logger = logger;
+            this.logger = logger.ForContext<WorkerHost>();
             this.configurationManager = configurationManager;
             this.presenceStore = presenceStore;
             this.chatCommandResolver = chatCommandResolver;
