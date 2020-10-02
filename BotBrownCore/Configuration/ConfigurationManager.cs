@@ -3,24 +3,29 @@
     using BotBrown.Configuration.Factories;
     using Newtonsoft.Json;
     using System;
-    using System.Collections.Generic;
+    using System.Collections.Concurrent;
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using Serilog;
+    using System.Collections.Generic;
 
     public sealed class ConfigurationManager : IConfigurationManager
     {
-        private readonly string configurationBasePath = Environment.CurrentDirectory;
+        private readonly IConfigurationPathProvider configurationPathProvider;
         private readonly IConfigurationFileFactoryRegistry registry;
         private readonly ILogger logger;
-        private readonly Dictionary<Type, (IConfiguration, string)> configurations;
+        private readonly ConcurrentDictionary<Type, (IConfiguration, string)> configurations;
 
-        public ConfigurationManager(IConfigurationFileFactoryRegistry registry, ILogger logger)
+        private string ConfigurationBasePath => configurationPathProvider.Path;
+
+        public ConfigurationManager(IConfigurationFileFactoryRegistry registry, ILogger logger, IConfigurationPathProvider configurationPathProvider)
         {
-            configurations = new Dictionary<Type, (IConfiguration, string)>();
+            configurations = new ConcurrentDictionary<Type, (IConfiguration, string)>();
             this.registry = registry;
-            this.logger = logger;
+            this.logger = logger.ForContext<ConfigurationManager>();
+            this.configurationPathProvider = configurationPathProvider;
         }
 
         public void ResetCacheFor(string filename)
@@ -38,8 +43,8 @@
 
             if (typeToRemoveFromCache != null)
             {
-                logger.Log($"Configuration file '{filename}' changed. Clearing cache.");
-                configurations.Remove(typeToRemoveFromCache);
+                logger.Information($"Configuration file '{filename}' changed. Clearing cache.");
+                configurations.TryRemove(typeToRemoveFromCache, out var _);
             }
         }
 
@@ -51,7 +56,7 @@
                 return (T)configurations[typeof(T)].Item1;
             }
 
-            string pathToFile = $"{configurationBasePath}/{filename}";
+            string pathToFile = $"{ConfigurationBasePath}/{filename}";
 
             if (!File.Exists(pathToFile))
             {
@@ -59,20 +64,22 @@
                 T defaultConfiguration = factory.CreateDefaultConfiguration();
                 WriteConfiguration(defaultConfiguration, filename);
 
-                configurations.Add(typeof(T), (defaultConfiguration, filename));
+                configurations.TryAdd(typeof(T), (defaultConfiguration, filename));
 
-                defaultConfiguration.PropertyChanged += ConfigurationChanged;
+                if(defaultConfiguration is IChangeableConfiguration changeableConfiguration)
+                    changeableConfiguration.PropertyChanged += ConfigurationChanged;
 
                 return defaultConfiguration;
             }
 
-            using (TextReader reader = new StreamReader($"{configurationBasePath}/{filename}"))
+            using (TextReader reader = new StreamReader($"{ConfigurationBasePath}/{filename}"))
             {
                 string serialzedConfiguration = reader.ReadToEnd();
                 var configuration = JsonConvert.DeserializeObject<T>(serialzedConfiguration);
-                configurations.Add(typeof(T), (configuration, filename));
+                configurations.TryAdd(typeof(T), (configuration, filename));
 
-                configuration.PropertyChanged += ConfigurationChanged;
+                if (configuration is IChangeableConfiguration changeableConfiguration)
+                    changeableConfiguration.PropertyChanged += ConfigurationChanged;
 
                 return configuration;
             }
@@ -91,7 +98,7 @@
                 NullValueHandling = NullValueHandling.Ignore
             };
 
-            using (StreamWriter sw = new StreamWriter($"{configurationBasePath}/{filename}"))
+            using (StreamWriter sw = new StreamWriter($"{ConfigurationBasePath}/{filename}"))
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
                 serializer.Serialize(writer, configurationValue);
@@ -121,7 +128,6 @@
                 {
                     if (!configurations.TryGetValue(type, out (IConfiguration, string) _))
                     {
-
                         MethodInfo method = GetType().GetMethod(nameof(LoadConfiguration));
 
                         MethodInfo genericMethod = method.MakeGenericMethod(GetType());

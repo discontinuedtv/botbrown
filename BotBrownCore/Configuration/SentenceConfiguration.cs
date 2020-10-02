@@ -15,8 +15,6 @@
 
         public string SubBombAlert { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public bool IsValid()
         {
             return true;

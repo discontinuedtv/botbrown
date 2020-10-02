@@ -17,7 +17,5 @@
 
         [JsonProperty("isValid")]
         public bool IsValid => status.IsValid;
-
-        public IEnumerable<ConfigurationStep>
     }
 }

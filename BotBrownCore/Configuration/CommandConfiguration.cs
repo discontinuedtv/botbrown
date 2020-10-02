@@ -4,15 +4,26 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
+    using System.Collections.ObjectModel;
 
     [ConfigurationFile(ConfigurationFileConstants.Commands)]
-    public class CommandConfiguration : IConfiguration
+    public class CommandConfiguration : IChangeableConfiguration
     {
         private bool isInitialized;
         private Dictionary<string, CommandDefinition> definitions = new Dictionary<string, CommandDefinition>();
         private List<string> allDefinitionKeys = new List<string>();
 
-        public List<CommandDefinition> CommandsDefinitions { get; set; } = new List<CommandDefinition>();
+        public ObservableCollection<CommandDefinition> CommandsDefinitions { get; set; } = new ObservableCollection<CommandDefinition>();
+
+        public CommandConfiguration()
+        {
+            CommandsDefinitions.CollectionChanged += CommandsDefinitions_CollectionChanged;
+        }
+
+        private void CommandsDefinitions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CommandsDefinitions)));
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -56,6 +67,8 @@
                 allDefinitionKeys.Add(commandDefinition.Shortcut);
                 definitions.Add(commandDefinition.Shortcut, commandDefinition);
             }
+
+            isInitialized = true;
         }
 
         public bool IsValid()

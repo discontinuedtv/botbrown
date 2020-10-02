@@ -5,12 +5,16 @@
     using BotBrown.Events;
     using BotBrown.Events.Twitch;
     using System;
+    using System.Collections.Generic;
     using TwitchLib.Client;
     using TwitchLib.Client.Events;
     using TwitchLib.Client.Models;
     using TwitchLib.Communication.Clients;
     using TwitchLib.Communication.Events;
     using TwitchLib.Communication.Models;
+    using Emote = Events.Twitch.Emote;
+    using UserType = Models.UserType;
+    using Serilog;
 
     public class TwitchClientWrapper : ITwitchClientWrapper
     {
@@ -23,7 +27,7 @@
         {
             this.usernameResolver = usernameResolver;
             this.bus = bus;
-            this.logger = logger;
+            this.logger = logger.ForContext<TwitchClientWrapper>();
         }
 
         public void ConnectToTwitch(TwitchConfiguration twitchConfiguration)
@@ -78,8 +82,40 @@
         {
             ChatCommand command = chatCommandReceivedArguments.Command;
             ChannelUser user = usernameResolver.ResolveUsername(new ChannelUser(command.ChatMessage.UserId, command.ChatMessage.DisplayName, command.ChatMessage.DisplayName));
+            string optionalUser = null;
 
-            bus.Publish(new ChatCommandReceivedEvent(user, command.CommandText, command.ChatMessage.Channel));
+            if(chatCommandReceivedArguments.Command.ArgumentsAsString.StartsWith("@"))
+            {
+                optionalUser = chatCommandReceivedArguments.Command.ArgumentsAsString;
+            }
+
+            var userType = ConvertToInternalUserType(command.ChatMessage);
+            bus.Publish(new ChatCommandReceivedEvent(user, command.CommandText, command.ArgumentsAsString, command.ChatMessage.Channel, optionalUser, userType));
+        }
+
+        private UserType ConvertToInternalUserType(ChatMessage chatMessage)
+        {
+            if(chatMessage.IsBroadcaster)
+            {
+                return UserType.Broadcaster;
+            }
+
+            if(chatMessage.IsModerator)
+            {
+                return UserType.Moderator;
+            }
+
+            if(chatMessage.IsVip)
+            {
+                return UserType.Vip;
+            }
+
+            if(chatMessage.IsSubscriber)
+            {
+                return UserType.Subscriber;
+            }
+
+            return UserType.Viewer;
         }
 
         private void Client_Log(object sender, OnLogArgs e)
@@ -104,13 +140,13 @@
 
         private void Client_OnConnected(object sender, OnConnectedArgs e)
         {
-            logger.Log($"Connected to {e.AutoJoinChannel}");
+            logger.Information($"Connected to {e.AutoJoinChannel}");
             bus.Publish(new ConnectedToTwitchEvent());
         }
 
         private void Client_OnDisconnected(object sender, OnDisconnectedEventArgs e)
         {
-            logger.Log($"Disconnected");
+            logger.Information($"Disconnected");
             bus.Publish(new DisconnectedFromTwitchEvent());
         }
 
@@ -122,7 +158,7 @@
 
         private void Client_OnLeftChannel(object sender, OnLeftChannelArgs e)
         {
-            logger.Log($"{e.BotUsername} left Channel {e.Channel}");
+            logger.Information($"{e.BotUsername} left Channel {e.Channel}");
             bus.Publish(new TwitchChannelLeftEvent(e.Channel));
         }
 
@@ -133,9 +169,16 @@
                 return;
             }
 
+            var emotesInMessage = new List<Emote>();
+
+            foreach (TwitchLib.Client.Models.Emote emote in e.ChatMessage.EmoteSet.Emotes)
+            {
+                emotesInMessage.Add(new Emote(emote.Name));
+            }
+
             ChannelUser user = usernameResolver.ResolveUsername(new ChannelUser(e.ChatMessage.UserId, e.ChatMessage.DisplayName, e.ChatMessage.DisplayName));
             TwitchChatMessage chatMessage = new TwitchChatMessage(e.ChatMessage.Message, e.ChatMessage.IsBroadcaster, e.ChatMessage.IsModerator, e.ChatMessage.CustomRewardId, e.ChatMessage.Channel);
-            MessageReceivedEvent message = new MessageReceivedEvent(user, chatMessage);
+            MessageReceivedEvent message = new MessageReceivedEvent(user, chatMessage, emotesInMessage);
 
             bus.Publish(message);
         }

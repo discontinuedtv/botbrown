@@ -12,6 +12,8 @@
     using BotBrown.Workers.Webserver;
     using Castle.Windsor;
     using BotBrown;
+    using BotBrown.ChatCommands;
+    using Serilog;
 
     public class WorkerHost : IWorkerHost
     {
@@ -22,16 +24,29 @@
         private readonly ILogger logger;
         private readonly IConfigurationManager configurationManager;
         private readonly IPresenceStore presenceStore;
+        private readonly IChatCommandResolver chatCommandResolver;
+        private readonly ISoundProcessor soundProcessor;
 
-        public WorkerHost(IEventBus bus, ITextToSpeechProcessor textToSpeechProcessor, ITwitchClientWrapper clientWrapper, ITwitchApiWrapper apiWrapper, ILogger logger, IConfigurationManager configurationManager, IPresenceStore presenceStore)
+        public WorkerHost(
+            IEventBus bus,
+            ITextToSpeechProcessor textToSpeechProcessor,
+            ITwitchClientWrapper clientWrapper,
+            ITwitchApiWrapper apiWrapper,
+            ILogger logger,
+            IConfigurationManager configurationManager,
+            IPresenceStore presenceStore,
+            IChatCommandResolver chatCommandResolver,
+            ISoundProcessor soundProcessor)
         {
             this.bus = bus;
             this.textToSpeechProcessor = textToSpeechProcessor;
             this.clientWrapper = clientWrapper;
             this.apiWrapper = apiWrapper;
-            this.logger = logger;
+            this.logger = logger.ForContext<WorkerHost>();
             this.configurationManager = configurationManager;
             this.presenceStore = presenceStore;
+            this.chatCommandResolver = chatCommandResolver;
+            this.soundProcessor = soundProcessor;
         }
 
         public WindsorContainer Container { get; set; }
@@ -73,7 +88,7 @@
         {
             Task.Run(async () =>
             {
-                var ttsWorker = new TextToSpeechWorker(bus, textToSpeechProcessor);
+                var ttsWorker = new SoundWorker(bus, textToSpeechProcessor, soundProcessor, logger);
                 return await ttsWorker.Execute(cancellationToken);
             });
         }
@@ -82,7 +97,7 @@
         {
             Task.Run(async () =>
             {
-                using (var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, textToSpeechProcessor, logger))
+                using (var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, textToSpeechProcessor, logger, chatCommandResolver))
                 {
                     return await commandWorker.Execute(cancellationToken);
                 }

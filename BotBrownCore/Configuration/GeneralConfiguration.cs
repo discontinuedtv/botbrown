@@ -14,8 +14,6 @@
 
         public HashSet<string> ByePhrases { get; set; } = new HashSet<string>();
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public bool IsValid()
         {
             return true;

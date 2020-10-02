@@ -1,17 +1,18 @@
 ﻿namespace BotBrown.Workers
 {
     using BotBrown;
+    using BotBrown.ChatCommands;
     using BotBrown.Configuration;
     using BotBrown.Events;
     using BotBrown.Events.Twitch;
     using BotBrown.Workers.TextToSpeech;
     using BotBrown.Workers.Timers;
-    using BotBrownCore.Configuration;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Serilog;
 
     public sealed class CommandWorker : IDisposable
     {
@@ -19,39 +20,32 @@
         private readonly IConfigurationManager configurationManager;
         private readonly IPresenceStore presenceStore;
         private readonly ILogger logger;
+        private readonly IChatCommandResolver chatCommandResolver;
         private readonly ITextToSpeechProcessor textToSpeechProcessor; // TODO !
+        private readonly List<TimerCommand> timerCommands = new List<TimerCommand>();
 
         private Dictionary<string, SoundCommand> soundsPerCommand = new Dictionary<string, SoundCommand>();
-        private List<TimerCommand> timerCommands = new List<TimerCommand>();
-
         private Guid identifier = Guid.NewGuid();
 
-        private AudioConfiguration audioConfiguration;
-        private SentenceConfiguration sentenceConfiguration;
-        private GeneralConfiguration generalConfiguration;
-        private TwitchConfiguration twitchConfiguration;
-        private GreetingConfiguration greetingConfiguration;
-        private UsernameConfiguration usernameConfiguration;
-        private CommandConfiguration commandConfiguration;
-
-        public CommandWorker(IEventBus bus, IConfigurationManager configurationManager, IPresenceStore presenceStore, ITextToSpeechProcessor textToSpeechProcessor, ILogger logger)
+        public CommandWorker(
+            IEventBus bus,
+            IConfigurationManager configurationManager,
+            IPresenceStore presenceStore,
+            ITextToSpeechProcessor textToSpeechProcessor,
+            ILogger logger,
+            IChatCommandResolver chatCommandResolver)
         {
             this.bus = bus;
             this.configurationManager = configurationManager;
             this.presenceStore = presenceStore;
-            this.logger = logger;
+            this.logger = logger.ForContext<CommandWorker>();
+            this.chatCommandResolver = chatCommandResolver;
             this.textToSpeechProcessor = textToSpeechProcessor;
         }
 
         public async Task<bool> Execute(CancellationToken cancellationToken)
         {
-            audioConfiguration = configurationManager.LoadConfiguration<AudioConfiguration>(ConfigurationFileConstants.Audio);
-            sentenceConfiguration = configurationManager.LoadConfiguration<SentenceConfiguration>(ConfigurationFileConstants.Sentences);
-            generalConfiguration = configurationManager.LoadConfiguration<GeneralConfiguration>(ConfigurationFileConstants.General);
-            twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
-            greetingConfiguration = configurationManager.LoadConfiguration<GreetingConfiguration>(ConfigurationFileConstants.Greetings);
-            usernameConfiguration = configurationManager.LoadConfiguration<UsernameConfiguration>(ConfigurationFileConstants.Usernames);
-            commandConfiguration = configurationManager.LoadConfiguration<CommandConfiguration>(ConfigurationFileConstants.Commands);
+            RefreshCommands();
 
             bus.SubscribeToTopic<MessageReceivedEvent>(identifier);
             bus.SubscribeToTopic<NewFollowerEvent>(identifier);
@@ -118,31 +112,58 @@
 
         private void ProcessChatCommandReceivedEvent(ChatCommandReceivedEvent @event)
         {
-            ChannelUser user = @event.User;
-            string channelName = @event.ChannelName;
+            var simpleTextCommandConfiguration = configurationManager.LoadConfiguration<SimpleTextCommandConfiguration>(ConfigurationFileConstants.TextCommands);
+            var chatCommands = chatCommandResolver.ResolveAllChatCommands();
 
-            if (@event.CommandText == "re")
+            foreach(var command in chatCommands)
             {
-                // TODO: Vielleicht lieber Zurück aus der Zukunft Daten? 1955, 1985, 2015
+                if(command.CanConsume(@event))
+                {
+                    var shouldContinue = command.Consume(@event).Result;
+                    if(!shouldContinue)
+                    {
+                        return;
+                    }
+                }
+            }
 
-                Random rand = new Random();
-                int year = rand.Next(1400, 2180);
+            if (simpleTextCommandConfiguration.Commands.ContainsKey(@event.CommandText))
+            {
+                string optionalUser = @event.OptionalUser;
+                if (string.IsNullOrEmpty(optionalUser))
+                {
+                    bus.Publish(new SendChannelMessageRequestedEvent(simpleTextCommandConfiguration.Commands[@event.CommandText], @event.ChannelName));
+                    return;
+                }
 
-                bus.Publish(new SendChannelMessageRequestedEvent($"{user.RealUsername} ist zurück von der Zeitreise aus dem Jahr {year}", channelName));
+                bus.Publish(new SendChannelMessageRequestedEvent($"{optionalUser}: {simpleTextCommandConfiguration.Commands[@event.CommandText]}", @event.ChannelName));
                 return;
             }
         }
 
         public void Dispose()
+        { 
+        }
+
+        private void RefreshCommands()
         {
-            foreach (var command in soundsPerCommand)
+            soundsPerCommand.Clear();
+            CommandConfiguration commandConfiguration = configurationManager.LoadConfiguration<CommandConfiguration>(ConfigurationFileConstants.Commands);
+
+            foreach (CommandDefinition commandDefinition in commandConfiguration.CommandsDefinitions)
             {
-                command.Value.Dispose();
+                SoundCommand command = commandDefinition.CreateCommand();
+                soundsPerCommand.Add(command.Shortcut, command);
+
+                logger.Information($"Kommando {command.Shortcut} hinzugefügt.");
             }
+
+            logger.Information("Kommandos wurden geladen.");
         }
 
         private void ProcessNewFollowerEvent(NewFollowerEvent newFollowerEvent)
         {
+            var sentenceConfiguration = configurationManager.LoadConfiguration<SentenceConfiguration>(ConfigurationFileConstants.Sentences);
             foreach (ChannelUser newFollow in newFollowerEvent.NewFollowers)
             {
                 bus.Publish(new TextToSpeechEvent(newFollow, string.Format(sentenceConfiguration.FollowerAlert, newFollow.Username)));
@@ -151,30 +172,35 @@
 
         private void ProcessSubGiftEvent(SubGiftEvent subGiftEvent)
         {
+            var sentenceConfiguration = configurationManager.LoadConfiguration<SentenceConfiguration>(ConfigurationFileConstants.Sentences);
             ChannelUser user = subGiftEvent.User;
             bus.Publish(new TextToSpeechEvent(user, string.Format(sentenceConfiguration.GiftedSubscriberAlert, user.Username)));
         }
 
         private void ProcessNewSubscriberEvent(NewSubscriberEvent newSubscriberEvent)
         {
+            var sentenceConfiguration = configurationManager.LoadConfiguration<SentenceConfiguration>(ConfigurationFileConstants.Sentences);
             ChannelUser user = newSubscriberEvent.User;
             bus.Publish(new TextToSpeechEvent(user, string.Format(sentenceConfiguration.SubscriberAlert, user.Username)));
         }
 
         private void ProcessResubscriberEvent(ResubscriberEvent resubscriberEvent)
         {
+            var sentenceConfiguration = configurationManager.LoadConfiguration<SentenceConfiguration>(ConfigurationFileConstants.Sentences);
             ChannelUser user = resubscriberEvent.User;
             bus.Publish(new TextToSpeechEvent(user, string.Format(sentenceConfiguration.ResubscriberAlert, user.Username, resubscriberEvent.NumberOfMonthsSubscribed)));
         }
 
         private void ProcessCommunitySubscriptionEvent(CommunitySubscriptionEvent communitySubscriptionEvent)
         {
+            var sentenceConfiguration = configurationManager.LoadConfiguration<SentenceConfiguration>(ConfigurationFileConstants.Sentences);
             ChannelUser user = communitySubscriptionEvent.User;
             bus.Publish(new TextToSpeechEvent(user, string.Format(sentenceConfiguration.SubBombAlert, user.Username, communitySubscriptionEvent.NumberOfSubscriptionsGifted)));
         }
 
         private void ProcessChannelJoinedEvent(TwitchChannelJoinedEvent channelJoinedEvent)
         {
+            var generalConfiguration = configurationManager.LoadConfiguration<GeneralConfiguration>(ConfigurationFileConstants.General);
             if (string.IsNullOrEmpty(generalConfiguration.BotChannelGreeting))
             {
                 return;
@@ -200,20 +226,18 @@
                 return;
             }
 
+            if (AddEditOrDeleteSimpleTextCommand(message))
+            {
+                return;
+            }
+
             if (!RecordGreetingLanguage(message) && !RecordNamechange(message.Message) && !GetLanguages(message))
             {
                 GreetIfNecessary(message);
             }
 
             SayByeIfNecessary(message);
-
-            
-            string commandName = message.Message.MessageContainsAnyCommand(commandConfiguration.AllDefinitionKeys);
-            if (commandName != null)
-            {
-                ProcessPlaySoundRequestedEvent(new PlaySoundRequestedEvent(commandName));
-                return;
-            }
+            CheckForSoundCommands(message);
 
             if (SpeakIfNecessary(message))
             {
@@ -221,9 +245,33 @@
             }
         }
 
+        private void CheckForSoundCommands(MessageReceivedEvent message)
+        {
+            if (!message.HasEmotesInMessage)
+            {
+                return;
+            }
+
+            foreach (var emoteInMessage in message.EmotesInMessage)
+            {
+                if (!soundsPerCommand.TryGetValue(emoteInMessage.Name, out SoundCommand command))
+                {
+                    continue;
+                }
+
+                if (!command.ShouldExecute)
+                {
+                    continue;
+                }
+
+                bus.Publish(new PlaySoundEvent(command.Filename, command.Volume));
+                command.MarkAsExecuted();
+            }
+        }
+
         private void ProcessPlaySoundRequestedEvent(PlaySoundRequestedEvent @event)
         {
-            commandConfiguration = configurationManager.LoadConfiguration<CommandConfiguration>(ConfigurationFileConstants.Commands);
+            var commandConfiguration = configurationManager.LoadConfiguration<CommandConfiguration>(ConfigurationFileConstants.Commands);
 
             CommandDefinition commandDefinition = commandConfiguration.CommandsDefinitions.SingleOrDefault(x => x.Shortcut == @event.CommandName);
             if (commandDefinition == null)
@@ -232,7 +280,7 @@
             }
 
             SoundCommand soundCommand = commandDefinition.CreateCommand();
-            soundCommand.Execute(audioConfiguration);
+            soundCommand.MarkAsExecuted();
         }
 
         private bool WhatsTheTime(MessageReceivedEvent @event)
@@ -252,6 +300,26 @@
 
             DateTime now = DateTime.Now;
             bus.Publish(new TextToSpeechEvent(user, $"Die Zeitleitung zeigt {now:HH} Uhr {now:mm} an."));
+            return true;
+        }
+
+        private bool AddEditOrDeleteSimpleTextCommand(MessageReceivedEvent @event)
+        {
+            TwitchChatMessage message = @event.Message;
+            ChannelUser user = @event.User;
+
+            if (!message.IsMessageFromModerator && !message.IsMessageFromBroadcaster)
+            {
+                return false;
+            }
+
+            if (!message.MessageStartsWith("+!") && !message.MessageStartsWith("-!"))
+            {
+                return false;
+            }
+
+            var simpleTextCommandConfiguration = configurationManager.LoadConfiguration<SimpleTextCommandConfiguration>(ConfigurationFileConstants.TextCommands);
+            simpleTextCommandConfiguration.ProcessMessage(message.Message);
             return true;
         }
 
@@ -316,7 +384,6 @@
 
             string timerName = string.Join(" ", parameters.Skip(1));
 
-
             bus.Publish(new TextToSpeechEvent(user, $"Der Timer {timerName} wurde gestartet."));
 
             TimeSpan timerLength = TimeSpan.FromSeconds(timeInSeconds);
@@ -346,6 +413,7 @@
             TwitchChatMessage chatMessage = @event.Message;
             ChannelUser user = @event.User;
 
+            var twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
             if (!chatMessage.IsCustomRewardId(twitchConfiguration.TextToSpeechRewardId))
             {
                 return false;
@@ -367,6 +435,7 @@
 
             TwitchChatMessage message = @event.Message;
 
+            var generalConfiguration = configurationManager.LoadConfiguration<GeneralConfiguration>(ConfigurationFileConstants.General);
             if (message.IsGoodbyeMessage(generalConfiguration.ByePhrases))
             {
                 bus.Publish(new TextToSpeechEvent(user, string.Format(generalConfiguration.ByePhrase, user.Username)));
@@ -384,11 +453,11 @@
                 return false;
             }
 
-
             string requestedLanguage = chatMessage.ReplaceInNormalizedMessage("!sprache:", string.Empty);
 
             if (textToSpeechProcessor.TryGetLanguage(requestedLanguage, out string language)) // TODO !!
             {
+                var greetingConfiguration = configurationManager.LoadConfiguration<GreetingConfiguration>(ConfigurationFileConstants.Greetings);
                 greetingConfiguration.AddGreeting(user, language);
                 configurationManager.WriteConfiguration(greetingConfiguration, ConfigurationFileConstants.Greetings);
                 return true;
@@ -416,7 +485,7 @@
                 return false;
             }
 
-            if (!chatMessage.IsMessageFromModerator)
+            if (!chatMessage.IsMessageFromModerator && !chatMessage.IsMessageFromBroadcaster)
             {
                 return false;
             }
@@ -429,13 +498,13 @@
                 return false;
             }
 
+            var usernameConfiguration = configurationManager.LoadConfiguration<UsernameConfiguration>(ConfigurationFileConstants.Usernames);
             if (!usernameConfiguration.FindUserByRealUsername(namechangeParameters[0], out ChannelUser user))
             {
                 return false;
             }
 
-            user.Username = namechangeParameters[1];
-            configurationManager.WriteConfiguration(usernameConfiguration, ConfigurationFileConstants.Usernames);
+            usernameConfiguration.AddUsername(user.WithResolvedUsername(namechangeParameters[1]));
             return true;
         }
 

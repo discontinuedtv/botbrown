@@ -6,7 +6,7 @@
     using System.ComponentModel;
 
     [ConfigurationFile(ConfigurationFileConstants.Audio)]
-    public class AudioConfiguration : IConfiguration
+    public class AudioConfiguration : IChangeableConfiguration
     {
         private bool isInitialized;
         private readonly MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
