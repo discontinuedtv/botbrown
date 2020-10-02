@@ -6,6 +6,7 @@
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using Serilog;
 
     public sealed class TwitchInterfaceWorker : IDisposable
     {
@@ -22,7 +23,7 @@
             this.bus = bus;
             this.clientWrapper = clientWrapper;
             this.apiWrapper = apiWrapper;
-            this.logger = logger;
+            this.logger = logger.ForContext<TwitchInterfaceWorker>();
             this.configurationManager = configurationManager;
         }
 
@@ -31,11 +32,11 @@
             try
             {
                 twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
-                logger.Log("Twitch Konfiguration wurde geladen.");
+                logger.Information("Twitch Konfiguration wurde geladen.");
 
                 if (!twitchConfiguration.IsValid())
                 {
-                    logger.Log("Die Twitch Konfiguration ist nicht valide");
+                    logger.Information("Die Twitch Konfiguration ist nicht valide");
                     return false;
                 }
 
@@ -44,8 +45,7 @@
             }
             catch (Exception e)
             {
-                logger.Log("Der Bot wurde aufgrund eines Fehlers beendet");
-                logger.Error(e);
+                logger.Error("Der Bot wurde aufgrund eines Fehlers beendet. Fehler: {e}", e);
             }
 
             bus.SubscribeToTopic<SendChannelMessageRequestedEvent>(identifier);

@@ -6,6 +6,7 @@
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using Serilog;
 
     public class SoundWorker
     {
@@ -21,7 +22,7 @@
             this.bus = bus;
             this.textToSpeechProcessor = textToSpeechProcessor;
             this.soundProcessor = soundProcessor;
-            this.logger = logger;
+            this.logger = logger.ForContext<SoundWorker>();
         }
 
         public async Task<bool> Execute(CancellationToken cancellationToken)
@@ -47,7 +48,7 @@
                 }
                 catch (Exception e)
                 {
-                    logger.Error(e);
+                    logger.Error("Beim Vearbeiten der Soundanfrage ist ein Fehler aufgetreten: {e}", e);
                 }
             }
 

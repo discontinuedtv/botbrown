@@ -11,6 +11,7 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Serilog;
 
     public sealed class CommandWorker : IDisposable
     {
@@ -36,7 +37,7 @@
             this.bus = bus;
             this.configurationManager = configurationManager;
             this.presenceStore = presenceStore;
-            this.logger = logger;
+            this.logger = logger.ForContext<CommandWorker>();
             this.chatCommandResolver = chatCommandResolver;
             this.textToSpeechProcessor = textToSpeechProcessor;
         }
@@ -153,10 +154,10 @@
                 SoundCommand command = commandDefinition.CreateCommand();
                 soundsPerCommand.Add(command.Shortcut, command);
 
-                logger.Log($"Kommando {command.Shortcut} hinzugefügt.");
+                logger.Information($"Kommando {command.Shortcut} hinzugefügt.");
             }
 
-            logger.Log("Kommandos wurden geladen.");
+            logger.Information("Kommandos wurden geladen.");
         }
 
         private void ProcessNewFollowerEvent(NewFollowerEvent newFollowerEvent)

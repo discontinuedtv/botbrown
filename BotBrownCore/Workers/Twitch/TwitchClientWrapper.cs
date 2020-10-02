@@ -13,6 +13,7 @@
     using TwitchLib.Communication.Models;
     using Emote = Events.Twitch.Emote;
     using UserType = Models.UserType;
+    using Serilog;
 
     public class TwitchClientWrapper : ITwitchClientWrapper
     {
@@ -25,7 +26,7 @@
         {
             this.usernameResolver = usernameResolver;
             this.bus = bus;
-            this.logger = logger;
+            this.logger = logger.ForContext<TwitchClientWrapper>();
         }
 
         public void ConnectToTwitch(TwitchConfiguration twitchConfiguration)
@@ -138,13 +139,13 @@
 
         private void Client_OnConnected(object sender, OnConnectedArgs e)
         {
-            logger.Log($"Connected to {e.AutoJoinChannel}");
+            logger.Information($"Connected to {e.AutoJoinChannel}");
             bus.Publish(new ConnectedToTwitchEvent());
         }
 
         private void Client_OnDisconnected(object sender, OnDisconnectedEventArgs e)
         {
-            logger.Log($"Disconnected");
+            logger.Information($"Disconnected");
             bus.Publish(new DisconnectedFromTwitchEvent());
         }
 
@@ -156,7 +157,7 @@
 
         private void Client_OnLeftChannel(object sender, OnLeftChannelArgs e)
         {
-            logger.Log($"{e.BotUsername} left Channel {e.Channel}");
+            logger.Information($"{e.BotUsername} left Channel {e.Channel}");
             bus.Publish(new TwitchChannelLeftEvent(e.Channel));
         }
 

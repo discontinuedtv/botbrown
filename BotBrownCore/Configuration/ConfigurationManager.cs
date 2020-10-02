@@ -5,6 +5,7 @@
     using System.Collections.Concurrent;
     using System.ComponentModel;
     using System.IO;
+    using Serilog;
 
     public sealed class ConfigurationManager : IConfigurationManager
     {
@@ -19,7 +20,7 @@
         {
             configurations = new ConcurrentDictionary<Type, (IConfiguration, string)>();
             this.registry = registry;
-            this.logger = logger;
+            this.logger = logger.ForContext<ConfigurationManager>();
             this.configurationPathProvider = configurationPathProvider;
         }
 
@@ -38,7 +39,7 @@
 
             if (typeToRemoveFromCache != null)
             {
-                logger.Log($"Configuration file '{filename}' changed. Clearing cache.");
+                logger.Information($"Configuration file '{filename}' changed. Clearing cache.");
                 configurations.TryRemove(typeToRemoveFromCache, out var _);
             }
         }
