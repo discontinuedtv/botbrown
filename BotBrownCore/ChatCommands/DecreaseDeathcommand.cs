@@ -44,17 +44,14 @@
 
             if (!string.IsNullOrEmpty(game))
             {
-                var current = deathConfig.GetDeath(game);
-                deathConfig.DecreaseDeath(game);
-
-                var newCount = current--;
+                var newCount = deathConfig.DecreaseDeath(game);
                 if (newCount == 0)
                 {
                     eventBus.Publish(new SendChannelMessageRequestedEvent($"Im Spiel {game} sind wir damit bisher noch nie gestorben.", channelName));
                 }
                 else
                 {
-                    eventBus.Publish(new SendChannelMessageRequestedEvent($"Oha. Damit sind wir in '{game}' bereits {newCount}-mal gestorben.", channelName));
+                    eventBus.Publish(new SendChannelMessageRequestedEvent($"Oha. Damit sind wir in '{game}' nur {newCount}-mal gestorben.", channelName));
                 }
             }
             else

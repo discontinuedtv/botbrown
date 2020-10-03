@@ -41,14 +41,11 @@
             var deathConfig = configurationManager.LoadConfiguration<DeathCounterConfiguration>(ConfigurationFileConstants.DeathCounter);
             var game = await twitchApiWrapper.GetCurrentGame();
 
-            if(!string.IsNullOrEmpty(game))
+            if (!string.IsNullOrEmpty(game))
             {
-                var current = deathConfig.GetDeath(game);
-                deathConfig.IncreaseDeath(game);
-
-                var newCount = current++;
+                var newCount = deathConfig.IncreaseDeath(game);
                 eventBus.Publish(new SendChannelMessageRequestedEvent($"Oha. Damit sind wir in '{game}' bereits {newCount}-mal gestorben.", chatCommandReceivedEvent.ChannelName));
-            } 
+            }
             else
             {
                 logger.Warning("Es konnte kein Spiel ermittelt werden.");

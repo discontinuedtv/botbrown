@@ -39,15 +39,17 @@
                 var game = await twitchApiWrapper.GetCurrentGame();
                 if(string.IsNullOrEmpty(game))
                 {
+                    logger.Warning("Es konnte kein Spiel ermittelt werden.");
                     return;
                 }
 
                 var channelName = chatCommandReceivedEvent.ChannelName;
                 var deathCounter = configurationManager.LoadConfiguration<DeathCounterConfiguration>(ConfigurationFileConstants.DeathCounter);
+                var currentCounter = deathCounter.GetDeath(game);
 
-                if (deathCounter.DeathsPerGame.ContainsKey(game))
+                if (currentCounter > 0)
                 {
-                    eventBus.Publish(new SendChannelMessageRequestedEvent($"Im Spiel {game} sind wir bereits {deathCounter.DeathsPerGame[game]}-mal gestorben.", channelName));
+                    eventBus.Publish(new SendChannelMessageRequestedEvent($"Im Spiel {game} sind wir bereits {currentCounter}-mal gestorben.", channelName));
                 }
                 else
                 {
