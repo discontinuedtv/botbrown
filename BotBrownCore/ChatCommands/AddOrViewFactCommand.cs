@@ -4,7 +4,6 @@
     using BotBrown.Events;
     using BotBrown.Events.Twitch;
     using BotBrown.Models;
-    using Serilog;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
@@ -14,9 +13,8 @@
         private readonly IConfigurationManager configurationManager;
         private readonly IEventBus eventBus;
 
-        public AddOrViewFactCommand(ILogger logger, IConfigurationManager configurationManager, IEventBus eventBus)
+        public AddOrViewFactCommand(IConfigurationManager configurationManager, IEventBus eventBus)
         {
-            this.logger = logger.ForContext<AddOrViewFactCommand>();
             this.configurationManager = configurationManager;
             this.eventBus = eventBus;
         }
