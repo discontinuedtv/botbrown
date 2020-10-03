@@ -36,7 +36,7 @@
 
                 if (!twitchConfiguration.IsValid())
                 {
-                    logger.Information("Die Twitch Konfiguration ist nicht valide");
+                    logger.Information("Die Twitch Konfiguration ist nicht valide.");
                     return false;
                 }
 
@@ -45,7 +45,7 @@
             }
             catch (Exception e)
             {
-                logger.Error("Der Bot wurde aufgrund eines Fehlers beendet. Fehler: {e}", e);
+                logger.Error("Aufgrund eines Fehlers wurde die Verbindung zu Twitch unterbrochen. Fehler: {e}", e);
             }
 
             bus.SubscribeToTopic<SendChannelMessageRequestedEvent>(identifier);

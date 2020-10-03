@@ -27,6 +27,7 @@
 
         public AudioConfiguration()
         {
+            InitializeConfiguration();
         }
 
         public void InitializeConfiguration()

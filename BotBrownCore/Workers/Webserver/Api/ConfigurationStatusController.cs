@@ -1,10 +1,10 @@
 ﻿namespace BotBrown.Workers.Webserver.Api
 {
     using BotBrown.Configuration;
-    using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.Linq;
     using System.Web.Http;
+    using System.Web.Http.Results;
 
     public class ConfigurationStatusController : ApiController
     {
@@ -16,10 +16,12 @@
         }
 
         [HttpGet]
-        public string Get()
+        public JsonResult<ConfigurationsStatusViewModel> Get()
         {
-            IEnumerable<ConfigurationStatusViewModel> status = configurationManager.CheckConfigurationStatus().Select(x => new ConfigurationStatusViewModel(x));
-            return JsonConvert.SerializeObject(status);
+            ConfigurationStatusViewModel[] status = configurationManager.CheckConfigurationStatus().Select(x => new ConfigurationStatusViewModel(x)).ToArray();
+            var statusModels = new ConfigurationsStatusViewModel { Configurations = status };
+
+            return Json(statusModels);
         }
 
         // GET api/values/5 

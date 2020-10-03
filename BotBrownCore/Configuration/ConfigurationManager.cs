@@ -130,8 +130,8 @@
                     {
                         MethodInfo method = GetType().GetMethod(nameof(LoadConfiguration));
 
-                        MethodInfo genericMethod = method.MakeGenericMethod(GetType());
-                        genericMethod.Invoke(null, new object[] { asd[0].Filename });
+                        MethodInfo genericMethod = method.MakeGenericMethod(type);
+                        genericMethod.Invoke(this, new object[] { asd[0].Filename });
                     }
                 }
             }

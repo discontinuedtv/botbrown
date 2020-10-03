@@ -21,15 +21,24 @@ export class ConfigurationState {
     }
 }
 
+export type ConfigurationStatus = {
+    name: string,
+    isValid: boolean
+}
+
 const asyncConfiguration = selector<ConfigurationsType | undefined>({
     key: "asyncConfiguration",
     get: async ({ get }) => {
 
         try {
-            return api<ConfigurationsType | undefined>("http://localhost:12345/api/configurations", (err) => {
-                console.log(err);
-                return undefined;
-            });
+            var result = await httpGet<Array<ConfigurationStatus>>("http://localhost:43210/api/configurationstatus");
+            if (result.parsedBody === undefined) {
+                throw new Error('HILFE!');
+            }
+
+            console.log(result);
+
+            result.parsedBody.forEach(x => console.log(x));
         }
         catch (e) {
             return undefined;
@@ -37,15 +46,46 @@ const asyncConfiguration = selector<ConfigurationsType | undefined>({
     }
 });
 
-function api<T>(url: string, onError: (error: any) => T): Promise<T> {
-    return fetch(url, { mode: 'no-cors' })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(response.statusText)
-            }
-            return response.json() as Promise<T>
-        })
-        .catch(error => onError(error));
+interface HttpResponse<T> extends Response {
+    parsedBody?: T;
+}
+
+export async function httpGet<T>(
+    path: string,
+    args: RequestInit = {
+        method: "get",
+        mode: "cors",
+        headers: new Headers({ 'content-type': 'application/json' })
+    }
+): Promise<HttpResponse<T>> {
+    return await http<T>(new Request(path, args));
+};
+
+export async function post<T>(
+    path: string,
+    body: any,
+    args: RequestInit = { method: "post", body: JSON.stringify(body) }
+): Promise<HttpResponse<T>> {
+    return await http<T>(new Request(path, args));
+};
+
+export async function put<T>(
+    path: string,
+    body: any,
+    args: RequestInit = { method: "put", body: JSON.stringify(body) }
+): Promise<HttpResponse<T>> {
+    return await http<T>(new Request(path, args));
+};
+
+export async function http<T>(
+    request: RequestInfo
+): Promise<HttpResponse<T>> {
+    const response: HttpResponse<T> = await fetch(
+        request
+    );
+
+    response.parsedBody = response.json();
+    return response;
 }
 
 export type ConfigurationsType = {

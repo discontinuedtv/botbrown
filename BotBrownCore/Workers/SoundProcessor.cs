@@ -6,20 +6,24 @@
     using System;
     using System.IO;
     using System.Threading;
+    using Serilog;
 
     public class SoundProcessor : ISoundProcessor
     {
         private readonly IConfigurationManager configurationManager;
         private readonly ISoundPathProvider soundPathProvider;
+        private readonly ILogger logger;
 
-        public SoundProcessor(IConfigurationManager configurationManager, ISoundPathProvider soundPathProvider)
+        public SoundProcessor(IConfigurationManager configurationManager, ISoundPathProvider soundPathProvider, ILogger logger)
         {
             this.configurationManager = configurationManager;
             this.soundPathProvider = soundPathProvider;
+            this.logger = logger.ForContext<SoundProcessor>();
         }
 
         public void Play(string filename, float volume)
         {
+            logger.Information("Playing {filename} at Volume {volume}", filename, volume);
             var configuration = configurationManager.LoadConfiguration<AudioConfiguration>(ConfigurationFileConstants.Audio);
 
             var pathToFile = Path.Combine(soundPathProvider.Path, filename);
