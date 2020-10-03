@@ -36,13 +36,5 @@ namespace BotBrown
             Assert.That(result.Username, Is.EqualTo("Resolved Name"));
             Assert.That(configurationChanged, Is.False);
         }
-
-        [Test]
-        public void asd()
-        {
-            int value = 80;
-
-            float result = value / 100;
-        }
     }
 }
