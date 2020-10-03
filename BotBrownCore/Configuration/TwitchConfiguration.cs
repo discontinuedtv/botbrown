@@ -1,5 +1,8 @@
 ﻿namespace BotBrown.Configuration
 {
+    using System.ComponentModel;
+
+    [ConfigurationFile(ConfigurationFileConstants.Twitch)]
     public class TwitchConfiguration : IConfiguration
     {
         public string Username { get; set; }
@@ -18,7 +21,7 @@
 
         public string BroadcasterUserId { get; set; }
 
-        internal bool IsValid()
+        public bool IsValid()
         {
             return !string.IsNullOrWhiteSpace(Username) &&
                 !string.IsNullOrWhiteSpace(AccessToken) &&

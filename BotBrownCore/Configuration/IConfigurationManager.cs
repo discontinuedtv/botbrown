@@ -1,4 +1,6 @@
-﻿namespace BotBrown.Configuration
+﻿using System.Collections.Generic;
+
+namespace BotBrown.Configuration
 {
     public interface IConfigurationManager
     {
@@ -8,5 +10,7 @@
             where T : IConfiguration;
 
         void WriteConfiguration(IConfiguration configurationValue, string filename);
+        
+        IEnumerable<ConfigurationStatus> CheckConfigurationStatus();
     }
 }

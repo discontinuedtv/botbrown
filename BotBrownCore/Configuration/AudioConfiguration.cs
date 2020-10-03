@@ -5,6 +5,7 @@
     using Newtonsoft.Json;
     using System.ComponentModel;
 
+    [ConfigurationFile(ConfigurationFileConstants.Audio)]
     public class AudioConfiguration : IChangeableConfiguration
     {
         private bool isInitialized;
@@ -26,6 +27,7 @@
 
         public AudioConfiguration()
         {
+            InitializeConfiguration();
         }
 
         public void InitializeConfiguration()
@@ -78,6 +80,11 @@
             }
 
             isInitialized = true;
+        }
+
+        public bool IsValid()
+        {
+            return SelectedSoundCommandDevice != null && SelectedTTSDevice != null;
         }
     }
 }

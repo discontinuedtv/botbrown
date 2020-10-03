@@ -1,5 +1,6 @@
 ﻿namespace BotBrown.Workers
 {
+    using BotBrown;
     using BotBrown.ChatCommands;
     using BotBrown.Configuration;
     using BotBrown.Events;
@@ -270,10 +271,16 @@
 
         private void ProcessPlaySoundRequestedEvent(PlaySoundRequestedEvent @event)
         {
-            if (soundsPerCommand.TryGetValue(@event.CommandName, out SoundCommand command))
+            var commandConfiguration = configurationManager.LoadConfiguration<CommandConfiguration>(ConfigurationFileConstants.Commands);
+
+            CommandDefinition commandDefinition = commandConfiguration.CommandsDefinitions.SingleOrDefault(x => x.Shortcut == @event.CommandName);
+            if (commandDefinition == null)
             {
-                command.MarkAsExecuted();
+                return;
             }
+
+            SoundCommand soundCommand = commandDefinition.CreateCommand();
+            soundCommand.MarkAsExecuted();
         }
 
         private bool WhatsTheTime(MessageReceivedEvent @event)

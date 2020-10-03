@@ -8,6 +8,7 @@
         {
             bool dontConnectToTwitch = false;
             bool isDebug = false;
+            string port = null;
             string customConfigurationPath = null;
             string customSoundsPath = null;
             string logPath = "log/";
@@ -24,6 +25,11 @@
                 {
                     isDebug = true;
                     continue;
+                }
+
+                if (arg.StartsWith("-port:"))
+                {
+                    port = arg.Split(':')[1];
                 }
 
                 if (arg.StartsWith("-ccp:"))
@@ -44,7 +50,7 @@
                 }
             }
 
-            var botArguments = new BotArguments(isDebug, dontConnectToTwitch, customConfigurationPath, customSoundsPath, logPath);
+            var botArguments = new BotArguments(isDebug, dontConnectToTwitch, port, customConfigurationPath, customSoundsPath, logPath);
             using (var bot = new Bot())
             {
                 bot.Execute(botArguments);

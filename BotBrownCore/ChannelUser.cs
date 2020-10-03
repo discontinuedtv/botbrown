@@ -1,4 +1,4 @@
-﻿namespace BotBrown.Configuration
+﻿namespace BotBrown
 {
     public sealed class ChannelUser
     {

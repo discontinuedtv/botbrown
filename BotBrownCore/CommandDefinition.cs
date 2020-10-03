@@ -1,6 +1,4 @@
-﻿using BotBrownCore.Configuration;
-
-namespace BotBrown.Configuration
+﻿namespace BotBrown
 {
     public class CommandDefinition
     {

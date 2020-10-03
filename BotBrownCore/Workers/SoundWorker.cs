@@ -1,6 +1,6 @@
 ﻿namespace BotBrown.Workers
 {
-    using BotBrown.Configuration;
+    using BotBrown;
     using BotBrown.Events;
     using BotBrown.Workers.TextToSpeech;
     using System;

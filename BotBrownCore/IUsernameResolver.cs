@@ -1,6 +1,4 @@
-﻿using BotBrown.Configuration;
-
-namespace BotBrown
+﻿namespace BotBrown
 {
     public interface IUsernameResolver
     {

@@ -2,10 +2,11 @@
 {
     public class BotArguments
     {
-        public BotArguments(bool isDebug, bool dontConnectToTwitch, string customConfigurationPath, string customSoundsPath, string logPath)
+        public BotArguments(bool isDebug, bool dontConnectToTwitch, string port, string customConfigurationPath, string customSoundsPath, string logPath)
         {
             IsDebug = isDebug;
             DontConnectToTwitch = dontConnectToTwitch;
+            Port = port;
             CustomConfigurationPath = customConfigurationPath;
             CustomSoundsPath = customSoundsPath;
             LogPath = logPath;
@@ -14,6 +15,8 @@
         public bool IsDebug { get; }
 
         public bool DontConnectToTwitch { get; }
+
+        public string Port { get; }
 
         public bool HasCustomConfigurationPath => !string.IsNullOrEmpty(CustomConfigurationPath);
 

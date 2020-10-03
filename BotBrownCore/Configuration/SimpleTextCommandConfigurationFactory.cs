@@ -1,4 +1,6 @@
-﻿namespace BotBrown.Configuration
+﻿using BotBrown.Configuration.Factories;
+
+namespace BotBrown.Configuration
 {
     public class SimpleTextCommandConfigurationFactory : IConfigurationFileFactory<SimpleTextCommandConfiguration>
     {

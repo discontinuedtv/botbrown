@@ -8,6 +8,7 @@
     using System.Speech.Synthesis;
     using System.Text;
     using System.Threading;
+    using BotBrown;
     using BotBrown.Configuration;
     using BotBrownCore.Configuration;
     using NAudio.CoreAudioApi;

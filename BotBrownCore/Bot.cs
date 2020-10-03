@@ -1,12 +1,13 @@
 ﻿namespace BotBrown
 {
     using System;
-    using System.IO;
     using System.Threading;
-    using BotBrown.ChatCommands;
     using BotBrown.Configuration;
-    using BotBrown.DI;
+    using BotBrown.Configuration.Factories;
     using BotBrown.Workers;
+    using System.IO;
+    using BotBrown.ChatCommands;
+    using BotBrown.DI;
     using Castle.MicroKernel.Registration;
     using Castle.MicroKernel.Resolvers.SpecializedResolvers;
     using Castle.Windsor;
@@ -34,6 +35,7 @@
             RegisterLogger(botArguments);
 
             workerHost = container.Resolve<IWorkerHost>();
+            workerHost.Container = container;
             workerHost.Execute(cancellationTokenSource.Token, botArguments);
         }
 

@@ -1,4 +1,5 @@
-﻿
+﻿@import 'https://fonts.googleapis.com/css?family=Prompt:400,700';
+
 body, html {
     background-color: white;
     color: black;
@@ -9,11 +10,32 @@ body, html {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    font-family: sans-serif;
+    font-family: 'Prompt', sans-serif;
+}
+
+.modal {
+    /* This way it could be display flex or grid or whatever also. */
+    display: block;
+    /* Probably need media queries here */
+    width: 800px;
+    max-width: 100%;
+    height: 600px;
+    max-height: 100%;
+    position: fixed;
+    z-index: 100;
+    left: 50%;
+    top: 50%;
+    /* Use this for centering if unknown width/height */
+    transform: translate(-50%, -50%);
+    /* If known, negative margins are probably better (less chance of blurry text). */
+    /* margin: -200px 0 0 -200px; */
+    background: white;
+    box-shadow: 0 0 60px 10px rgba(0, 0, 0, 0.9);
+    border-radius: 5px;
 }
 
 h1 {
-    font-family: Nunito,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    /*font-family: Nunito,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";*/
     font-size: 32px;
     font-weight: bold;
     padding: 0;
@@ -65,7 +87,7 @@ h1 {
 .sidebarmenuitem {
     color: #FFF;
     text-decoration: none;
-    font-family: Nunito,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    /*font-family: Nunito,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";*/
     font-size: 14px;
     font-weight: 400;
 }

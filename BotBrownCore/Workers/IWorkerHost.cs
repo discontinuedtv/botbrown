@@ -1,7 +1,8 @@
-﻿using System.Threading;
-
-namespace BotBrown.Workers
+﻿namespace BotBrown.Workers
 {
+    using System.Threading;
+    using Castle.Windsor;
+
     public interface IWorkerHost
     {
         void Execute(CancellationToken cancellationToken, BotArguments botArguments);
@@ -9,5 +10,7 @@ namespace BotBrown.Workers
         void PublishTTSMessage(string message);
 
         void PublishSoundCommand(string message);
+
+        WindsorContainer Container { get; set; }
     }
 }

@@ -2,8 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using BotBrown.Configuration;
+    using System.Linq;    
+    using BotBrown;
     using BotBrown.Events.Twitch;
 
     public sealed class MessageReceivedEvent : UserSpecificEvent
@@ -15,7 +15,6 @@
         {
             Message = message;
             this.emotesInMessage.AddRange(emotesInMessage);
-
         }
 
         public TwitchChatMessage Message { get; }

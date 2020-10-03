@@ -1,9 +1,11 @@
 ﻿namespace BotBrown.Configuration
 {
+    using BotBrown;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
 
+    [ConfigurationFile(ConfigurationFileConstants.Usernames)]
     public sealed class UsernameConfiguration : IUsernameConfiguration
     {
         public Dictionary<string, ChannelUser> Users { get; set; } = new Dictionary<string, ChannelUser>();
@@ -40,6 +42,11 @@
 
             user = null;
             return false;
+        }
+
+        public bool IsValid()
+        {
+            return true;
         }
     }
 }

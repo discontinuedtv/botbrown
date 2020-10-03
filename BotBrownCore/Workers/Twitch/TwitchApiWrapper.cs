@@ -1,17 +1,18 @@
 ﻿namespace BotBrown.Workers.Twitch
 {
+    using BotBrown;
     using BotBrown.Configuration;
     using BotBrown.Events;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
     using TwitchLib.Api;
     using TwitchLib.Api.Core;
     using TwitchLib.Api.Services;
     using TwitchLib.Api.Services.Events.FollowerService;
+    using System.Threading.Tasks;
     using TwitchLib.Api.V5.Models.Channels;
-    using Serilog;
+    using Serilog;    
 
     public class TwitchApiWrapper : ITwitchApiWrapper
     {
@@ -122,6 +123,6 @@
         {
             TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
             bus.Publish(new SendChannelMessageRequestedEvent(message, twitchConfiguration.Channel));
-        }
+        }        
     }
 }
