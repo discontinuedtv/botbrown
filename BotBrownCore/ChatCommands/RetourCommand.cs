@@ -13,11 +13,13 @@
     public class RetourCommand : BaseChatCommand
     {
         private readonly IEventBus eventBus;
+        private readonly IConfigurationManager configurationManager;
         private readonly Random random;
 
-        public RetourCommand(IEventBus eventBus)
+        public RetourCommand(IEventBus eventBus, IConfigurationManager configurationManager)
         {
             this.eventBus = eventBus;
+            this.configurationManager = configurationManager;
             random = new Random();
         }
 
@@ -37,6 +39,14 @@
 
             int year = random.Next(1400, 2180);
             eventBus.Publish(new SendChannelMessageRequestedEvent($"{user.RealUsername} ist zurück von der Zeitreise aus dem Jahr {year}", channelName));
+
+            var facts = configurationManager.LoadConfiguration<FactConfiguration>(ConfigurationFileConstants.Facts);
+            var yearAsString = Convert.ToString(year);
+            var fact = facts.GetFact(yearAsString);
+            if(fact != null)
+            {
+                eventBus.Publish(new SendChannelMessageRequestedEvent($"Interessanter Fakt über {yearAsString}: {fact}", channelName));
+            }
 
             return Task.CompletedTask;
         }
