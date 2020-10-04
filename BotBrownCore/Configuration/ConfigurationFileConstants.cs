@@ -11,5 +11,6 @@
         public const string Audio = "audio.json";
         public const string TextCommands = "textcommands.json";
         public const string DeathCounter = "deathcounter.json";
+        public const string Facts = "facts.json";
     }
 }
