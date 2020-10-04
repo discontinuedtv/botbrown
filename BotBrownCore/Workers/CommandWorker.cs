@@ -114,12 +114,12 @@
             var simpleTextCommandConfiguration = configurationManager.LoadConfiguration<SimpleTextCommandConfiguration>(ConfigurationFileConstants.TextCommands);
             var chatCommands = chatCommandResolver.ResolveAllChatCommands();
 
-            foreach(var command in chatCommands)
+            foreach (var command in chatCommands)
             {
-                if(command.CanConsume(@event))
+                if (command.CanConsume(@event))
                 {
                     var shouldContinue = command.Consume(@event).Result;
-                    if(!shouldContinue)
+                    if (!shouldContinue)
                     {
                         return;
                     }
@@ -141,7 +141,7 @@
         }
 
         public void Dispose()
-        { 
+        {
         }
 
         private void RefreshCommands()
@@ -466,7 +466,23 @@
 
             if (presenceStore.IsGreetingNecessary(user))
             {
-                bus.Publish(new TextToSpeechEvent(user, $"Hallo {user.Username}"));
+                var now = DateTimeOffset.Now;
+                string? phrase;
+
+                if (now.Hour > 0 && now.Hour < 11)
+                {
+                    phrase = "Guten Morgen";
+                }
+                else if (now.Hour >= 11 && now.Hour < 18)
+                {
+                    phrase = "Hallo";
+                }
+                else
+                {
+                    phrase = "Guten Abend";
+                }
+
+                bus.Publish(new TextToSpeechEvent(user, $"{phrase} {user.Username}"));
                 presenceStore.RecordPresence(user);
             }
         }
