@@ -8,6 +8,7 @@
         Vip = 4,
         Subscriber = 8,
         Viewer = 16,
+        NonEditors = Vip | Subscriber | Viewer,
         Editor = Broadcaster | Moderator,
         AboveSubscriber = Editor | Vip,
         AllSubscribers = Editor | Vip | Subscriber,
