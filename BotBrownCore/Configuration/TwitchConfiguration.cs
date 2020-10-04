@@ -1,5 +1,6 @@
 ﻿namespace BotBrown.Configuration
 {
+    using Newtonsoft.Json;
     using System.ComponentModel;
 
     [ConfigurationFile(ConfigurationFileConstants.Twitch)]
@@ -20,6 +21,9 @@
         public string TextToSpeechRewardId { get; set; }
 
         public string BroadcasterUserId { get; set; }
+
+        [JsonIgnore]
+        public string Filename => ConfigurationFileConstants.Twitch;
 
         public bool IsValid()
         {

@@ -105,15 +105,15 @@
             }
         }
 
-        public IEnumerable<ConfigurationStatus> CheckConfigurationStatus()
+        public IEnumerable<IConfiguration> CheckConfigurationStatus()
         {
             ResolveConfigurationTypes();
 
-            var status = new List<ConfigurationStatus>();
+            var status = new List<IConfiguration>();
 
             foreach (KeyValuePair<Type, (IConfiguration, string)> configuration in configurations)
             {
-                status.Add(new ConfigurationStatus(configuration.Value.Item2, configuration.Value.Item1.IsValid()));
+                status.Add(configuration.Value.Item1);
             }
 
             return status;

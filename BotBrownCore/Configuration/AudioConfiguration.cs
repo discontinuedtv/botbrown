@@ -23,6 +23,9 @@
         [JsonIgnore]
         public MMDevice SelectedSoundCommandDevice { get; private set; }
 
+        [JsonIgnore]
+        public string Filename => ConfigurationFileConstants.Audio;
+
         private bool isDirty;
 
         public AudioConfiguration()

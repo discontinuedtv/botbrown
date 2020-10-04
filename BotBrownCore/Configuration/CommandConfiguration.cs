@@ -5,6 +5,7 @@
     using System.ComponentModel;
     using System.Linq;
     using System.Collections.ObjectModel;
+    using Newtonsoft.Json;
 
     [ConfigurationFile(ConfigurationFileConstants.Commands)]
     public class CommandConfiguration : IChangeableConfiguration
@@ -39,6 +40,9 @@
                 return allDefinitionKeys.ToList();
             }
         }
+
+        [JsonIgnore]
+        public string Filename => ConfigurationFileConstants.Commands;
 
         public void AddDefinition(CommandDefinition definition)
         {

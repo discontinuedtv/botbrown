@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace BotBrown.Configuration
 {
@@ -6,6 +7,9 @@ namespace BotBrown.Configuration
     public class DeathCounterConfiguration : IConfiguration
     {
         public Dictionary<string, int> DeathsPerGame { get; set; } = new Dictionary<string, int>();
+
+        [JsonIgnore]
+        public string Filename => ConfigurationFileConstants.DeathCounter;
 
         public bool IsValid()
         {

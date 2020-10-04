@@ -1,5 +1,6 @@
 ﻿namespace BotBrown.Configuration
 {
+    using Newtonsoft.Json;
     using System.ComponentModel;
 
     [ConfigurationFile(ConfigurationFileConstants.Sentences)]
@@ -14,6 +15,9 @@
         public string ResubscriberAlert { get; set; }
 
         public string SubBombAlert { get; set; }
+
+        [JsonIgnore]
+        public string Filename => ConfigurationFileConstants.Sentences;
 
         public bool IsValid()
         {

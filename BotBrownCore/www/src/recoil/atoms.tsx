@@ -21,24 +21,17 @@ export class ConfigurationState {
     }
 }
 
-export type ConfigurationStatus = {
-    name: string,
-    isValid: boolean
-}
-
 const asyncConfiguration = selector<ConfigurationsType | undefined>({
     key: "asyncConfiguration",
     get: async ({ get }) => {
 
         try {
-            var result = await httpGet<Array<ConfigurationStatus>>("http://localhost:43210/api/configurationstatus");
+            var result = await httpGet<ConfigurationsType>("http://localhost:43210/api/configurationstatus");
             if (result.parsedBody === undefined) {
                 throw new Error('HILFE!');
             }
 
-            console.log(result);
-
-            result.parsedBody.forEach(x => console.log(x));
+            return result.parsedBody;
         }
         catch (e) {
             return undefined;
@@ -84,7 +77,7 @@ export async function http<T>(
         request
     );
 
-    response.parsedBody = response.json();
+    response.parsedBody = await response.json();
     return response;
 }
 
@@ -94,12 +87,19 @@ export type ConfigurationsType = {
 
 export type ConfigurationType = {
     name: string,
-    steps: Array<StepType>
+    isValid: boolean,
+    values: Array<ValueType>
 };
 
 export type StepType = {
-    name: string,
-    isCompleted: boolean
+    
+};
+
+export type ValueType = {
+    typename: string,
+    currentValue: string,
+    defaultValue: string,
+    isValid: boolean
 };
 
 export const configurationState = atom<ConfigurationsType | undefined>({
@@ -114,11 +114,15 @@ export const configurationState = atom({
 });
 */
 
-export const currentConfigurationState = selector<ConfigurationType | undefined>({
+export const currentConfigurationState = selector<Array<ConfigurationType>>({
     key: 'currentConfigurationState',
     get: ({ get }) => {
         var config = get(configurationState);
-        return config?.configurations.find(x => !x.steps.every(s => s.isCompleted));
+        if (config === undefined) {
+            return new Array<ConfigurationType>();
+        }
+
+        return config.configurations.filter(x => !x.isValid);
     },
     set: ({ set }) => {
         console.log('setter called');

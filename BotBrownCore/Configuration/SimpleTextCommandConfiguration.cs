@@ -1,5 +1,6 @@
 ﻿namespace BotBrown.Configuration
 {
+    using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
@@ -10,6 +11,9 @@
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Dictionary<string, string> Commands { get; set; } = new Dictionary<string, string>();
+
+        [JsonIgnore]
+        public string Filename => ConfigurationFileConstants.TextCommands;
 
         public void AddOrUpdateCommand(string command, string commandText)
         {

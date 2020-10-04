@@ -1,6 +1,7 @@
 ﻿namespace BotBrown.Configuration
 {
     using BotBrown;
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -9,6 +10,10 @@
     public sealed class UsernameConfiguration : IUsernameConfiguration
     {
         public Dictionary<string, ChannelUser> Users { get; set; } = new Dictionary<string, ChannelUser>();
+
+        [JsonIgnore]
+        public string Filename => ConfigurationFileConstants.Usernames;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void AddUsername(ChannelUser user)

@@ -2,7 +2,7 @@
   "profiles": {
     "BotBrownCli": {
       "commandName": "Project",
-      "commandLineArgs": "-debug -port:43210 -ccp:..\\..\\..\\..\\Configurations -csp:..\\..\\..\\..\\Sounds"
+      "commandLineArgs": "-notwitch -debug -port:43210 -ccp:..\\..\\..\\..\\Configurations -csp:..\\..\\..\\..\\Sounds"
     }
   }
 }

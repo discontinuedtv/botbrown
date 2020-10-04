@@ -6,6 +6,7 @@ import { Configuration } from './Configuration';
 
 export const ConfigurationDialog = () => {
 
+    const [configuration, setConfiguration] = useRecoilState(configurationState);
     const [currentConfiguration, setCurrentConfiguration] = useRecoilState(currentConfigurationState);
 
 
@@ -14,7 +15,7 @@ export const ConfigurationDialog = () => {
     }
 
     const isStepComplete = (step: number) => {
-        return currentConfiguration?.steps[step].isCompleted;
+        return currentConfiguration[step].isValid;
     }
 
     const isOnFirstStep = () : boolean => {
@@ -41,30 +42,31 @@ export const ConfigurationDialog = () => {
         //currentConfiguration.currentlyActiveStep = currentConfiguration.currentlyActiveStep - 1;
     }
 
+    const hasPreviousConfiguration = () => {
+
+        return false;
+    }
+
     const handleNext = () => {
         //setCurrentConfiguration(c => c?.produce(x => x.moveToNextStep()));
     }
 
     return (
-        
-            <div className="modal">
-                <Stepper>
-                    <Step key="test1">
-                        <StepButton
-                            onClick={() => handleStep(1)}
-                            completed={isStepComplete(1)}
-                        >
-                            Test 1
-                    </StepButton>
-                    </Step>
-                    <Step key="test2">
-                        <StepLabel>Test 2</StepLabel>
-                    </Step>
+        <div className="modal">
+            <Stepper>
+
+                {
+                    currentConfiguration.map((c, i) => (
+                        <Step key={c.name}>
+                            <StepButton onClick={() => handleStep(i)} completed={isStepComplete(i)}>
+                                {c.name}
+                            </StepButton>
+                        </Step>
+                    ))
+                }
                 </Stepper>
                 <div>
-                    <Button disabled={isOnFirstStep()} onClick={handleBack}>
-                        Back
-              </Button>
+                {hasPreviousConfiguration() && <Button disabled={isOnFirstStep()} onClick={handleBack}>Back</Button>}
                     <Button
                         disabled={isOnLastStep()}
                         variant="contained"

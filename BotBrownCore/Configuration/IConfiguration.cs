@@ -2,6 +2,8 @@
 {
     public interface IConfiguration
     {
+        string Filename { get; }
+
         bool IsValid();
     }
 }
