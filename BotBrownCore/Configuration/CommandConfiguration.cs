@@ -12,6 +12,8 @@
         private bool isInitialized;
         private readonly Dictionary<string, CommandDefinition> definitions = new Dictionary<string, CommandDefinition>();
         private readonly List<string> allDefinitionKeys = new List<string>();
+        public ObservableCollection<CommandDefinition> CommandsDefinitions { get; set; } = new ObservableCollection<CommandDefinition>();
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public CommandConfiguration()
         {
@@ -22,11 +24,7 @@
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CommandsDefinitions)));
         }
-
-        public ObservableCollection<CommandDefinition> CommandsDefinitions { get; set; } = new ObservableCollection<CommandDefinition>();
         
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public List<string> AllDefinitionKeys
         {
             get

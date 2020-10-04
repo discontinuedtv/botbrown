@@ -109,16 +109,15 @@
             serializer.Serialize(writer, configurationValue);
         }
 
-        public IEnumerable<ConfigurationStatus> CheckConfigurationStatus()
+        public IEnumerable<IConfiguration> CheckConfigurationStatus()
         {
             ResolveConfigurationTypes();
 
-            var status = new List<ConfigurationStatus>();
+            var status = new List<IConfiguration>();
 
             foreach (KeyValuePair<Type, IConfiguration> configuration in configurations)
             {
-                var filename = configuration.Value.GetType().GetCustomAttribute<ConfigurationFileAttribute>().Filename;
-                status.Add(new ConfigurationStatus(filename, configuration.Value.IsValid()));
+                status.Add(configuration.Value);
             }
 
             return status;

@@ -11,6 +11,6 @@ namespace BotBrown.Configuration
 
         void WriteConfiguration(IConfiguration configurationValue);
         
-        IEnumerable<ConfigurationStatus> CheckConfigurationStatus();
+        IEnumerable<IConfiguration> CheckConfigurationStatus();
     }
 }

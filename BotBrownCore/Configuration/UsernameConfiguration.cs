@@ -9,6 +9,7 @@
     public sealed class UsernameConfiguration : IUsernameConfiguration
     {
         public Dictionary<string, ChannelUser> Users { get; set; } = new Dictionary<string, ChannelUser>();
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void AddUsername(ChannelUser user)
