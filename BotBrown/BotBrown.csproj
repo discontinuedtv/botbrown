@@ -2,35 +2,25 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net48</TargetFramework>
-    <AssemblyTitle>BotBrown</AssemblyTitle>
-    <Product>BotBrown</Product>
-    <Copyright>Copyright ©  2020</Copyright>
-    <OutputPath>..\Build\$(Configuration)\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Net.Http" />
+    <Folder Include="Models\" />
+    <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="botbrown.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Remove="Assets\doc-112x112.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.9.11" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.9.11" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.11" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BotBrownCore\BotBrownCore.csproj" />
-    <ProjectReference Include="..\BotBrownGui.Core\BotBrownGui.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Bildstein.SpiderEye.Windows" Version="1.0.0-beta.1" />
+    <None Update="Views\StartPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
   </ItemGroup>
 </Project>

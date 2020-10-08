@@ -1,0 +1,117 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:BotBrown.ViewModels;assembly=BotBrown"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:main="clr-namespace:BotBrown.Views"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="BotBrown.Views.MainWindow"
+        Icon="/Assets/botbrown.ico"
+        Title="BotBrown"
+        Height="600"
+        Width="800"
+        ShowInTaskbar="True"
+        WindowState="Maximized">
+
+  <Design.DataContext>
+    <vm:MainWindowViewModel/>
+  </Design.DataContext>
+
+  <TabControl
+    Name="MenuTabControl"
+    TabStripPlacement="Left"
+    VerticalAlignment="Stretch"
+    HorizontalAlignment="Stretch"
+      Items="{Binding MenuItems}">
+    <!--
+    <TabItem VerticalContentAlignment="Top"
+             HorizontalContentAlignment="Center"
+             IsEnabled="False"
+             Name="Logo">
+      <TabItem.Header>
+        <Image Source="/Assets/doc-112x112.png" />
+      </TabItem.Header>
+    </TabItem>
+
+    <TabItem IsSelected="true" Header="Startseite">
+      <main:StartPage />
+    </TabItem>
+    
+    <TabItem Header="Kommandos">
+      <main:Commands />
+    </TabItem>
+    <TabItem Header="Sounds">
+      <TextBlock Text="I am in the circle page !"></TextBlock>
+    </TabItem>
+    <TabItem Header="Einstellungen">
+      <TextBlock Text="I am in the circle page !"></TextBlock>
+    </TabItem>
+    -->
+  </TabControl>
+
+
+  <Window.Resources>
+    <Color x:Key="SidebarBackground">#202225</Color>
+  </Window.Resources>
+  <Window.Styles>
+    <Style Selector="TabControl">
+
+      <Setter Property="Background" Value="#2f3136"/>
+    </Style>
+    <Style Selector="TabControl WrapPanel">
+      <Setter Property="Background" Value="#202225"/>
+    </Style>
+    
+    <Style Selector="TabItem Panel">
+      <Setter Property="Margin" Value="12" />
+    </Style>
+    
+    <Style Selector="TabItem Panel TextBlock.Header">
+      <Setter Property="Foreground" Value="#BBBBBB" />
+      <Setter Property="FontSize" Value="28" />
+    </Style>
+
+    <Style Selector="TabItem">
+      <Setter Property="FontSize" Value="15"/>
+      <!--<Setter Property="FontFamily" Value="" />-->
+      <Setter Property="Height" Value="34"/>
+      <Setter Property="Width" Value="150" />
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Background" Value="#202225"/>
+      <Setter Property="Foreground" Value="#BBBBBB"/>
+      <Setter Property="Margin" Value="0 0 0 0"/>
+      <Setter Property="Padding" Value="10 0"/>
+
+    </Style>
+    <Style Selector="TabItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#36393f"/>
+    </Style>
+
+    <Style Selector="TabItem:focus">
+      <Setter Property="Foreground" Value="#BBBBBB"/>
+      <Setter Property="Margin" Value="0 0 0 0"/>
+      <Setter Property="Padding" Value="10 0"/>
+    </Style>
+    <Style Selector="TabItem:focus /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#3e4349"/>
+    </Style>
+    <Style Selector="TabItem#Logo:disabled">
+      <Setter Property="Opacity" Value="1"/>
+      <Setter Property="Height" Value="112"/>
+      <Setter Property="Background" Value="#202225" />
+    </Style>
+
+    <Style Selector="TabItem:selected">
+      <Setter Property="Foreground" Value="#BBBBBB"/>
+      <Setter Property="Margin" Value="0 0 0 0"/>
+      <Setter Property="Background" Value="#2f3136" />
+      <Setter Property="Padding" Value="10 0"/>
+    </Style>
+    <Style Selector="TabItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#2f3136"/>
+    </Style>
+
+  </Window.Styles>
+
+</Window>

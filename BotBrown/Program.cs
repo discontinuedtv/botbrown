@@ -1,56 +1,33 @@
 ﻿namespace BotBrown
 {
-    using System;
-    using SpiderEye.Windows;
+    using Avalonia;
+    using Avalonia.Logging.Serilog;
+    using Avalonia.ReactiveUI;
 
-    public class Program : ProgramBase
+    public class Program
     {
-        [STAThread]
+        // Initialization code. Don't use any Avalonia, third-party APIs or any
+        // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
+        // yet and stuff might break.
         public static void Main(string[] args)
         {
-            bool dontConnectToTwitch = false;
-            bool isDebug = false;
-            string customConfigurationPath = null;
-            string customSoundsPath = null;
-            string logPath = "log/";
-
-            foreach (var arg in args)
+            var botArguments = new BotArguments(true, true, null, null, "/logs");
+            using (var bot = new Bot())
             {
-                if (arg == "-notwitch")
-                {
-                    dontConnectToTwitch = true;
-                    continue;
-                }
-                
-                if (arg == "-debug")
-                {
-                    isDebug = true;
-                    continue;
-                }
+                bot.Execute(botArguments);
 
-                if (arg.StartsWith("-ccp:"))
-                {
-                    customConfigurationPath = arg.Split(':')[1];
-                    continue;
-                }
-
-                if (arg.StartsWith("-csp:"))
-                {
-                    customSoundsPath = arg.Split(':')[1];
-                    continue;
-                }
-
-                if (arg.StartsWith("-l:"))
-                {
-                    logPath = arg.Split(':')[1];
-                    continue;
-                }
+                BuildAvaloniaApp()
+                    .StartWithClassicDesktopLifetime(args);
             }
+        }
 
-            var botArguments = new BotArguments(isDebug, dontConnectToTwitch, customConfigurationPath, customSoundsPath, logPath);
-
-            WindowsApplication.Init();
-            Run(botArguments);
+        // Avalonia configuration, don't remove; also used by visual designer.
+        public static AppBuilder BuildAvaloniaApp()
+        {
+            return AppBuilder.Configure<App>()
+                  .UsePlatformDetect()
+                  .LogToDebug()
+                  .UseReactiveUI();
         }
     }
 }

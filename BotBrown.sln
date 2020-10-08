@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBrownCli", "BotBrownCli\BotBrownCli.csproj", "{6DEDBFF9-4BD8-4A83-A7ED-B06D7246A6DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotBrownCli", "BotBrownCli\BotBrownCli.csproj", "{6DEDBFF9-4BD8-4A83-A7ED-B06D7246A6DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBrownCore", "BotBrownCore\BotBrownCore.csproj", "{DE6F56DC-6EE9-48BB-8169-EF2E931C94D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotBrownCore", "BotBrownCore\BotBrownCore.csproj", "{DE6F56DC-6EE9-48BB-8169-EF2E931C94D5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C2EB7DD9-F2AE-4EA1-A1EC-5C47AF0C7F87}"
 	ProjectSection(SolutionItems) = preProject
@@ -20,11 +20,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBrownCore.Tests", "BotBrownCore.Tests\BotBrownCore.Tests.csproj", "{8543C509-0088-4A9A-931F-E24165650C07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotBrownCore.Tests", "BotBrownCore.Tests\BotBrownCore.Tests.csproj", "{8543C509-0088-4A9A-931F-E24165650C07}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotBrownGui.Core", "BotBrownGui.Core\BotBrownGui.Core.csproj", "{38A325B1-30B8-4A4F-8D0C-A2A173D11847}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBrown", "BotBrown\BotBrown.csproj", "{4AD4E238-F6A5-41E5-B27D-A35FDDB841D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBrown", "BotBrown\BotBrown.csproj", "{5C793AA7-868C-4E3B-B9D4-58B00FD5F0D1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,14 +42,10 @@ Global
 		{8543C509-0088-4A9A-931F-E24165650C07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8543C509-0088-4A9A-931F-E24165650C07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8543C509-0088-4A9A-931F-E24165650C07}.Release|Any CPU.Build.0 = Release|Any CPU
-		{38A325B1-30B8-4A4F-8D0C-A2A173D11847}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{38A325B1-30B8-4A4F-8D0C-A2A173D11847}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{38A325B1-30B8-4A4F-8D0C-A2A173D11847}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{38A325B1-30B8-4A4F-8D0C-A2A173D11847}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4AD4E238-F6A5-41E5-B27D-A35FDDB841D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4AD4E238-F6A5-41E5-B27D-A35FDDB841D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4AD4E238-F6A5-41E5-B27D-A35FDDB841D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4AD4E238-F6A5-41E5-B27D-A35FDDB841D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C793AA7-868C-4E3B-B9D4-58B00FD5F0D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C793AA7-868C-4E3B-B9D4-58B00FD5F0D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C793AA7-868C-4E3B-B9D4-58B00FD5F0D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C793AA7-868C-4E3B-B9D4-58B00FD5F0D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

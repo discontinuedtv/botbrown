@@ -46,6 +46,8 @@
 
                     await Task.Delay(100, cancellationToken);
                 }
+                catch (TaskCanceledException)
+                { }
                 catch (Exception e)
                 {
                     logger.Error("Beim Vearbeiten der Soundanfrage ist ein Fehler aufgetreten: {e}", e);
