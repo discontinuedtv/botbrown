@@ -1,5 +1,6 @@
 ﻿namespace BotBrown
 {
+    using BotBrown.DI;
     using System;
 
     class Program
@@ -45,9 +46,10 @@
             }
 
             var botArguments = new BotArguments(isDebug, dontConnectToTwitch, customConfigurationPath, customSoundsPath, logPath);
+            using (var container = new BotContainer(botArguments))
             using (var bot = new Bot())
             {
-                bot.Execute(botArguments);
+                bot.Execute(botArguments, container);
                 LookForExit(bot);
             }
         }

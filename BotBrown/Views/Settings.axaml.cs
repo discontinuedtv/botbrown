@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using BotBrown.Configuration;
 
 namespace BotBrown.Views
 {
@@ -14,6 +15,9 @@ namespace BotBrown.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+
+            var result = this.Get<StackPanel>("stacktwitch");
+
         }
     }
 }

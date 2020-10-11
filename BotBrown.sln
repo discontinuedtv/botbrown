@@ -22,7 +22,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotBrownCore.Tests", "BotBrownCore.Tests\BotBrownCore.Tests.csproj", "{8543C509-0088-4A9A-931F-E24165650C07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBrown", "BotBrown\BotBrown.csproj", "{5C793AA7-868C-4E3B-B9D4-58B00FD5F0D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotBrownAvalonia", "BotBrown\BotBrownAvalonia.csproj", "{5C793AA7-868C-4E3B-B9D4-58B00FD5F0D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotbrownWPF", "BotbrownWPF\BotbrownWPF.csproj", "{49D6B424-8985-4833-81C6-C243CE1CD074}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,6 +48,10 @@ Global
 		{5C793AA7-868C-4E3B-B9D4-58B00FD5F0D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C793AA7-868C-4E3B-B9D4-58B00FD5F0D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C793AA7-868C-4E3B-B9D4-58B00FD5F0D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49D6B424-8985-4833-81C6-C243CE1CD074}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49D6B424-8985-4833-81C6-C243CE1CD074}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49D6B424-8985-4833-81C6-C243CE1CD074}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49D6B424-8985-4833-81C6-C243CE1CD074}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

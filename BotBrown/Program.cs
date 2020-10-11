@@ -1,8 +1,10 @@
 ﻿namespace BotBrown
 {
     using Avalonia;
-    using Avalonia.Logging.Serilog;
     using Avalonia.ReactiveUI;
+    using BotBrown.DI;
+    using CefGlue.Avalonia;
+    using System;
 
     public class Program
     {
@@ -11,10 +13,12 @@
         // yet and stuff might break.
         public static void Main(string[] args)
         {
-            var botArguments = new BotArguments(true, true, null, null, "/logs");
+            BotArguments botArguments = new BotArguments(true, true, null, null, "./logs");
+            using (var container = new BotContainer(botArguments))
             using (var bot = new Bot())
             {
-                bot.Execute(botArguments);
+                bot.Execute(botArguments, container);
+                AvaloniaLocator.Current = new BotBrownLocator(container, AvaloniaLocator.Current);
 
                 BuildAvaloniaApp()
                     .StartWithClassicDesktopLifetime(args);
@@ -24,9 +28,14 @@
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
         {
+#if DEBUG
+            BotArguments botArguments = new BotArguments(true, true, null, null, "./logs");
+            AvaloniaLocator.Current = new BotBrownLocator(new BotContainer(botArguments), AvaloniaLocator.Current);
+#endif
             return AppBuilder.Configure<App>()
                   .UsePlatformDetect()
-                  .LogToDebug()
+                  .UseSkia()
+                  .ConfigureCefGlue(Array.Empty<string>())
                   .UseReactiveUI();
         }
     }

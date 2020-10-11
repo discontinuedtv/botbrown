@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:main="clr-namespace:BotBrown.Views"
+        xmlns:cef="clr-namespace:CefGlue.Avalonia;assembly=CefGlue.Avalonia"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BotBrown.Views.MainWindow"
         Icon="/Assets/botbrown.ico"
@@ -17,37 +18,17 @@
     <vm:MainWindowViewModel/>
   </Design.DataContext>
 
+  <cef:AvaloniaCefBrowser StartUrl="http://www.bing.com" Width="800" Height="600" />
+  
+  <!--
   <TabControl
     Name="MenuTabControl"
     TabStripPlacement="Left"
     VerticalAlignment="Stretch"
     HorizontalAlignment="Stretch"
       Items="{Binding MenuItems}">
-    <!--
-    <TabItem VerticalContentAlignment="Top"
-             HorizontalContentAlignment="Center"
-             IsEnabled="False"
-             Name="Logo">
-      <TabItem.Header>
-        <Image Source="/Assets/doc-112x112.png" />
-      </TabItem.Header>
-    </TabItem>
-
-    <TabItem IsSelected="true" Header="Startseite">
-      <main:StartPage />
-    </TabItem>
-    
-    <TabItem Header="Kommandos">
-      <main:Commands />
-    </TabItem>
-    <TabItem Header="Sounds">
-      <TextBlock Text="I am in the circle page !"></TextBlock>
-    </TabItem>
-    <TabItem Header="Einstellungen">
-      <TextBlock Text="I am in the circle page !"></TextBlock>
-    </TabItem>
-    -->
   </TabControl>
+  -->
 
 
   <Window.Resources>
@@ -66,11 +47,6 @@
       <Setter Property="Margin" Value="12" />
     </Style>
     
-    <Style Selector="TabItem Panel TextBlock.Header">
-      <Setter Property="Foreground" Value="#BBBBBB" />
-      <Setter Property="FontSize" Value="28" />
-    </Style>
-
     <Style Selector="TabItem">
       <Setter Property="FontSize" Value="15"/>
       <!--<Setter Property="FontFamily" Value="" />-->
@@ -110,6 +86,50 @@
     </Style>
     <Style Selector="TabItem:selected /template/ ContentPresenter#PART_ContentPresenter">
       <Setter Property="Background" Value="#2f3136"/>
+    </Style>
+
+    <Style Selector="TextBlock.Header">
+      <Setter Property="Foreground" Value="#BBBBBB" />
+      <Setter Property="FontSize" Value="28" />
+      <Setter Property="Margin" Value="0,0,0,12" />
+    </Style>
+
+    <Style Selector="TextBlock.Header2">
+      <Setter Property="Foreground" Value="#BBBBBB" />
+      <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style Selector="HeaderedContentControl">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate>
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+              </Grid.RowDefinitions>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+              </Grid.ColumnDefinitions>
+              <Border ZIndex="1" Padding="5,0,5,0" Background="#2f3136" Margin="5,0,0,0">
+                <TextBlock FontSize="16" Foreground="#BBBBBB" Text="{TemplateBinding Header}" />
+              </Border>
+              <Border Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="0,12,0,0"
+                  BorderBrush="#6C6C6C"
+                  BorderThickness="1">
+                <ContentPresenter Content="{TemplateBinding Content}" 
+                                  Padding="12" />
+              </Border>
+            </Grid>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style Selector="HeaderedContentControl TextBlock">
+      <Setter Property="Foreground" Value="#BBBBBB" />
+      <Setter Property="FontSize" Value="13" />
     </Style>
 
   </Window.Styles>

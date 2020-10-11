@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\Build\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\Build\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Assets\doc-112x112.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.9.12" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.9.12" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.12" />    
+    <PackageReference Include="Castle.Windsor" Version="5.1.0-beta001" />    
+    <PackageReference Include="VitalElement.CefGlue.Core" Version="0.9.0-build32-alpha" />    
+    <PackageReference Include="VitalElement.CefGlue.Core.Avalonia" Version="0.9.0-build32-alpha" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BotBrownCore\BotBrownCore.csproj" />
+  </ItemGroup>
+</Project>
