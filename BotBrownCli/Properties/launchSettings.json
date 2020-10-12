@@ -2,15 +2,7 @@
   "profiles": {
     "BotBrownCli": {
       "commandName": "Project",
-<<<<<<< HEAD
-<<<<<<< HEAD
-      "commandLineArgs": "-notwitch -debug -ccp:..\\..\\..\\..\\Configurations -csp:..\\..\\..\\..\\Sounds"
-=======
-      "commandLineArgs": "-notwitch -debug -port:43210"
->>>>>>> e0e9301... Iteration of configurations for the frontend
-=======
       "commandLineArgs": "-notwitch -debug -port:43210 -ccp:..\\..\\..\\..\\Configurations -csp:..\\..\\..\\..\\Sounds"
->>>>>>> 76a9444... First steps towards returning configuration values to the frontend
     }
   }
 }
