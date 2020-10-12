@@ -44,7 +44,7 @@
                 }
 
                 var channelName = chatCommandReceivedEvent.ChannelName;
-                var deathCounter = configurationManager.LoadConfiguration<DeathCounterConfiguration>(ConfigurationFileConstants.DeathCounter);
+                var deathCounter = configurationManager.LoadConfiguration<DeathCounterConfiguration>();
                 var currentCounter = deathCounter.GetDeath(game);
 
                 if (currentCounter > 0)

@@ -19,7 +19,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Castle.Core" Version="4.3.1" />
+    <PackageReference Include="Castle.Facilities.AspNet.SystemWeb" Version="5.0.1" />
     <PackageReference Include="Castle.Windsor" Version="5.0.1" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.Owin" Version="4.1.0" />
@@ -29,6 +31,7 @@
     <PackageReference Include="Microsoft.Owin.Hosting" Version="4.1.0" />
     <PackageReference Include="Microsoft.Owin.SelfHost" Version="4.1.0" />
     <PackageReference Include="Microsoft.Owin.StaticFiles" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Web.Infrastructure" Version="1.0.0" />
     <PackageReference Include="NAudio" Version="1.10.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Owin" Version="1.0" />
@@ -65,21 +68,12 @@
     <Reference Include="System.Data.DataSetExtensions" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="www\package.json" />
-    <EmbeddedResource Include="www\package-lock.json" />
-    <EmbeddedResource Include="www\tsconfig.json" />
-    <EmbeddedResource Include="www\src\styles.scss" />
-    <EmbeddedResource Include="www\src\index.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="www\dist\*.*" />
     <COMReference Include="{c866ca3a-32f7-11d2-9602-00c04f8ee628}">
       <Guid>c866ca3a-32f7-11d2-9602-00c04f8ee628</Guid>
       <VersionMajor>5</VersionMajor>
       <VersionMinor>4</VersionMinor>
       <WrapperTool>tlbimp</WrapperTool>
     </COMReference>
-    <Content Include="www\src\logo.png" />
   </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="powershell -ExecutionPolicy Unrestricted $(ProjectDir)..\Prebuild.ps1 -ProjectDir $(ProjectDir)" />

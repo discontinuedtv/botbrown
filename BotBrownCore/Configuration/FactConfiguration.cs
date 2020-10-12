@@ -5,6 +5,7 @@
     using System.ComponentModel;
     using System.Linq;
 
+    [ConfigurationFile(ConfigurationFileConstants.Facts)]
     public class FactConfiguration : IChangeableConfiguration
     {
         public Dictionary<string, string> Facts { get; set; } = new Dictionary<string, string>();
@@ -45,6 +46,11 @@
         {
             Facts.Remove(key);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Facts)));
+        }
+
+        public bool IsValid()
+        {
+            return true;
         }
     }
 }

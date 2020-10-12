@@ -35,7 +35,7 @@
                 return Task.CompletedTask;
             }
 
-            var facts = configurationManager.LoadConfiguration<FactConfiguration>(ConfigurationFileConstants.Facts);
+            var facts = configurationManager.LoadConfiguration<FactConfiguration>();
             
             var splittedArgs = commandArgs.Split(' ');
             if(splittedArgs.Length == 1)

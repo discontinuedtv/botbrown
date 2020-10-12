@@ -1,16 +1,17 @@
 ﻿namespace BotBrown
 {
-    using System;
-    using System.IO;
-    using System.Threading;
     using BotBrown.ChatCommands;
     using BotBrown.Configuration;
+    using BotBrown.Configuration.Factories;
     using BotBrown.DI;
     using BotBrown.Workers;
     using Castle.MicroKernel.Registration;
     using Castle.MicroKernel.Resolvers.SpecializedResolvers;
     using Castle.Windsor;
     using Serilog;
+    using System;
+    using System.IO;
+    using System.Threading;
 
     public sealed class Bot : IDisposable
     {
@@ -83,11 +84,6 @@
         public void PublishTestTTSMessage(string message)
         {
             workerHost.PublishTTSMessage(message);
-        }
-
-        public void PublishSoundCommand(string message)
-        {
-            workerHost.PublishSoundCommand(message);
         }
 
         public void Dispose()

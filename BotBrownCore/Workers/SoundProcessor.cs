@@ -20,23 +20,20 @@
 
         public void Play(string filename, float volume)
         {
-            var configuration = configurationManager.LoadConfiguration<AudioConfiguration>(ConfigurationFileConstants.Audio);
+            var configuration = configurationManager.LoadConfiguration<AudioConfiguration>();
 
             var pathToFile = Path.Combine(soundPathProvider.Path, filename);
 
-            using (var reader = new MediaFoundationReader(pathToFile))
-            using (var volumeStream = new WaveChannel32(reader))
-            using (var outputStream = new WasapiOut(configuration.SelectedSoundCommandDevice, NAudio.CoreAudioApi.AudioClientShareMode.Shared, false, 10))
-            {
-                volumeStream.Volume = NormalizeVolume(volume);
-                outputStream.Init(volumeStream);
+            using var reader = new MediaFoundationReader(pathToFile);
+            using var volumeStream = new WaveChannel32(reader);
+            using var outputStream = new WasapiOut(configuration.SelectedSoundCommandDevice, NAudio.CoreAudioApi.AudioClientShareMode.Shared, false, 10);
+            volumeStream.Volume = NormalizeVolume(volume);
+            outputStream.Init(volumeStream);
+            outputStream.Play();
 
-                outputStream.Play();
+            Thread.Sleep(reader.TotalTime.Add(TimeSpan.FromMilliseconds(100)));
 
-                Thread.Sleep(reader.TotalTime.Add(TimeSpan.FromMilliseconds(100)));
-
-                outputStream.Stop();
-            }
+            outputStream.Stop();
         }  
 
         private float NormalizeVolume(float rawVolume)

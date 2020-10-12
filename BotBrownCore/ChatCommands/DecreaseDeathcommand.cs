@@ -38,7 +38,7 @@
 
         public override async Task ConsumeCommandSpecific(ChatCommandReceivedEvent chatCommandReceivedEvent)
         {
-            var deathConfig = configurationManager.LoadConfiguration<DeathCounterConfiguration>(ConfigurationFileConstants.DeathCounter);
+            var deathConfig = configurationManager.LoadConfiguration<DeathCounterConfiguration>();
             var game = await twitchApiWrapper.GetCurrentGame();
             var channelName = chatCommandReceivedEvent.ChannelName;
 

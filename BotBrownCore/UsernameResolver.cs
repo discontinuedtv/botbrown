@@ -14,7 +14,7 @@
 
         public ChannelUser ResolveUsername(ChannelUser user)
         {
-            UsernameConfiguration usernameConfiguration = configurationManager.LoadConfiguration<UsernameConfiguration>(ConfigurationFileConstants.Usernames);
+            UsernameConfiguration usernameConfiguration = configurationManager.LoadConfiguration<UsernameConfiguration>();
 
             if (usernameConfiguration.TryGetValue(user.UserId, out string cachedUsername))
             {

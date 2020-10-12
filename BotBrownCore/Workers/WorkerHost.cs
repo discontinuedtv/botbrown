@@ -10,6 +10,10 @@
     using BotBrown.ChatCommands;
     using Serilog;
     using System;
+    using Owin;
+    using BotBrown.Workers.Webserver;
+    using Castle.Windsor;
+    using BotBrown;
 
     public class WorkerHost : IWorkerHost
     {
@@ -45,6 +49,8 @@
             this.soundProcessor = soundProcessor;
         }
 
+        public WindsorContainer Container { get; set; }
+
         public void Execute(CancellationToken cancellationToken, BotArguments botArguments)
         {
             SpawnWorkerTasks(cancellationToken, botArguments);
@@ -65,7 +71,7 @@
             SpawnTTSWorker(cancellationToken);
             SpawnTwitchWorker(cancellationToken, botArguments.DontConnectToTwitch);
             SpawnCommandWorker(cancellationToken);
-            SpawnWebserver(cancellationToken, botArguments.IsDebug);
+            SpawnWebserver(cancellationToken, botArguments.IsDebug, botArguments.Port);
             SpawnConfigurationWatcher(cancellationToken);
         }
 
@@ -91,21 +97,19 @@
         {
             Task.Run(async () =>
             {
-                using (var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, textToSpeechProcessor, logger, chatCommandResolver))
-                {
-                    return await commandWorker.Execute(cancellationToken);
-                }
+                using var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, textToSpeechProcessor, chatCommandResolver);
+                return await commandWorker.Execute(cancellationToken);
             });
         }
 
-        private static void SpawnWebserver(CancellationToken cancellationToken, bool isDebug)
+        private void SpawnWebserver(CancellationToken cancellationToken, bool isDebug, string portOverwrite)
         {
             Task.Run(async () =>
             {
-                string port = isDebug ? WebserverConstants.DebugPort : WebserverConstants.ProductivePort;
+                string port = portOverwrite ?? (isDebug ? WebserverConstants.DebugPort : WebserverConstants.ProductivePort);
                 string webserverUrl = $"http://localhost:{port}";
 
-                using (WebApp.Start<WebserverStartup>(webserverUrl))
+                using (WebApp.Start(webserverUrl, CreateStartup))
                 {
                     while (!cancellationToken.IsCancellationRequested)
                     {
@@ -113,6 +117,17 @@
                     }
                 }
             });
+        }
+
+        private void CreateStartup(IAppBuilder appBuilder)
+        {
+            if (Container == null)
+            {
+                throw new InvalidOperationException("Kein CONTAINER!!");
+            }
+
+            var startup = new WebserverStartup(Container);
+            startup.Configuration(appBuilder);
         }
 
         private void SpawnTwitchWorker(CancellationToken cancellationToken, bool dontConnectToTwitch)
@@ -124,10 +139,8 @@
 
             Task.Run(async () =>
             {
-                using (var ttsWorker = new TwitchInterfaceWorker(bus, clientWrapper, apiWrapper, logger, configurationManager))
-                {
-                    return await ttsWorker.Execute(cancellationToken);
-                }
+                using var ttsWorker = new TwitchInterfaceWorker(bus, clientWrapper, apiWrapper, logger, configurationManager);
+                return await ttsWorker.Execute(cancellationToken);
             });
         }
     }

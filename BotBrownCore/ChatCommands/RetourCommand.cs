@@ -40,7 +40,7 @@
             int year = random.Next(1400, 2180);
             eventBus.Publish(new SendChannelMessageRequestedEvent($"{user.RealUsername} ist zurück von der Zeitreise aus dem Jahr {year}", channelName));
 
-            var facts = configurationManager.LoadConfiguration<FactConfiguration>(ConfigurationFileConstants.Facts);
+            var facts = configurationManager.LoadConfiguration<FactConfiguration>();
             var yearAsString = Convert.ToString(year);
             var fact = facts.GetFact(yearAsString);
             if(fact != null)

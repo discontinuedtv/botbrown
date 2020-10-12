@@ -31,7 +31,7 @@
         {
             try
             {
-                twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
+                twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>();
                 logger.Information("Twitch Konfiguration wurde geladen.");
 
                 if (!twitchConfiguration.IsValid())
