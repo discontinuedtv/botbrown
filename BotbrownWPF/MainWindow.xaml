@@ -8,57 +8,24 @@
         Title="BotBrown"
         Icon="Assets/Botbrown.ico"
         Height="450" Width="800"
-        WindowState="Maximized">
-    <TabControl
-        Name="MenuTabControl"
-        TabStripPlacement="Left"
-        VerticalAlignment="Stretch"
-        HorizontalAlignment="Stretch"
-        BorderThickness="0"
-                    Margin="0, 0, 0, 0"
-                    Padding="0, 0, 0, 0"
-        >
-        <TabItem
-            VerticalContentAlignment = "Top"
-            HorizontalContentAlignment = "Center"
-            IsEnabled = "False"
-            Name = "Logo"
-            IsSelected = "False">
-            <TabItem.Header>
-                <Image Width="50" Source="Assets/doc-112x112.png"/>
-            </TabItem.Header>
-            <Style>
-                <!--
-                <Setter Property="Opacity" Value="1"/>
-                <Setter Property="Height" Value="112"/>
-                <Setter Property="Background" Value="#202225" />
-                -->
-            </Style>            
-        </TabItem>
-
-        <TabItem
-                    Margin="0, 0, 0, 0"
-                    Padding="0, 0, 0, 0"
-                    IsSelected = "True"
-                    Header = "Startseite"
-                    Content = "Startseite"
-                    FocusVisualStyle="{DynamicResource TabItemFocused}"
-            />
-        <TabItem
-                    Header = "Kommandos"
-                    Content = "Kommandos" />
-        <TabItem
-                    Header = "Sounds"
-                    Content = "Sounds" />
-        <TabItem
-                    Header = "Eigenschaften"
-                    Content = "Eigenschaften" />
-    </TabControl>
-
+        WindowState="Maximized"
+        DataContext="{StaticResource MainViewModel}">
+    <Border Margin="0,0,0,0" Background="#202225">
+        <TabControl
+            Name="MenuTabControl"
+            TabStripPlacement="Left"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch"
+            BorderThickness="0"
+            Margin="0, 0, 0, 0"
+            Padding="0, 0, 0, 0"
+            ItemsSource="{Binding Tabs}" />
+    </Border>
 
     <Window.Resources>
         <Style TargetType="TabControl">
             <Setter Property="Background" Value="#2f3136"/>
+            <Setter Property="BorderThickness" Value="0" />
 
             <Style.Resources>
                 <Style TargetType="WrapPanel">
@@ -70,22 +37,24 @@
         <Style TargetType="{x:Type TabItem}">
             <Setter Property="FontSize" Value="15"/>
             <Setter Property="Height" Value="34"/>
-            <Setter Property="Width" Value="150" />
+            <Setter Property="Width" Value="175" />
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="Background" Value="#202225"/>
             <Setter Property="Foreground" Value="#BBBBBB"/>
-            
+            <Setter Property="BorderThickness" Value="0" />
+
             <Setter Property="Margin" Value="0 0 0 0"/>
             <Setter Property="Padding" Value="10 0"/>
             <Setter Property="OverridesDefaultStyle" Value="True" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TabItem}">
-                        <Grid Name="Grid">
+                        <Grid x:Name="tabItemBorderGrid">
                             <Border Name="Border" Background="{TemplateBinding Background}"
                                     BorderThickness="0">
-                                <ContentPresenter  
+                                <ContentPresenter x:Name="cp" 
                                     VerticalAlignment="Center" 
                                     Margin="5"
                                     HorizontalAlignment="Center"
@@ -94,16 +63,6 @@
                             </Border>
                         </Grid>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Foreground" Value="Pink"/>
-                                <Setter TargetName="Border" Property="Background" Value="Green"/>
-                                <Setter Property="Background" Value="green"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="False">
-                                <Setter TargetName="Border" Property="Background" Value="red"/>
-                                <Setter Property="Background" Value="red"/>
-                            </Trigger>                            
-
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter Property="Foreground" Value="#BBBBBB"/>
                                 <Setter TargetName="Border" Property="Margin" Value="0 0 0 0"/>
@@ -113,13 +72,16 @@
                             <Trigger Property="IsSelected" Value="False">
                                 <Setter TargetName="Border" Property="Background" Value="#202225" />
                             </Trigger>
+                            <Trigger SourceName="tabItemBorderGrid" Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
 
-<!--
+        <!--
         <Style TargetType="TabItem">
 
             
@@ -139,10 +101,10 @@
         <Style x:Key="TabItemFocused" TargetType="TabItem">
             <Setter Property="Foreground" Value="#BBBBBB"/>
             <Setter Property="Margin" Value="0 0 0 0"/>
-            <Setter Property="Padding" Value="10 0"/>            
+            <Setter Property="Padding" Value="10 0"/>
             <Setter Property="Background" Value="#3e4349"/>
         </Style>
-        
+
 
 
         <!--
