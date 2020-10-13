@@ -182,11 +182,6 @@
 
         private void ProcessChatMessage(MessageReceivedEvent message)
         {
-            if (WhatsTheTime(message))
-            {
-                return;
-            }
-
             if (ListTimers(message))
             {
                 return;
@@ -240,26 +235,6 @@
                 bus.Publish(new PlaySoundEvent(command.Filename, command.Volume));
                 command.MarkAsExecuted();
             }
-        }
-
-        private bool WhatsTheTime(MessageReceivedEvent @event)
-        {
-            TwitchChatMessage message = @event.Message;
-            ChannelUser user = @event.User;
-
-            if (!message.MessageIs("!time"))
-            {
-                return false;
-            }
-
-            if (!message.IsMessageFromModerator && !message.IsMessageFromBroadcaster)
-            {
-                return false;
-            }
-
-            DateTime now = DateTime.Now;
-            bus.Publish(new TextToSpeechEvent(user, $"Die Zeitleitung zeigt {now:HH} Uhr {now:mm} an."));
-            return true;
         }
 
         private bool AddEditOrDeleteSimpleTextCommand(MessageReceivedEvent @event)
