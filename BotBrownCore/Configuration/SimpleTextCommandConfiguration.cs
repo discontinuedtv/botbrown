@@ -3,7 +3,6 @@
     using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Linq;
 
     [ConfigurationFile(ConfigurationFileConstants.TextCommands)]
     public class SimpleTextCommandConfiguration : IChangeableConfiguration
@@ -25,23 +24,6 @@
         {
             Commands.Remove(command);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Commands)));
-        }
-
-        internal void ProcessMessage(string message)
-        {
-            var indicator = message.Substring(0, 2);
-            var splittedString = message.Substring(2).Split(' ');
-            var command = splittedString[0];
-
-            switch (indicator)
-            {
-                case "+!":
-                    AddOrUpdateCommand(command, string.Join(" ", splittedString.Skip(1)));
-                    return;
-                case "-!":
-                    DeleteCommand(command);
-                    return;
-            }
         }
 
         public bool IsValid()

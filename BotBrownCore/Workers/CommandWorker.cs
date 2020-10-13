@@ -9,10 +9,8 @@
     using BotBrown.Workers.Timers;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Serilog;
 
     public sealed class CommandWorker : IDisposable
     {
@@ -20,22 +18,18 @@
         private readonly IConfigurationManager configurationManager;
         private readonly IPresenceStore presenceStore;
         private readonly IChatCommandResolver chatCommandResolver;
-        private readonly ITextToSpeechProcessor textToSpeechProcessor; // TODO !
-        private readonly List<TimerCommand> timerCommands = new List<TimerCommand>();
         private Guid identifier = Guid.NewGuid();
 
         public CommandWorker(
             IEventBus bus,
             IConfigurationManager configurationManager,
             IPresenceStore presenceStore,
-            ITextToSpeechProcessor textToSpeechProcessor,
             IChatCommandResolver chatCommandResolver)
         {
             this.bus = bus;
             this.configurationManager = configurationManager;
             this.presenceStore = presenceStore;
             this.chatCommandResolver = chatCommandResolver;
-            this.textToSpeechProcessor = textToSpeechProcessor;
         }
 
         public async Task<bool> Execute(CancellationToken cancellationToken)
@@ -98,10 +92,8 @@
         }
 
         private void ProcessChatCommandReceivedEvent(ChatCommandReceivedEvent @event)
-        {
-            var simpleTextCommandConfiguration = configurationManager.LoadConfiguration<SimpleTextCommandConfiguration>();
+        {            
             var chatCommands = chatCommandResolver.ResolveAllChatCommands();
-
             foreach (var command in chatCommands)
             {
                 if (command.CanConsume(@event))
@@ -114,6 +106,7 @@
                 }
             }
 
+            var simpleTextCommandConfiguration = configurationManager.LoadConfiguration<SimpleTextCommandConfiguration>();
             if (simpleTextCommandConfiguration.Commands.ContainsKey(@event.CommandText))
             {
                 string optionalUser = @event.OptionalUser;
@@ -182,33 +175,10 @@
 
         private void ProcessChatMessage(MessageReceivedEvent message)
         {
-            if (ListTimers(message))
-            {
-                return;
-            }
-
-            if (TimerStart(message))
-            {
-                return;
-            }
-
-            if (AddEditOrDeleteSimpleTextCommand(message))
-            {
-                return;
-            }
-
-            if (!RecordGreetingLanguage(message) && !RecordNamechange(message.Message) && !GetLanguages(message))
-            {
-                GreetIfNecessary(message);
-            }
-
+            GreetIfNecessary(message);
             SayByeIfNecessary(message);
             CheckForSoundCommands(message);
-
-            if (SpeakIfNecessary(message))
-            {
-                return;
-            }
+            SpeakIfNecessary(message);
         }
 
         private void CheckForSoundCommands(MessageReceivedEvent message)
@@ -234,110 +204,6 @@
 
                 bus.Publish(new PlaySoundEvent(command.Filename, command.Volume));
                 command.MarkAsExecuted();
-            }
-        }
-
-        private bool AddEditOrDeleteSimpleTextCommand(MessageReceivedEvent @event)
-        {
-            TwitchChatMessage message = @event.Message;
-
-            if (!message.IsMessageFromModerator && !message.IsMessageFromBroadcaster)
-            {
-                return false;
-            }
-
-            if (!message.MessageStartsWith("+!") && !message.MessageStartsWith("-!"))
-            {
-                return false;
-            }
-
-            var simpleTextCommandConfiguration = configurationManager.LoadConfiguration<SimpleTextCommandConfiguration>();
-            simpleTextCommandConfiguration.ProcessMessage(message.Message);
-            return true;
-        }
-
-        private bool ListTimers(MessageReceivedEvent @event)
-        {
-            TwitchChatMessage message = @event.Message;
-            ChannelUser user = @event.User;
-
-            // !timer 420 Ex-und-hopp
-            if (!message.MessageIs("!timers"))
-            {
-                return false;
-            }
-
-            var activeTimers = timerCommands.Where(x => x.IsRunning).ToList();
-            if (!activeTimers.Any())
-            {
-                bus.Publish(new SendChannelMessageRequestedEvent($"Es sind keine Timer aktiv", @event.Message.ChannelName));
-                return true;
-            }
-
-            List<string> expiringTimers = new List<string>();
-            foreach (TimerCommand timer in activeTimers)
-            {
-                expiringTimers.Add($"{timer.Name}: {timer.FormattedTimeLeft}");
-            }
-
-            string expiringTimerOutput = string.Join(", ", expiringTimers);
-
-            bus.Publish(new SendChannelMessageRequestedEvent($"Folgende Timer sind aktiv -> {expiringTimerOutput}", @event.Message.ChannelName));
-
-            return true;
-        }
-
-        private bool TimerStart(MessageReceivedEvent @event)
-        {
-            TwitchChatMessage message = @event.Message;
-            ChannelUser user = @event.User;
-
-            // !timer 420 Ex-und-hopp
-            if (!message.MessageStartsWith("!timer "))
-            {
-                return false;
-            }
-
-            string parameterString = message.ReplaceInNormalizedMessage("!timer ", string.Empty);
-            string[] parameters = parameterString.Split(' ');
-            if (parameters.Length < 2)
-            {
-                return false;
-            }
-
-            if (!int.TryParse(parameters[0], out int timeInSeconds))
-            {
-                return false;
-            }
-
-            if (!message.IsMessageFromBroadcaster && !message.IsMessageFromModerator)
-            {
-                return false;
-            }
-
-            string timerName = string.Join(" ", parameters.Skip(1));
-
-            bus.Publish(new TextToSpeechEvent(user, $"Der Timer {timerName} wurde gestartet."));
-
-            TimeSpan timerLength = TimeSpan.FromSeconds(timeInSeconds);
-
-            DateTime now = DateTime.Now;
-            DateTime doneAt = now.Add(timerLength);
-            timerCommands.Add(new TimerCommand(timerName, doneAt, new DefaultTimeProvider()));
-
-            Task.Delay(timerLength)
-                .ContinueWith(o => PublishTimeEnded(timerName, user));
-
-            return true;
-        }
-
-        private void PublishTimeEnded(string timerName, ChannelUser user)
-        {
-            bus.Publish(new TextToSpeechEvent(user, $"Der Timer {timerName} ist abgelaufen."));
-
-            foreach (var timer in timerCommands.Where(x => x.Name == timerName))
-            {
-                timer.Done();
             }
         }
 
@@ -376,30 +242,6 @@
             }
         }
 
-        private bool RecordGreetingLanguage(MessageReceivedEvent @event)
-        {
-            TwitchChatMessage chatMessage = @event.Message;
-            ChannelUser user = @event.User;
-
-            if (!chatMessage.MessageStartsWith("!sprache"))
-            {
-                return false;
-            }
-
-            string requestedLanguage = chatMessage.ReplaceInNormalizedMessage("!sprache:", string.Empty);
-
-            if (textToSpeechProcessor.TryGetLanguage(requestedLanguage, out string language)) // TODO !!
-            {
-                var greetingConfiguration = configurationManager.LoadConfiguration<GreetingConfiguration>();
-                greetingConfiguration.AddGreeting(user, language);
-                configurationManager.WriteConfiguration(greetingConfiguration);
-                return true;
-            }
-
-            bus.Publish(new SendChannelMessageRequestedEvent($"Die Sprache {requestedLanguage} spreche ich leider nicht.", @event.Message.ChannelName));
-            return false;
-        }
-
         private void GreetIfNecessary(MessageReceivedEvent @event)
         {
             ChannelUser user = @event.User;
@@ -425,48 +267,6 @@
                 bus.Publish(new TextToSpeechEvent(user, $"{phrase} {user.Username}"));
                 presenceStore.RecordPresence(user);
             }
-        }
-
-        private bool RecordNamechange(TwitchChatMessage chatMessage)
-        {
-            if (!chatMessage.MessageStartsWith("!correctname:"))
-            {
-                return false;
-            }
-
-            if (!chatMessage.IsMessageFromModerator && !chatMessage.IsMessageFromBroadcaster)
-            {
-                return false;
-            }
-
-            string namechange = chatMessage.ReplaceInNormalizedMessage("!correctname:", string.Empty);
-
-            string[] namechangeParameters = namechange.Split(';');
-            if (namechangeParameters.Length != 2)
-            {
-                return false;
-            }
-
-            var usernameConfiguration = configurationManager.LoadConfiguration<UsernameConfiguration>();
-            if (!usernameConfiguration.FindUserByRealUsername(namechangeParameters[0], out ChannelUser user))
-            {
-                return false;
-            }
-
-            usernameConfiguration.AddUsername(user.WithResolvedUsername(namechangeParameters[1]));
-            return true;
-        }
-
-        private bool GetLanguages(MessageReceivedEvent message)
-        {
-            if (!message.Message.MessageStartsWith("!sprachen"))
-            {
-                return false;
-            }
-
-            string languages = textToSpeechProcessor.TextToSpeechLanguages;
-            bus.Publish(new SendWhisperMessageRequestedEvent(message.User, languages));
-            return true;
         }
     }
 }

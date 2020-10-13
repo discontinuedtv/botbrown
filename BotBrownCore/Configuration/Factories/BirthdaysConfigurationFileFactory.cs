@@ -11,7 +11,7 @@
             {
                 Birthdays = new Dictionary<DayMonth, List<Birthday>>
                 {
-                    { new DayMonth{ Day = 17, Month = 11}, new List<Birthday> { new Birthday { Day = DateTime.Parse("17.11.1986"), Gratulated = new List<int>(), UserId = 476539607 } } }
+                    { new DayMonth{ Day = 17, Month = 11}, new List<Birthday> { new Birthday { Day = DateTime.Parse("17.11.1986"), Gratulated = new List<int>(), UserId = "476539607" } } }
                 }
             };
         }
