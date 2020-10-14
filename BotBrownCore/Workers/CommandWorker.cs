@@ -5,10 +5,7 @@
     using BotBrown.Configuration;
     using BotBrown.Events;
     using BotBrown.Events.Twitch;
-    using BotBrown.Workers.TextToSpeech;
-    using BotBrown.Workers.Timers;
     using System;
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -92,7 +89,7 @@
         }
 
         private void ProcessChatCommandReceivedEvent(ChatCommandReceivedEvent @event)
-        {            
+        {
             var chatCommands = chatCommandResolver.ResolveAllChatCommands();
             foreach (var command in chatCommands)
             {
@@ -179,6 +176,7 @@
             SayByeIfNecessary(message);
             CheckForSoundCommands(message);
             SpeakIfNecessary(message);
+            CheerForBirthday(message);
         }
 
         private void CheckForSoundCommands(MessageReceivedEvent message)
@@ -221,6 +219,32 @@
             bus.Publish<TextToSpeechEvent>(new SpeakEvent(user, chatMessage.Message));
 
             return true;
+        }
+
+        private void CheerForBirthday(MessageReceivedEvent message)
+        {
+            var birthdayConfiguration = configurationManager.LoadConfiguration<BirthdaysConfiguration>();
+            DateTime now = DateTime.Now;
+            if (birthdayConfiguration.ContainsBirthdayForDate(now))
+            {
+                var changed = false;
+                var birthdays = birthdayConfiguration.GetBirthdays(now);
+                foreach (var birthday in birthdays)
+                {
+                    if (birthday.UserId == message.User.UserId && !birthday.Gratulated.Contains(now.Year))
+                    {
+                        changed = true;
+                        birthday.Gratulated.Add(now.Year);
+                        bus.Publish(new TextToSpeechEvent(message.User, $"Alles Gute zu deinem Geburtstag {message.User.Username}! Genieße deinen Geburstag in unserem Stream. Mach es dir gemütlich."));
+                        break;
+                    }
+                }
+
+                if (changed)
+                {
+                    birthdayConfiguration.MarkChanged();
+                }
+            }
         }
 
         private void SayByeIfNecessary(MessageReceivedEvent @event)

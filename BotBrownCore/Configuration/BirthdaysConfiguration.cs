@@ -12,6 +12,12 @@
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public bool ContainsBirthdayForDate(DateTime dateToCheck)
+        {
+            var dayMonth = new DayMonth { Day = dateToCheck.Day, Month = dateToCheck.Month };
+            return Birthdays.ContainsKey(dayMonth);
+        }
+
         public void AddBirthday(DateTime birthday, string userId)
         {
             Birthday item = new Birthday { Day = birthday, Gratulated = new List<int>(), UserId = userId };
@@ -41,6 +47,17 @@
         public bool IsValid()
         {
             return true;
+        }
+
+        public List<Birthday> GetBirthdays(DateTime date)
+        {
+            var dayMonth = new DayMonth { Day = date.Day, Month = date.Month };
+            return Birthdays[dayMonth];
+        }
+
+        public void MarkChanged()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BirthdaysConfiguration)));
         }
     }
 }

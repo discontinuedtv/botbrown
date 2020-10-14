@@ -7,6 +7,11 @@
     {
         private readonly IList<TimerCommand> timers = new List<TimerCommand>();
 
+        public void AddTimer(TimerCommand timer)
+        {
+            timers.Add(timer);
+        }
+
         public void DeleteTimer(TimerCommand timer)
         {
             timers.Remove(timer);
