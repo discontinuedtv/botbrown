@@ -102,6 +102,18 @@
             return channel.Game;
         }
 
+        public async Task<string> GetUserIdByUsername(string username)
+        {
+            var user = await api.V5.Users.GetUserByNameAsync(username);
+            
+            if(user.Total != 1)
+            {
+                return null;
+            }
+
+            return user.Matches[0].Id;
+        }
+
         private void PublishSuccessMessageOnCompletion(Task<Channel> task)
         {
             task.ContinueWith(t =>

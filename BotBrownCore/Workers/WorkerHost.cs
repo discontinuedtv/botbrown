@@ -97,7 +97,7 @@
         {
             Task.Run(async () =>
             {
-                using var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, textToSpeechProcessor, chatCommandResolver);
+                using var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, chatCommandResolver);
                 return await commandWorker.Execute(cancellationToken);
             });
         }
