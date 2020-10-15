@@ -10,6 +10,7 @@
     using System.Linq;
     using System.Reflection;
     using System.Collections.Generic;
+    using System.Collections;
 
     public sealed class ConfigurationManager : IConfigurationManager
     {

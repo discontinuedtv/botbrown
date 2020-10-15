@@ -1,5 +1,6 @@
 ﻿namespace BotBrown.Configuration
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -8,6 +9,7 @@
     [ConfigurationFile(ConfigurationFileConstants.Birthdays)]
     public partial class BirthdaysConfiguration : IChangeableConfiguration
     {
+        [JsonConverter(typeof(CustomDictionaryConverter<DayMonth, List<Birthday>>))]
         public Dictionary<DayMonth, List<Birthday>> Birthdays { get; set; } = new Dictionary<DayMonth, List<Birthday>>();
 
         public event PropertyChangedEventHandler PropertyChanged;
