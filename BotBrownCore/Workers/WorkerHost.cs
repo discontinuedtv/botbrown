@@ -26,6 +26,7 @@
         private readonly IPresenceStore presenceStore;
         private readonly IChatCommandResolver chatCommandResolver;
         private readonly ISoundProcessor soundProcessor;
+        private readonly IConfigurationPathProvider configurationPathProvider;
 
         public WorkerHost(
             IEventBus bus,
@@ -36,7 +37,8 @@
             IConfigurationManager configurationManager,
             IPresenceStore presenceStore,
             IChatCommandResolver chatCommandResolver,
-            ISoundProcessor soundProcessor)
+            ISoundProcessor soundProcessor,
+            IConfigurationPathProvider configurationPathProvider)
         {
             this.bus = bus;
             this.textToSpeechProcessor = textToSpeechProcessor;
@@ -47,6 +49,7 @@
             this.presenceStore = presenceStore;
             this.chatCommandResolver = chatCommandResolver;
             this.soundProcessor = soundProcessor;
+            this.configurationPathProvider = configurationPathProvider;
         }
 
         public WindsorContainer Container { get; set; }
@@ -79,7 +82,7 @@
         {
             Task.Run(async () =>
             {
-                var configurationWatcher = new ConfigurationWatcher(configurationManager);
+                var configurationWatcher = new ConfigurationWatcher(configurationManager, configurationPathProvider);
                 return await configurationWatcher.StartWatch(cancellationToken);
             });
         }

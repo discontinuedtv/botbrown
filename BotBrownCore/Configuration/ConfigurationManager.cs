@@ -11,6 +11,7 @@
     using System.Reflection;
     using System.Collections.Generic;
     using System.Collections;
+    using System.Security.Cryptography.X509Certificates;
 
     public sealed class ConfigurationManager : IConfigurationManager
     {
@@ -36,11 +37,13 @@
         {
             filename = Path.GetFileName(filename);
             Type typeToRemoveFromCache = null;
-            foreach (var config in configurations)
+            foreach (var configValuePair in configurations)
             {
-                if (config.GetType().GetCustomAttribute<ConfigurationFileAttribute>().Filename == filename)
+                var attributes = Attribute.GetCustomAttributes(configValuePair.Value.GetType());
+                var attribute = (ConfigurationFileAttribute)attributes.First(x => x.GetType() == typeof(ConfigurationFileAttribute));
+                if (attribute.Filename == filename)
                 {
-                    typeToRemoveFromCache = config.Key;
+                    typeToRemoveFromCache = configValuePair.Key;
                     break;
                 }
             }
