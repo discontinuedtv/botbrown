@@ -5,8 +5,8 @@
 
     public sealed class TimerCommand
     {
-        private ITimeProvider timeProvider;
-        private DateTime doneAt;
+        private readonly ITimeProvider timeProvider;
+        private readonly DateTime doneAt;
         private bool isFinished;
 
         public TimerCommand(string timerName, DateTime doneAt, ITimeProvider timeProvider)

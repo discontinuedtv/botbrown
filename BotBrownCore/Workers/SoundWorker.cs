@@ -13,9 +13,8 @@
         private readonly ISoundProcessor soundProcessor;
         private readonly ITextToSpeechProcessor textToSpeechProcessor;
         private readonly ILogger logger;
-
-        private Guid identifier = Guid.NewGuid();
-        private IEventBus bus;
+        private readonly IEventBus bus;
+        private readonly Guid identifier = Guid.NewGuid();
 
         public SoundWorker(IEventBus bus, ITextToSpeechProcessor textToSpeechProcessor, ISoundProcessor soundProcessor, ILogger logger)
         {

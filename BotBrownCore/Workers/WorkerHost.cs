@@ -82,7 +82,7 @@
         {
             Task.Run(async () =>
             {
-                var configurationWatcher = new ConfigurationWatcher(configurationManager, configurationPathProvider);
+                var configurationWatcher = new ConfigurationWatcher(configurationManager, configurationPathProvider, logger);
                 return await configurationWatcher.StartWatch(cancellationToken);
             });
         }
@@ -100,7 +100,7 @@
         {
             Task.Run(async () =>
             {
-                using var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, chatCommandResolver);
+                using var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, chatCommandResolver, logger);
                 return await commandWorker.Execute(cancellationToken);
             });
         }
@@ -116,7 +116,7 @@
                 {
                     while (!cancellationToken.IsCancellationRequested)
                     {
-                        await Task.Delay(1000);
+                        await Task.Delay(1000, cancellationToken);
                     }
                 }
             });

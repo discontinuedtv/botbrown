@@ -7,6 +7,7 @@
     <Product>BotBrown</Product>
     <Copyright>Copyright ©  2020</Copyright>
     <OutputPath>..\Build\$(Configuration)\</OutputPath>
+    <ResolveComReferenceSilent>True</ResolveComReferenceSilent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -75,7 +76,4 @@
       <WrapperTool>tlbimp</WrapperTool>
     </COMReference>
   </ItemGroup>
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="powershell -ExecutionPolicy Unrestricted $(ProjectDir)..\Prebuild.ps1 -ProjectDir $(ProjectDir)" />
-  </Target>
 </Project>

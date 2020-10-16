@@ -23,6 +23,10 @@
             var configuration = configurationManager.LoadConfiguration<AudioConfiguration>();
 
             var pathToFile = Path.Combine(soundPathProvider.Path, filename);
+            if (!File.Exists(pathToFile))
+            {
+                return;
+            }
 
             using var reader = new MediaFoundationReader(pathToFile);
             using var volumeStream = new WaveChannel32(reader);

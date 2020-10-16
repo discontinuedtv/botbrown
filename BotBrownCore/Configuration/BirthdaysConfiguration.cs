@@ -38,9 +38,13 @@
 
         public void DeleteBirthday(string userId)
         {
-            foreach(var key in Birthdays.Keys)
+            foreach(var key in Birthdays.Keys.ToList())
             {
                 Birthdays[key] = Birthdays[key].Where(x => x.UserId != userId).ToList();
+                if (!Birthdays[key].Any())
+                {
+                    Birthdays.Remove(key);
+                }
             }
 
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Birthdays)));
