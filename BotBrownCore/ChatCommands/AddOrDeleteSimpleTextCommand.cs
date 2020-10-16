@@ -7,7 +7,7 @@
     using System.Linq;
     using System.Threading.Tasks;
 
-    class AddOrDeleteSimpleTextCommand : BaseChatCommand
+    public class AddOrDeleteSimpleTextCommand : BaseChatCommand
     {
         private readonly IConfigurationManager configurationManager;
 
