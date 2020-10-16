@@ -8,17 +8,19 @@
     {
         private const int ConfigurationWatchWaitTime = 5000;
         private readonly IConfigurationManager configurationManager;
+        private readonly IConfigurationPathProvider configurationPathProvider;
 
-        public ConfigurationWatcher(IConfigurationManager configurationManager)
+        public ConfigurationWatcher(IConfigurationManager configurationManager, IConfigurationPathProvider configurationPathProvider)
         {
             this.configurationManager = configurationManager;
+            this.configurationPathProvider = configurationPathProvider;
         }
 
         public Task<bool> StartWatch(CancellationToken cancellationToken)
         {
             using (var watcher = new FileSystemWatcher())
             {
-                watcher.Path = Directory.GetCurrentDirectory();
+                watcher.Path = configurationPathProvider.Path;
                 watcher.Filter = "*.json";
                 watcher.NotifyFilter = NotifyFilters.LastWrite;
                 watcher.IncludeSubdirectories = true;
