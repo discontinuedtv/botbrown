@@ -35,6 +35,7 @@
             RegisterLogger(botArguments);
 
             workerHost = container.Resolve<IWorkerHost>();
+            workerHost.Container = container;
             workerHost.Execute(cancellationTokenSource.Token, botArguments);
         }
 

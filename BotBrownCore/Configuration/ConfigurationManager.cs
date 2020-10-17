@@ -10,8 +10,6 @@
     using System.Linq;
     using System.Reflection;
     using System.Collections.Generic;
-    using System.Collections;
-    using System.Security.Cryptography.X509Certificates;
 
     public sealed class ConfigurationManager : IConfigurationManager
     {

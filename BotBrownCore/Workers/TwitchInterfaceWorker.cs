@@ -54,22 +54,29 @@
           
             while (!cancellationToken.IsCancellationRequested)
             {
-                if (bus.TryConsume(identifier, out SendChannelMessageRequestedEvent message))
+                try
                 {
-                    SendChannelMessage(message);
-                }
+                    if (bus.TryConsume(identifier, out SendChannelMessageRequestedEvent message))
+                    {
+                        SendChannelMessage(message);
+                    }
 
-                if (bus.TryConsume(identifier, out SendWhisperMessageRequestedEvent whisper))
+                    if (bus.TryConsume(identifier, out SendWhisperMessageRequestedEvent whisper))
+                    {
+                        SendWhisperMessage(whisper);
+                    }
+
+                    if (bus.TryConsume(identifier, out UpdateChannelEvent channelUpdate))
+                    {
+                        apiWrapper.UpdateChannel(channelUpdate);
+                    }
+
+                    await Task.Delay(100, cancellationToken);
+                }
+                catch (Exception e)
                 {
-                    SendWhisperMessage(whisper);
+                    logger.Error("Bei der Verarbeitung von Twitch Events ist ein Fehler aufgetreten: {e}", e);
                 }
-
-                if(bus.TryConsume(identifier, out UpdateChannelEvent channelUpdate))
-                {
-                    apiWrapper.UpdateChannel(channelUpdate);
-                }
-
-                await Task.Delay(100);
             }
 
             return true;

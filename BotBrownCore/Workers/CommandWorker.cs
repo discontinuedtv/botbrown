@@ -8,6 +8,7 @@
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using Serilog;
 
     public sealed class CommandWorker : IDisposable
     {
@@ -15,18 +16,21 @@
         private readonly IConfigurationManager configurationManager;
         private readonly IPresenceStore presenceStore;
         private readonly IChatCommandResolver chatCommandResolver;
+        private readonly ILogger logger;
         private Guid identifier = Guid.NewGuid();
 
         public CommandWorker(
             IEventBus bus,
             IConfigurationManager configurationManager,
             IPresenceStore presenceStore,
-            IChatCommandResolver chatCommandResolver)
+            IChatCommandResolver chatCommandResolver,
+            ILogger logger)
         {
             this.bus = bus;
             this.configurationManager = configurationManager;
             this.presenceStore = presenceStore;
             this.chatCommandResolver = chatCommandResolver;
+            this.logger = logger.ForContext<CommandWorker>();
         }
 
         public async Task<bool> Execute(CancellationToken cancellationToken)
@@ -42,47 +46,54 @@
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                if (bus.TryConsume(identifier, out MessageReceivedEvent message))
+                try
                 {
-                    ProcessChatMessage(message);
-                }
+                    if (bus.TryConsume(identifier, out MessageReceivedEvent message))
+                    {
+                        ProcessChatMessage(message);
+                    }
 
-                if (bus.TryConsume(identifier, out NewFollowerEvent newFollower))
+                    if (bus.TryConsume(identifier, out NewFollowerEvent newFollower))
+                    {
+                        ProcessNewFollowerEvent(newFollower);
+                    }
+
+                    if (bus.TryConsume(identifier, out SubGiftEvent subGiftEvent))
+                    {
+                        ProcessSubGiftEvent(subGiftEvent);
+                    }
+
+                    if (bus.TryConsume(identifier, out NewSubscriberEvent newSubscriberEvent))
+                    {
+                        ProcessNewSubscriberEvent(newSubscriberEvent);
+                    }
+
+                    if (bus.TryConsume(identifier, out ResubscriberEvent resubscriberEvent))
+                    {
+                        ProcessResubscriberEvent(resubscriberEvent);
+                    }
+
+                    if (bus.TryConsume(identifier, out CommunitySubscriptionEvent communitySubscriptionEvent))
+                    {
+                        ProcessCommunitySubscriptionEvent(communitySubscriptionEvent);
+                    }
+
+                    if (bus.TryConsume(identifier, out TwitchChannelJoinedEvent channelJoinedEvent))
+                    {
+                        ProcessChannelJoinedEvent(channelJoinedEvent);
+                    }
+
+                    if (bus.TryConsume(identifier, out ChatCommandReceivedEvent chatCommandReceivedEvent))
+                    {
+                        ProcessChatCommandReceivedEvent(chatCommandReceivedEvent);
+                    }
+
+                    await Task.Delay(100, cancellationToken);
+                }
+                catch (Exception e)
                 {
-                    ProcessNewFollowerEvent(newFollower);
+                    logger.Error("Bei der Verarbeitung eines Kommandos ist ein Fehler aufgetreten: {e}", e);
                 }
-
-                if (bus.TryConsume(identifier, out SubGiftEvent subGiftEvent))
-                {
-                    ProcessSubGiftEvent(subGiftEvent);
-                }
-
-                if (bus.TryConsume(identifier, out NewSubscriberEvent newSubscriberEvent))
-                {
-                    ProcessNewSubscriberEvent(newSubscriberEvent);
-                }
-
-                if (bus.TryConsume(identifier, out ResubscriberEvent resubscriberEvent))
-                {
-                    ProcessResubscriberEvent(resubscriberEvent);
-                }
-
-                if (bus.TryConsume(identifier, out CommunitySubscriptionEvent communitySubscriptionEvent))
-                {
-                    ProcessCommunitySubscriptionEvent(communitySubscriptionEvent);
-                }
-
-                if (bus.TryConsume(identifier, out TwitchChannelJoinedEvent channelJoinedEvent))
-                {
-                    ProcessChannelJoinedEvent(channelJoinedEvent);
-                }
-
-                if (bus.TryConsume(identifier, out ChatCommandReceivedEvent chatCommandReceivedEvent))
-                {
-                    ProcessChatCommandReceivedEvent(chatCommandReceivedEvent);
-                }
-
-                await Task.Delay(100);
             }
 
             return true;
