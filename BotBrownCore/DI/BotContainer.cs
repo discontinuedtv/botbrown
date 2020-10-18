@@ -46,6 +46,11 @@
             }
         }
 
+        public void Install(IWindsorInstaller installer)
+        {
+            container.Install(installer);
+        }
+
         public void Dispose()
         {
             container.Dispose();

@@ -1,19 +1,23 @@
-﻿using BotbrownWPF.Views;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-
-namespace BotbrownWPF.ViewModels
+﻿namespace BotbrownWPF.ViewModels
 {
-    public class MainViewModel
+    using BotbrownWPF.Views;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Media.Imaging;
+
+    public class MainViewModel : IMainViewModel, IViewModel
     {
-        public List<TabItem> Tabs
+        private ISettingsPage settingsPage;
+
+        public MainViewModel(ISettingsPage settingsPage)
+        {
+            this.settingsPage = settingsPage;
+        }
+
+        public ObservableCollection<TabItem> Tabs
         {
             get
             {
@@ -54,10 +58,10 @@ namespace BotbrownWPF.ViewModels
                 tabs.Add(new TabItem
                 {
                     Header = "Eigenschaften",
-                    Content = new Settingspage()
+                    Content = settingsPage
                 });
 
-                return tabs;
+                return new ObservableCollection<TabItem>(tabs);
             }
         }
     }

@@ -8,8 +8,8 @@
         Title="BotBrown"
         Icon="Assets/Botbrown.ico"
         Height="450" Width="800"
-        WindowState="Maximized"
-        DataContext="{StaticResource MainViewModel}">
+        WindowState="Maximized">
+    <!--DataContext="{StaticResource MainViewModel}"-->
     <Border Margin="0,0,0,0" Background="#202225">
         <TabControl
             Name="MenuTabControl"

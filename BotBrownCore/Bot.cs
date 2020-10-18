@@ -29,6 +29,7 @@
         public void Dispose()
         {
             cancellationTokenSource.Cancel();
+            cancellationTokenSource.Dispose();
         }
 
         // https://github.com/TwitchLib/TwitchLib

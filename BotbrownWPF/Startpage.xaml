@@ -35,26 +35,6 @@
         <TextBlock
             FontSize="24"
             FontWeight="SemiBold">Startpage</TextBlock>
-        <GroupBox Header="Twitch"
-                  Margin="12"
-                  Padding="12"
-                  BorderThickness="0.5">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                    
-                <Label Grid.Row="0" Grid.Column="0" Foreground="#FFFFFF">Kanal:</Label>
-                <TextBox Grid.Row="0" Grid.Column="1"
-                         Padding="3"
-                         Background="#2f3136"
-                        
-                         Foreground="#FFFFFF"></TextBox>
-            </Grid>
-        </GroupBox>
+
     </StackPanel>
 </UserControl>

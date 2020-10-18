@@ -1,28 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-namespace BotbrownWPF.Views
+﻿namespace BotbrownWPF.Views
 {
+    using BotbrownWPF.ViewModels;
+    using System.Windows.Controls;
+
     /// <summary>
-    /// Interaktionslogik für Settingspage.xaml
+    /// Interaktionslogik für SettingsPage.xaml
     /// </summary>
-    public partial class Settingspage : UserControl
+    public partial class SettingsPage : UserControl, ISettingsPage
     {
-        public Settingspage()
+        public SettingsPage(ISettingsViewModel vm)
         {
             InitializeComponent();
+
+            this.DataContext = vm;
         }
     }
 }
