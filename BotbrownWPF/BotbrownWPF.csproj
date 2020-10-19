@@ -68,8 +68,10 @@
     <Compile Include="IViewFactory.cs" />
     <Compile Include="IViewModel.cs" />
     <Compile Include="ViewActivatorFacility.cs" />
+    <Compile Include="ViewModels\Configuration\TwitchConfigurationViewModel.cs" />
     <Compile Include="ViewModels\IMainViewModel.cs" />
     <Compile Include="ViewModels\ISettingsViewModel.cs" />
+    <Compile Include="ViewModels\Notifier.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\Commandspage.xaml.cs">
       <DependentUpon>Commandspage.xaml</DependentUpon>

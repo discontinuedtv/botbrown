@@ -20,6 +20,7 @@
                     .Configure(c => c
                         .LifeStyle.Is(LifestyleType.Transient)),
                 Classes.FromThisAssembly().BasedOn<IViewModel>()
+                    .WithService.FromInterface()
                     .Configure(c => c.LifeStyle.Is(LifestyleType.Transient))
               );
 

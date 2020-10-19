@@ -41,6 +41,7 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150" />
@@ -52,8 +53,16 @@
                          Padding="3"
                          Background="#2f3136"
                         
-                         Foreground="#FFFFFF" Text="{Binding Bla}"></TextBox>
+                         Foreground="#FFFFFF" Text="{Binding TwitchConfiguration.Channel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                <Label Grid.Row="1" Grid.Column="0" Foreground="#FFFFFF">Token:</Label>
+                <Button Grid.Column="1" 
+                        Grid.Row="1" 
+                        IsEnabled="{Binding TwitchConfiguration.IsMissingAccessToken}"
+                        Content="Token anfordern" />
             </Grid>
         </GroupBox>
+        <Button Content="Speichern" 
+                IsEnabled="{Binding IsDirty}"
+                Click="Save_Click"/>
     </StackPanel>
 </UserControl>
