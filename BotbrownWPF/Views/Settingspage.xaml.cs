@@ -1,6 +1,7 @@
 ﻿namespace BotbrownWPF.Views
 {
     using BotbrownWPF.ViewModels;
+    using System.Diagnostics;
     using System.Windows.Controls;
 
     /// <summary>
@@ -20,6 +21,12 @@
         private void Save_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             vm.Save();
+        }
+
+        private void RequestToken_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var webview = new WebView();
+            webview.Show();
         }
     }
 }

@@ -39,7 +39,8 @@
             }
         }
 
-        public bool IsMissingAccessToken => string.IsNullOrWhiteSpace(twitchConfiguration.AccessToken);
+        public bool IsMissingAccessToken => string.IsNullOrWhiteSpace(twitchConfiguration.AccessToken)
+            && !string.IsNullOrWhiteSpace(twitchConfiguration.Channel);
 
         public void Save()
         {

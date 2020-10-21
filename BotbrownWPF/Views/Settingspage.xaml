@@ -58,7 +58,8 @@
                 <Button Grid.Column="1" 
                         Grid.Row="1" 
                         IsEnabled="{Binding TwitchConfiguration.IsMissingAccessToken}"
-                        Content="Token anfordern" />
+                        Content="Token anfordern"
+                        Click="RequestToken_Click"/>
             </Grid>
         </GroupBox>
         <Button Content="Speichern" 

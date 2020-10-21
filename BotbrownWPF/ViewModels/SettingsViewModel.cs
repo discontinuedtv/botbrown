@@ -28,6 +28,8 @@ namespace BotbrownWPF.ViewModels
             {
                 TwitchConfiguration.Save();
             }
+
+            IsDirty = false;
         }
 
         public TwitchConfigurationViewModel TwitchConfiguration { get; }
