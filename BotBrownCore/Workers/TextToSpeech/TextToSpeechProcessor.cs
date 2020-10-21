@@ -159,6 +159,12 @@
                 foreach (InstalledVoice voice in voices)
                 {
                     string[] languageName = voice.VoiceInfo.Culture.DisplayName.ToLower().Split(' ');
+                    
+                    if (availableLanguages.ContainsKey(languageName[0]))
+                    {
+                        continue;
+                    }
+                    
                     availableLanguages.Add(languageName[0], voice.VoiceInfo.Name);
                 }
             }

@@ -7,13 +7,8 @@
         xmlns:local="clr-namespace:BotbrownWPF.Views"
         mc:Ignorable="d"
         Title="WebView" Height="600" Width="800">
-    <Grid HorizontalAlignment="left">
-        <!--
-        <WebBrowser x:Name="webBrowser"  
-            Width="800" Height="600"  />-->
         <WPF:WebView x:Name="WebView1"
                       Grid.Row="0"
                       Grid.Column="0"
                       Loaded="WebView_Loaded" />
-    </Grid>
-</Window>
+ </Window>

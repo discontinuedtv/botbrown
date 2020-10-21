@@ -25,8 +25,11 @@
 
         private void RequestToken_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            var webview = new WebView();
-            webview.Show();
+            var webVm = new WebViewModel();
+            var webview = new WebView(webVm);
+            webview.ShowDialog();
+
+            var asd = webVm.AccessToken;
         }
     }
 }

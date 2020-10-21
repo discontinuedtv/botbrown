@@ -1,10 +1,11 @@
 ﻿namespace BotbrownWPF.Views
 {
-    internal class WebViewModel
+    public class WebViewModel
     {
         public WebViewModel()
         {
         }
 
+        public string AccessToken { get; set; }
     }
 }
