@@ -5,7 +5,7 @@
     public class TwitchConfigurationViewModel : Notifier
     {
         private readonly IConfigurationManager configurationManager;
-        private TwitchConfiguration twitchConfiguration;
+        private readonly TwitchConfiguration twitchConfiguration;
 
         public TwitchConfigurationViewModel(IConfigurationManager configurationManager)
         {
@@ -35,6 +35,19 @@
                 {
                     twitchConfiguration.AccessToken = value;
                     OnPropertyChanged(nameof(AccessToken));
+                }
+            }
+        }
+
+        public string BroadcasterUserId 
+        {
+            get { return twitchConfiguration.BroadcasterUserId; }
+            set
+            {
+                if (value != twitchConfiguration.AccessToken)
+                {
+                    twitchConfiguration.BroadcasterUserId = value;
+                    OnPropertyChanged(nameof(BroadcasterUserId));
                 }
             }
         }

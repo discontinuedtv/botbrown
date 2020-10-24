@@ -88,6 +88,8 @@
     <Compile Include="Views\Soundspage.xaml.cs">
       <DependentUpon>Soundspage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TwitchApiResponse.cs" />
+    <Compile Include="Views\UserInfo.cs" />
     <Compile Include="Views\WebView.xaml.cs">
       <DependentUpon>WebView.xaml</DependentUpon>
     </Compile>

@@ -9,6 +9,5 @@
         Title="WebView" Height="600" Width="800">
         <WPF:WebView x:Name="WebView1"
                       Grid.Row="0"
-                      Grid.Column="0"
-                      Loaded="WebView_Loaded" />
+                      Grid.Column="0" />
  </Window>

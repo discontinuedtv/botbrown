@@ -57,7 +57,7 @@
 
                 tabs.Add(new TabItem
                 {
-                    Header = "Eigenschaften",
+                    Header = "Einstellungen",
                     Content = settingsPage
                 });
 

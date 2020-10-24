@@ -52,10 +52,13 @@
 
         private TwitchAPI InitializeTwitchApi(TwitchConfiguration twitchConfiguration)
         {
-            return new TwitchAPI(null, null, new ApiSettings
+            var loggerFactory = new Serilog.Extensions.Logging.SerilogLoggerFactory(logger);
+
+            return new TwitchAPI(loggerFactory, null, new ApiSettings
             {
-                ClientId = twitchConfiguration.ApiClientId,
-                AccessToken = twitchConfiguration.ApiAccessToken
+                ClientId = TwitchConfiguration.ApiClientId,
+                AccessToken = twitchConfiguration.AccessToken.Replace("oauth:", ""),
+                Secret = TwitchConfiguration.ClientSecret
             });
         }
 

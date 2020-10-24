@@ -89,7 +89,7 @@
             }
 
             var userType = ConvertToInternalUserType(command.ChatMessage);
-            bus.Publish(new ChatCommandReceivedEvent(user, command.CommandText, command.ArgumentsAsString, command.ChatMessage.Channel, optionalUser, userType));
+            bus.Publish(new ChatCommandReceivedEvent(user, command.CommandText, command.ArgumentsAsString, command.ChatMessage.Channel, optionalUser, userType, command.ChatMessage.CustomRewardId));
         }
 
         private UserType ConvertToInternalUserType(ChatMessage chatMessage)

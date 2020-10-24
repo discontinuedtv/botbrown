@@ -1,6 +1,12 @@
 ﻿namespace BotbrownWPF.Views
 {
+    using BotBrown.Configuration;
+    using Newtonsoft.Json;
     using System;
+    using System.Linq;
+    using System.Net.Http;
+    using System.Threading.Tasks;
+    using System.Web;
     using System.Windows;
 
     /// <summary>
@@ -15,15 +21,54 @@
             this.vm = vm;
             InitializeComponent();
             DataContext = vm;
-            WebView1.Source = new Uri("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=bv8ex3iuo52pc1ob3ti9lq698t45ey&redirect_uri=http://www.legien.org&scope=viewing_activity_read&state=c3ab8aa609ea11e793ae92361f002671");
+            WebView1.Source = vm.TargetUri;
             WebView1.NavigationCompleted += WebView1_NavigationCompleted;
         }
 
         private async void WebView1_NavigationCompleted(object sender, Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT.WebViewControlNavigationCompletedEventArgs e)
         {
             string windowLocationHref = await WebView1.InvokeScriptAsync("eval", "window.location.href");
-            vm.AccessToken = windowLocationHref;
-            Close();
+
+            if (!Uri.TryCreate(windowLocationHref, UriKind.RelativeOrAbsolute, out Uri parsedUri))
+            {
+                return;
+            }
+
+            if (parsedUri.Fragment.Contains("#access"))
+            {
+                var queryParameters = HttpUtility.ParseQueryString(parsedUri.Fragment);
+
+                var token = queryParameters.Get("#access_token");
+                if (token != null)
+                {
+                    vm.AccessToken = token;
+                    var userInfo = await RequestUserId(vm.ChannelName, token);
+                    vm.UserInfo = userInfo;
+
+                    Close();
+                }
+            }
+        }
+
+        private async Task<TwitchUserInfo> RequestUserId(string channelname, string accessToken)
+        {
+            var client = new HttpClient();
+
+            var uri = new Uri($"https://api.twitch.tv/helix/users?login={channelname}");
+
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+            client.DefaultRequestHeaders.Add("Client-Id", TwitchConfiguration.ApiClientId);
+            HttpResponseMessage response = await client.GetAsync(uri);
+            response.EnsureSuccessStatusCode();
+            var resp = await response.Content.ReadAsStringAsync();
+
+            var result = JsonConvert.DeserializeObject<TwitchApiResponse<TwitchUserInfo>>(resp);
+            if (result?.Data == null || !result.Data.Any())
+            {
+                throw new InvalidOperationException("Could not resolve Twitch user");
+            }
+            
+            return result.Data.First();
         }
     }
 }
