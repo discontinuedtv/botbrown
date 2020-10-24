@@ -2,6 +2,7 @@
 {
     using BotBrown.ChatCommands;
     using BotBrown.Configuration;
+    using BotBrown.Configuration.Factories;
     using BotBrown.Workers;
     using Castle.MicroKernel.Registration;
     using Castle.MicroKernel.Resolvers.SpecializedResolvers;

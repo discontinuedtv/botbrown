@@ -28,7 +28,7 @@
                 configuration.PropertyChanged += configurationWasChangedCheck;
 
                 configurationManagerMock
-                    .Setup(x => x.LoadConfiguration<UsernameConfiguration>(It.Is<string>(s => s == ConfigurationFileConstants.Usernames)))
+                    .Setup(x => x.LoadConfiguration<UsernameConfiguration>())
                     .Returns(configuration);
 
                 return CreateUserWithUnresolvedName();
@@ -41,7 +41,7 @@
                 configuration.PropertyChanged += configurationWasChangedCheck;
 
                 configurationManagerMock
-                    .Setup(x => x.LoadConfiguration<UsernameConfiguration>(It.Is<string>(s => s == ConfigurationFileConstants.Usernames)))
+                    .Setup(x => x.LoadConfiguration<UsernameConfiguration>())
                     .Returns(configuration);
 
                 return CreateUserWithUnresolvedName();

@@ -1,8 +1,10 @@
-﻿namespace BotBrown.Configuration
+namespace BotBrown.Configuration
 {
     using System.Collections.Generic;
     using System.ComponentModel;
+    using Newtonsoft.Json;
 
+    [ConfigurationFile(ConfigurationFileConstants.DeathCounter)]
     public class DeathCounterConfiguration : IChangeableConfiguration
     {
         public Dictionary<string, int> DeathsPerGame { get; set; } = new Dictionary<string, int>();
@@ -57,6 +59,11 @@
 
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DeathsPerGame)));
             return newCount;
+        }
+
+        public bool IsValid()
+        {
+            return true;
         }
     }
 }

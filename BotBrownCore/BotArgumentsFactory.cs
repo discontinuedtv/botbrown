@@ -9,6 +9,7 @@
             string customConfigurationPath = null;
             string customSoundsPath = null;
             string logPath = "log/";
+            string port = null;
 
             foreach (var arg in args)
             {
@@ -40,9 +41,14 @@
                 {
                     logPath = arg.Split(':')[1];
                 }
+
+                if (arg.StartsWith("-port:"))
+                {
+                    port = arg.Split(':')[1];
+                }
             }
 
-            var botArguments = new BotArguments(isDebug, dontConnectToTwitch, customConfigurationPath, customSoundsPath, logPath);
+            var botArguments = new BotArguments(isDebug, dontConnectToTwitch, port, customConfigurationPath, customSoundsPath, logPath);
             return botArguments;
         }
     }

@@ -10,6 +10,10 @@
     using BotBrown.ChatCommands;
     using Serilog;
     using System;
+    using Owin;
+    using BotBrown.Workers.Webserver;
+    using Castle.Windsor;
+    using BotBrown;
 
     public class WorkerHost : IWorkerHost
     {
@@ -22,6 +26,7 @@
         private readonly IPresenceStore presenceStore;
         private readonly IChatCommandResolver chatCommandResolver;
         private readonly ISoundProcessor soundProcessor;
+        private readonly IConfigurationPathProvider configurationPathProvider;
 
         public WorkerHost(
             IEventBus bus,
@@ -32,7 +37,8 @@
             IConfigurationManager configurationManager,
             IPresenceStore presenceStore,
             IChatCommandResolver chatCommandResolver,
-            ISoundProcessor soundProcessor)
+            ISoundProcessor soundProcessor,
+            IConfigurationPathProvider configurationPathProvider)
         {
             this.bus = bus;
             this.textToSpeechProcessor = textToSpeechProcessor;
@@ -43,7 +49,10 @@
             this.presenceStore = presenceStore;
             this.chatCommandResolver = chatCommandResolver;
             this.soundProcessor = soundProcessor;
+            this.configurationPathProvider = configurationPathProvider;
         }
+
+        public WindsorContainer Container { get; set; }
 
         public void Execute(CancellationToken cancellationToken, BotArguments botArguments)
         {
@@ -65,7 +74,7 @@
             SpawnTTSWorker(cancellationToken);
             SpawnTwitchWorker(cancellationToken, botArguments.DontConnectToTwitch);
             SpawnCommandWorker(cancellationToken);
-            SpawnWebserver(cancellationToken, botArguments.IsDebug);
+            SpawnWebserver(cancellationToken, botArguments.IsDebug, botArguments.Port);
             SpawnConfigurationWatcher(cancellationToken);
         }
 
@@ -73,7 +82,7 @@
         {
             Task.Run(async () =>
             {
-                var configurationWatcher = new ConfigurationWatcher(configurationManager);
+                var configurationWatcher = new ConfigurationWatcher(configurationManager, configurationPathProvider, logger);
                 return await configurationWatcher.StartWatch(cancellationToken);
             });
         }
@@ -91,28 +100,37 @@
         {
             Task.Run(async () =>
             {
-                using (var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, textToSpeechProcessor, logger, chatCommandResolver))
+                using var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, chatCommandResolver, logger);
+                return await commandWorker.Execute(cancellationToken);
+            });
+        }
+
+        private void SpawnWebserver(CancellationToken cancellationToken, bool isDebug, string portOverwrite)
+        {
+            Task.Run(async () =>
+            {
+                string port = portOverwrite ?? (isDebug ? WebserverConstants.DebugPort : WebserverConstants.ProductivePort);
+                string webserverUrl = $"http://localhost:{port}";
+
+                using (WebApp.Start(webserverUrl, CreateStartup))
                 {
-                    return await commandWorker.Execute(cancellationToken);
+                    while (!cancellationToken.IsCancellationRequested)
+                    {
+                        await Task.Delay(1000, cancellationToken);
+                    }
                 }
             });
         }
 
-        private static void SpawnWebserver(CancellationToken cancellationToken, bool isDebug)
+        private void CreateStartup(IAppBuilder appBuilder)
         {
-            Task.Run(async () =>
+            if (Container == null)
             {
-                string port = isDebug ? WebserverConstants.DebugPort : WebserverConstants.ProductivePort;
-                string webserverUrl = $"http://localhost:{port}";
+                throw new InvalidOperationException("Kein CONTAINER!!");
+            }
 
-                using (WebApp.Start<WebserverStartup>(webserverUrl))
-                {
-                    while (!cancellationToken.IsCancellationRequested)
-                    {
-                        await Task.Delay(1000);
-                    }
-                }
-            });
+            var startup = new WebserverStartup(Container);
+            startup.Configuration(appBuilder);
         }
 
         private void SpawnTwitchWorker(CancellationToken cancellationToken, bool dontConnectToTwitch)
@@ -124,10 +142,8 @@
 
             Task.Run(async () =>
             {
-                using (var ttsWorker = new TwitchInterfaceWorker(bus, clientWrapper, apiWrapper, logger, configurationManager))
-                {
-                    return await ttsWorker.Execute(cancellationToken);
-                }
+                using var ttsWorker = new TwitchInterfaceWorker(bus, clientWrapper, apiWrapper, logger, configurationManager);
+                return await ttsWorker.Execute(cancellationToken);
             });
         }
     }

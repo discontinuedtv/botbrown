@@ -10,7 +10,7 @@
         public TwitchConfigurationViewModel(IConfigurationManager configurationManager)
         {
             this.configurationManager = configurationManager;
-            twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
+            twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>();
         }
 
         public string Channel
@@ -57,7 +57,7 @@
 
         public void Save()
         {
-            configurationManager.WriteConfiguration(twitchConfiguration, ConfigurationFileConstants.Twitch);
+            configurationManager.WriteConfiguration(twitchConfiguration);
             IsDirty = false;
         }
     }

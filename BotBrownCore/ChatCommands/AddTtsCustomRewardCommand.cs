@@ -33,9 +33,9 @@ namespace BotBrown.ChatCommands
                 return Task.CompletedTask;
             }
 
-            var twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>(ConfigurationFileConstants.Twitch);
+            var twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>();
             twitchConfiguration.TextToSpeechRewardId = chatCommandReceivedEvent.CustomRewardId;
-            configurationManager.WriteConfiguration(twitchConfiguration, ConfigurationFileConstants.Twitch);
+            configurationManager.WriteConfiguration(twitchConfiguration);
 
             eventBus.Publish(new SendChannelMessageRequestedEvent($"Custom Reward wurde registriert.", chatCommandReceivedEvent.ChannelName));
             return Task.CompletedTask;

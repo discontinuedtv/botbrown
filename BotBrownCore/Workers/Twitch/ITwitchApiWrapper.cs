@@ -13,5 +13,7 @@
         void UpdateChannel(UpdateChannelEvent channelUpdate);
 
         Task<string> GetCurrentGame();
+
+        Task<string> GetUserIdByUsername(string username);
     }
 }

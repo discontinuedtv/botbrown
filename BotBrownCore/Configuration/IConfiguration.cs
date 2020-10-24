@@ -2,5 +2,6 @@
 {
     public interface IConfiguration
     {
+        bool IsValid();
     }
 }

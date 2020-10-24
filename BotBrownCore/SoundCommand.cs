@@ -35,11 +35,6 @@
                     return false;
                 }
 
-                if (!File.Exists(Filename))
-                {
-                    return false;
-                }
-
                 return true;
             }
         }

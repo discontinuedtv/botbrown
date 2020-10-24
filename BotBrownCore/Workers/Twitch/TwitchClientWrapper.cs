@@ -1,5 +1,6 @@
 ﻿namespace BotBrown.Workers.Twitch
 {
+    using BotBrown;
     using BotBrown.Configuration;
     using BotBrown.Events;
     using BotBrown.Events.Twitch;

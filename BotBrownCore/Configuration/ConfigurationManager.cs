@@ -1,24 +1,31 @@
 ﻿namespace BotBrown.Configuration
 {
+    using BotBrown.Configuration.Factories;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Concurrent;
     using System.ComponentModel;
     using System.IO;
     using Serilog;
+    using System.Linq;
+    using System.Reflection;
+    using System.Collections.Generic;
 
     public sealed class ConfigurationManager : IConfigurationManager
     {
         private readonly IConfigurationPathProvider configurationPathProvider;
         private readonly IConfigurationFileFactoryRegistry registry;
         private readonly ILogger logger;
-        private readonly ConcurrentDictionary<Type, (IConfiguration, string)> configurations;
+        private readonly ConcurrentDictionary<Type, IConfiguration> configurations;
 
         private string ConfigurationBasePath => configurationPathProvider.Path;
 
-        public ConfigurationManager(IConfigurationFileFactoryRegistry registry, ILogger logger, IConfigurationPathProvider configurationPathProvider)
+        public ConfigurationManager(
+            IConfigurationFileFactoryRegistry registry,
+            ILogger logger,
+            IConfigurationPathProvider configurationPathProvider)
         {
-            configurations = new ConcurrentDictionary<Type, (IConfiguration, string)>();
+            configurations = new ConcurrentDictionary<Type, IConfiguration>();
             this.registry = registry;
             this.logger = logger.ForContext<ConfigurationManager>();
             this.configurationPathProvider = configurationPathProvider;
@@ -28,11 +35,13 @@
         {
             filename = Path.GetFileName(filename);
             Type typeToRemoveFromCache = null;
-            foreach (var config in configurations)
+            foreach (var configValuePair in configurations)
             {
-                if (config.Value.Item2 == filename)
+                var attributes = Attribute.GetCustomAttributes(configValuePair.Value.GetType());
+                var attribute = (ConfigurationFileAttribute)attributes.First(x => x.GetType() == typeof(ConfigurationFileAttribute));
+                if (attribute.Filename == filename)
                 {
-                    typeToRemoveFromCache = config.Key;
+                    typeToRemoveFromCache = configValuePair.Key;
                     break;
                 }
             }
@@ -44,25 +53,27 @@
             }
         }
 
-        public T LoadConfiguration<T>(string filename)
+        public T LoadConfiguration<T>()
             where T : IConfiguration
         {
-            if (configurations.ContainsKey(typeof(T)))
+            Type key = typeof(T);
+            if (configurations.ContainsKey(key))
             {
-                return (T)configurations[typeof(T)].Item1;
+                return (T)configurations[key];
             }
 
+            var filename = key.GetCustomAttribute<ConfigurationFileAttribute>().Filename;
             string pathToFile = $"{ConfigurationBasePath}/{filename}";
 
             if (!File.Exists(pathToFile))
             {
                 IConfigurationFileFactory<T> factory = registry.GetFactory<T>();
                 T defaultConfiguration = factory.CreateDefaultConfiguration();
-                WriteConfiguration(defaultConfiguration, filename);
+                WriteConfiguration(defaultConfiguration);
 
-                configurations.TryAdd(typeof(T), (defaultConfiguration, filename));
+                configurations.TryAdd(key, defaultConfiguration);
 
-                if(defaultConfiguration is IChangeableConfiguration changeableConfiguration)
+                if (defaultConfiguration is IChangeableConfiguration changeableConfiguration)
                     changeableConfiguration.PropertyChanged += ConfigurationChanged;
 
                 return defaultConfiguration;
@@ -72,7 +83,7 @@
             {
                 string serialzedConfiguration = reader.ReadToEnd();
                 var configuration = JsonConvert.DeserializeObject<T>(serialzedConfiguration);
-                configurations.TryAdd(typeof(T), (configuration, filename));
+                configurations.TryAdd(key, configuration);
 
                 if (configuration is IChangeableConfiguration changeableConfiguration)
                     changeableConfiguration.PropertyChanged += ConfigurationChanged;
@@ -83,21 +94,48 @@
 
         private void ConfigurationChanged(object sender, PropertyChangedEventArgs e)
         {
-            var entry = configurations[sender.GetType()].Item2;
-            WriteConfiguration(sender as IConfiguration, entry);
+            WriteConfiguration(sender as IConfiguration);
         }
 
-        public void WriteConfiguration(IConfiguration configurationValue, string filename)
+        public void WriteConfiguration(IConfiguration configurationValue)
         {
+            var filename = configurationValue.GetType().GetCustomAttribute<ConfigurationFileAttribute>().Filename;
+
             JsonSerializer serializer = new JsonSerializer
             {
                 NullValueHandling = NullValueHandling.Ignore
             };
 
-            using (StreamWriter sw = new StreamWriter($"{ConfigurationBasePath}/{filename}"))
-            using (JsonWriter writer = new JsonTextWriter(sw))
+            using StreamWriter sw = new StreamWriter($"{ConfigurationBasePath}/{filename}");
+            using JsonWriter writer = new JsonTextWriter(sw);
+            serializer.Serialize(writer, configurationValue);
+        }
+
+        public IEnumerable<IConfiguration> CheckConfigurationStatus()
+        {
+            ResolveConfigurationTypes();
+
+            var status = new List<IConfiguration>();
+
+            foreach (KeyValuePair<Type, IConfiguration> configuration in configurations)
             {
-                serializer.Serialize(writer, configurationValue);
+                status.Add(configuration.Value);
+            }
+
+            return status;
+        }
+
+        private void ResolveConfigurationTypes()
+        {
+            Type[] types = GetType().Assembly.GetTypes().Where(x => x.GetCustomAttribute<ConfigurationFileAttribute>() != null).ToArray();
+            foreach (Type type in types)
+            {
+                if (!configurations.TryGetValue(type, out IConfiguration _))
+                {
+                    MethodInfo method = GetType().GetMethod(nameof(LoadConfiguration));
+                    MethodInfo genericMethod = method.MakeGenericMethod(GetType());
+                    genericMethod.Invoke(null, null);
+                }
             }
         }
     }

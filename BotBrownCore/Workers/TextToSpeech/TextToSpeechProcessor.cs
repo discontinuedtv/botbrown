@@ -8,6 +8,7 @@
     using System.Speech.Synthesis;
     using System.Text;
     using System.Threading;
+    using BotBrown;
     using BotBrown.Configuration;
     using BotBrownCore.Configuration;
     using NAudio.CoreAudioApi;
@@ -28,7 +29,7 @@
             this.configurationManager = configurationManager;
             RegisterAvailableLanguages();
 
-            audioConfiguration = configurationManager.LoadConfiguration<AudioConfiguration>(ConfigurationFileConstants.Audio);
+            audioConfiguration = configurationManager.LoadConfiguration<AudioConfiguration>();
         }
 
         public string TextToSpeechLanguages
@@ -96,20 +97,18 @@
 
         private void OutputWaveStream(SpMemoryStream waveStream)
         {
-            using (var sourceStream = new MemoryStream((byte[])waveStream.GetData()))
-            using (var output = new WasapiOut(audioConfiguration.SelectedTTSDevice, AudioClientShareMode.Shared, true, 100))
-            using (var provider = new RawSourceWaveStream(sourceStream, new WaveFormat(44100, BitResolution, 2)))
+            using var sourceStream = new MemoryStream((byte[])waveStream.GetData());
+            using var output = new WasapiOut(audioConfiguration.SelectedTTSDevice, AudioClientShareMode.Shared, true, 100);
+            using var provider = new RawSourceWaveStream(sourceStream, new WaveFormat(44100, BitResolution, 2));
+
+            sourceStream.Seek(0, SeekOrigin.Begin);
+            output.Volume = 1f;
+            output.Init(provider);
+            output.Play();
+
+            while (output.PlaybackState == PlaybackState.Playing)
             {
-                sourceStream.Seek(0, SeekOrigin.Begin);
-
-                output.Volume = 1f;
-                output.Init(provider);
-                output.Play();
-
-                while (output.PlaybackState == PlaybackState.Playing)
-                {
-                    Thread.Sleep(10);
-                }
+                Thread.Sleep(10);
             }
         }
 
@@ -132,13 +131,13 @@
 
         private string GetDesiredLanguage(ChannelUser user)
         {
-            GreetingConfiguration greetingConfiguration = configurationManager.LoadConfiguration<GreetingConfiguration>(ConfigurationFileConstants.Greetings);
+            GreetingConfiguration greetingConfiguration = configurationManager.LoadConfiguration<GreetingConfiguration>();
             return greetingConfiguration.RetrieveDesiredLanguage(user.UserId);
         }
 
         private bool CheckIfTextToSpeechIsActive()
         {
-            GeneralConfiguration generalConfiguration = configurationManager.LoadConfiguration<GeneralConfiguration>(ConfigurationFileConstants.General);
+            GeneralConfiguration generalConfiguration = configurationManager.LoadConfiguration<GeneralConfiguration>();
             return generalConfiguration.ActivateTextToSpeech;
         }
 
@@ -152,21 +151,19 @@
 
         private void RegisterAvailableLanguages()
         {
-            using (var synth = new SpeechSynthesizer())
-            {
-                ReadOnlyCollection<InstalledVoice> voices = synth.GetInstalledVoices();
+            using var synth = new SpeechSynthesizer();
+            ReadOnlyCollection<InstalledVoice> voices = synth.GetInstalledVoices();
 
-                foreach (InstalledVoice voice in voices)
+            foreach (InstalledVoice voice in voices)
+            {
+                string[] languageName = voice.VoiceInfo.Culture.DisplayName.ToLower().Split(' ');
+
+                if (availableLanguages.ContainsKey(languageName[0]))
                 {
-                    string[] languageName = voice.VoiceInfo.Culture.DisplayName.ToLower().Split(' ');
-                    
-                    if (availableLanguages.ContainsKey(languageName[0]))
-                    {
-                        continue;
-                    }
-                    
-                    availableLanguages.Add(languageName[0], voice.VoiceInfo.Name);
+                    continue;
                 }
+
+                availableLanguages.Add(languageName[0], voice.VoiceInfo.Name);
             }
         }
     }
