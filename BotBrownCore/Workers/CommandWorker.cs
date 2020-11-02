@@ -197,7 +197,7 @@
                 return;
             }
 
-            var soundConfiguration = configurationManager.LoadConfiguration<CommandConfiguration>();
+            var soundConfiguration = configurationManager.LoadConfiguration<SoundCommandConfiguration>();
             foreach (var emoteInMessage in message.EmotesInMessage)
             {
                 if (!soundConfiguration.TryGetDefinition(emoteInMessage.Name, out CommandDefinition commandDefinition))

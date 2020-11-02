@@ -10,11 +10,13 @@
 
     public class MainViewModel : IMainViewModel, IViewModel
     {
-        private ISettingsPage settingsPage;
+        private readonly ISettingsPage settingsPage;
+        private readonly ISoundsPage soundsPage;
 
-        public MainViewModel(ISettingsPage settingsPage)
+        public MainViewModel(ISettingsPage settingsPage, ISoundsPage soundsPage)
         {
             this.settingsPage = settingsPage;
+            this.soundsPage = soundsPage;
         }
 
         public ObservableCollection<TabItem> Tabs
@@ -52,7 +54,7 @@
                 tabs.Add(new TabItem
                 {
                     Header = "Sounds",
-                    Content = new Soundspage()
+                    Content = soundsPage
                 });
 
                 tabs.Add(new TabItem

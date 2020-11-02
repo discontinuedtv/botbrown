@@ -26,6 +26,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>618</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -71,8 +72,10 @@
     <Compile Include="ViewModels\Configuration\TwitchConfigurationViewModel.cs" />
     <Compile Include="ViewModels\IMainViewModel.cs" />
     <Compile Include="ViewModels\ISettingsViewModel.cs" />
+    <Compile Include="ViewModels\ISoundsViewModel.cs" />
     <Compile Include="ViewModels\Notifier.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\SoundsPageViewModel.cs" />
     <Compile Include="Views\Commandspage.xaml.cs">
       <DependentUpon>Commandspage.xaml</DependentUpon>
     </Compile>
@@ -81,6 +84,7 @@
     </Compile>
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\ISettingsPage.cs" />
+    <Compile Include="Views\ISoundsPage.cs" />
     <Compile Include="Views\IView.cs" />
     <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>

@@ -9,7 +9,8 @@
     /// </summary>
     public partial class SettingsPage : UserControl, ISettingsPage
     {
-        private ISettingsViewModel vm;
+        private readonly ISettingsViewModel vm;
+
         public SettingsPage(ISettingsViewModel vm)
         {
             this.vm = vm;
@@ -25,9 +26,12 @@
 
         private void RequestToken_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            var webVm = new WebViewModel();
-            webVm.ChannelName = vm.TwitchConfiguration.Channel;
-            var webview = new WebView(webVm);
+            WebViewModel webVm = new WebViewModel
+            {
+                ChannelName = vm.TwitchConfiguration.Channel
+            };
+
+            WebView webview = new WebView(webVm);
 
             webview.ShowDialog();
             vm.TwitchConfiguration.AccessToken = $"oauth:{webVm.AccessToken}";

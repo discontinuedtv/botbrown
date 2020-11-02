@@ -1,9 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace BotBrown.Configuration
 {
     [ConfigurationFile(ConfigurationFileConstants.Twitch)]
-    public class TwitchConfiguration : IConfiguration
+    public class TwitchConfiguration : IChangeableConfiguration
     {
         [JsonIgnore]
         public const string ApiClientId = "bv8ex3iuo52pc1ob3ti9lq698t45ey";
@@ -24,6 +25,13 @@ namespace BotBrown.Configuration
         public string TextToSpeechRewardId { get; set; }
 
         public string BroadcasterUserId { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void Changed()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TwitchConfiguration)));
+        }
 
         public bool IsValid()
         {
