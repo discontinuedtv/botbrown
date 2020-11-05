@@ -8,7 +8,8 @@
     <Product>BotBrown</Product>
     <Copyright>Copyright ©  2020</Copyright>
     <OutputPath>..\Build\$(Configuration)\</OutputPath>
-    <Platforms>AnyCPU;x64</Platforms>
+    <Platforms>x64</Platforms>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
