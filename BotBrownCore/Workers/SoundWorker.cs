@@ -1,26 +1,31 @@
 ﻿namespace BotBrown.Workers
 {
     using BotBrown;
+    using BotBrown.Configuration;
     using BotBrown.Events;
     using BotBrown.Workers.TextToSpeech;
+    using Serilog;
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Serilog;
 
     public class SoundWorker
     {
         private readonly ISoundProcessor soundProcessor;
-        private readonly ITextToSpeechProcessor textToSpeechProcessor;
+        private readonly IConfigurationManager configurationManager;
+        private readonly IList<ITextToSpeechProcessor> textToSpeechProcessors;
         private readonly ILogger logger;
         private readonly IEventBus bus;
         private readonly Guid identifier = Guid.NewGuid();
 
-        public SoundWorker(IEventBus bus, ITextToSpeechProcessor textToSpeechProcessor, ISoundProcessor soundProcessor, ILogger logger)
+        public SoundWorker(IEventBus bus, IList<ITextToSpeechProcessor> textToSpeechProcessors, ISoundProcessor soundProcessor, ILogger logger, IConfigurationManager configurationManager)
         {
             this.bus = bus;
-            this.textToSpeechProcessor = textToSpeechProcessor;
+            this.textToSpeechProcessors = textToSpeechProcessors;
             this.soundProcessor = soundProcessor;
+            this.configurationManager = configurationManager;
             this.logger = logger.ForContext<SoundWorker>();
         }
 
@@ -76,12 +81,26 @@
 
         private void Speak(ChannelUser user, Func<ChannelUser, string> messageAction)
         {
-            textToSpeechProcessor.Speak(user, messageAction);
+            var generalConfiguration = configurationManager.LoadConfiguration<GeneralConfiguration>();
+            if (!generalConfiguration.ActivateTextToSpeech)
+            {
+                return;
+            }
+
+            var textToSpeechProcessor = textToSpeechProcessors.FirstOrDefault(x => x.Engine == generalConfiguration.TextToSpeechEngine);
+            textToSpeechProcessor?.Speak(user, messageAction);
         }
 
         private void Speak(string messageAction)
         {
-            textToSpeechProcessor.Speak(messageAction);
+            var generalConfiguration = configurationManager.LoadConfiguration<GeneralConfiguration>();
+            if (!generalConfiguration.ActivateTextToSpeech)
+            {
+                return;
+            }
+
+            var textToSpeechProcessor = textToSpeechProcessors.FirstOrDefault(x => x.Engine == generalConfiguration.TextToSpeechEngine);
+            textToSpeechProcessor?.Speak(messageAction);
         }
     }
 }

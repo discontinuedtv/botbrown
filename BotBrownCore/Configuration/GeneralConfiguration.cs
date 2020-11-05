@@ -8,6 +8,8 @@
     {
         public bool ActivateTextToSpeech { get; set; }
 
+        public string TextToSpeechEngine { get; set; } = "Windows";
+
         public string BotChannelGreeting { get; set; }
 
         public string ByePhrase { get; set; }

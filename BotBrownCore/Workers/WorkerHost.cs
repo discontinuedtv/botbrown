@@ -14,11 +14,12 @@
     using BotBrown.Workers.Webserver;
     using Castle.Windsor;
     using BotBrown;
+    using System.Collections.Generic;
 
     public class WorkerHost : IWorkerHost
     {
         private readonly IEventBus bus;
-        private readonly ITextToSpeechProcessor textToSpeechProcessor;
+        private readonly IList<ITextToSpeechProcessor> textToSpeechProcessors;
         private readonly ITwitchClientWrapper clientWrapper;
         private readonly ITwitchApiWrapper apiWrapper;
         private readonly ILogger logger;
@@ -31,7 +32,7 @@
 
         public WorkerHost(
             IEventBus bus,
-            ITextToSpeechProcessor textToSpeechProcessor,
+            IList<ITextToSpeechProcessor> textToSpeechProcessors,
             ITwitchClientWrapper clientWrapper,
             ITwitchApiWrapper apiWrapper,
             ILogger logger,
@@ -43,7 +44,7 @@
             IWindsorContainer container)
         {
             this.bus = bus;
-            this.textToSpeechProcessor = textToSpeechProcessor;
+            this.textToSpeechProcessors = textToSpeechProcessors;
             this.clientWrapper = clientWrapper;
             this.apiWrapper = apiWrapper;
             this.logger = logger.ForContext<WorkerHost>();
@@ -92,7 +93,7 @@
         {
             Task.Run(async () =>
             {
-                var ttsWorker = new SoundWorker(bus, textToSpeechProcessor, soundProcessor, logger);
+                var ttsWorker = new SoundWorker(bus, textToSpeechProcessors, soundProcessor, logger, configurationManager);
                 return await ttsWorker.Execute(cancellationToken);
             });
         }
