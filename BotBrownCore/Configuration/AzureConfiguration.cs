@@ -1,13 +1,9 @@
 ﻿namespace BotBrown.Configuration
 {
-    using System.ComponentModel;
-
     [ConfigurationFile(ConfigurationFileConstants.Azure)]
-    public class AzureConfiguration : IChangeableConfiguration
+    public class AzureConfiguration : IConfiguration
     {
         public string SubscriptionKey { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public bool IsValid()
         {
