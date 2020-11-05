@@ -12,5 +12,7 @@
         void Speak(string message);
 
         bool TryGetLanguage(string requestedLanguage, out string language);
+
+        string Engine { get; }
     }
 }

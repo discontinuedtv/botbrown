@@ -15,7 +15,7 @@
     using NAudio.Wave;
     using SpeechLib;
 
-    public class TextToSpeechProcessor : ITextToSpeechProcessor
+    public class WindowsTextToSpeechProcessor : ITextToSpeechProcessor
     {
         private const int BitResolution = 16;
 
@@ -24,13 +24,15 @@
         private readonly AudioConfiguration audioConfiguration;
         private string languages;
 
-        public TextToSpeechProcessor(IConfigurationManager configurationManager)
+        public WindowsTextToSpeechProcessor(IConfigurationManager configurationManager)
         {
             this.configurationManager = configurationManager;
             RegisterAvailableLanguages();
 
             audioConfiguration = configurationManager.LoadConfiguration<AudioConfiguration>();
         }
+
+        public string Engine => "Windows";
 
         public string TextToSpeechLanguages
         {
@@ -138,7 +140,7 @@
         private bool CheckIfTextToSpeechIsActive()
         {
             GeneralConfiguration generalConfiguration = configurationManager.LoadConfiguration<GeneralConfiguration>();
-            return generalConfiguration.ActivateTextToSpeech;
+            return generalConfiguration.ActivateTextToSpeech && generalConfiguration.TextToSpeechEngine == "Windows";
         }
 
         private void InitializeLanguages()

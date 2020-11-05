@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BotBrown.Configuration
+﻿namespace BotBrown.Configuration
 {
     public static class ConfigurationFileConstants
     {
@@ -15,5 +13,7 @@ namespace BotBrown.Configuration
         public const string DeathCounter = "deathcounter.json";
         public const string Facts = "facts.json";
         public const string Birthdays = "birthdays.json";
+        public const string Amazon = "aws.json";
+        public const string Azure = "azure.json";
     }
 }
