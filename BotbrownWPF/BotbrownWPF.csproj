@@ -7,7 +7,7 @@
     <ProjectGuid>{49D6B424-8985-4833-81C6-C243CE1CD074}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>BotbrownWPF</RootNamespace>
-    <AssemblyName>BotbrownWPF</AssemblyName>
+    <AssemblyName>Botbrown</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -18,7 +18,7 @@
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -29,7 +29,7 @@
     <NoWarn>618</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\Build\Release\</OutputPath>
@@ -69,7 +69,9 @@
     <Compile Include="IViewFactory.cs" />
     <Compile Include="IViewModel.cs" />
     <Compile Include="ViewActivatorFacility.cs" />
+    <Compile Include="ViewModels\Configuration\AudioConfigurationViewModel.cs" />
     <Compile Include="ViewModels\Configuration\TwitchConfigurationViewModel.cs" />
+    <Compile Include="ViewModels\Configuration\GeneralConfigurationViewModel.cs" />
     <Compile Include="ViewModels\IMainViewModel.cs" />
     <Compile Include="ViewModels\ISettingsViewModel.cs" />
     <Compile Include="ViewModels\ISoundsViewModel.cs" />

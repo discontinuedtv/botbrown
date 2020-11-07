@@ -63,6 +63,8 @@
 
                     await Task.Delay(100, cancellationToken);
                 }
+                catch (TaskCanceledException)
+                { }
                 catch (Exception e)
                 {
                     logger.Error("Bei der Verarbeitung von Twitch Events ist ein Fehler aufgetreten: {e}", e);

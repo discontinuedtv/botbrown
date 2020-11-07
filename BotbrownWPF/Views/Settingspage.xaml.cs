@@ -19,11 +19,6 @@
             this.DataContext = vm;
         }
 
-        private void Save_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            vm.Save();
-        }
-
         private void RequestToken_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             WebViewModel webVm = new WebViewModel
@@ -36,6 +31,21 @@
             webview.ShowDialog();
             vm.TwitchConfiguration.AccessToken = $"oauth:{webVm.AccessToken}";
             vm.TwitchConfiguration.BroadcasterUserId = webVm.UserInfo.Id;
+        }
+
+        private void SaveTwitch_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            vm.TwitchConfiguration.Save();
+        }
+
+        private void SaveAudio_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            vm.AudioConfiguration.Save();
+        }
+
+        private void SaveGeneral_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            vm.GeneralConfiguration.Save();
         }
     }
 }

@@ -74,9 +74,7 @@
         }
 
         private void Client_OnWhisperCommandReceived(object sender, OnWhisperCommandReceivedArgs e)
-        {
-            var asd = e;
-        }
+        { }
 
         private void Client_OnChatCommandReceived(object sender, OnChatCommandReceivedArgs chatCommandReceivedArguments)
         {

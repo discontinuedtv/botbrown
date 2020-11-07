@@ -90,6 +90,8 @@
 
                     await Task.Delay(100, cancellationToken);
                 }
+                catch (TaskCanceledException)
+                { }
                 catch (Exception e)
                 {
                     logger.Error("Bei der Verarbeitung eines Kommandos ist ein Fehler aufgetreten: {e}", e);

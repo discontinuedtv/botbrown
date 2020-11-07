@@ -10,7 +10,6 @@
     using System.Threading;
     using BotBrown;
     using BotBrown.Configuration;
-    using BotBrownCore.Configuration;
     using NAudio.CoreAudioApi;
     using NAudio.Wave;
     using SpeechLib;

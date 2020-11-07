@@ -14,10 +14,6 @@ namespace BotBrown.Configuration
 
         public string Username { get; set; }
 
-        //public string ApiAccessToken { get; set; }
-
-        //public string ApiRefreshToken { get; set; }
-
         public string AccessToken { get; set; }
 
         public string Channel { get; set; }

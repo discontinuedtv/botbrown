@@ -1,7 +1,6 @@
 ﻿namespace BotBrown.Workers
 {
     using BotBrown.Configuration;
-    using BotBrownCore.Configuration;
     using NAudio.Wave;
     using System;
     using System.IO;

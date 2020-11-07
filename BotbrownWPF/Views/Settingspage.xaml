@@ -34,36 +34,114 @@
         <TextBlock
             FontSize="24"
             FontWeight="SemiBold">Einstellungen</TextBlock>
+        <GroupBox Header="Grundeinstellungen"
+                  Margin="12"
+                  Padding="12"
+                  BorderThickness="0.5">
+            <StackPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="220" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" Foreground="#FFFFFF">TTS aktivieren:</Label>
+                    <CheckBox Margin="0 8 0 0" Grid.Row="0" Grid.Column="1" IsChecked="{Binding GeneralConfiguration.TtsActive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Label Grid.Row="1" Grid.Column="0" Foreground="#FFFFFF">Begrüßung:</Label>
+                    <TextBox Grid.Row="1" Grid.Column="1"
+                         Padding="3"
+                         Margin="0 3 0 0"
+                         Background="#2f3136"                        
+                         Foreground="#FFFFFF" Text="{Binding GeneralConfiguration.BotChannelGreeting, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>                    
+                    <Label Grid.Row="2" Grid.Column="0" Foreground="#FFFFFF">Verabschiedung:</Label>
+                    <TextBox Grid.Row="2" Grid.Column="1"
+                         Padding="3"
+                         Margin="0 3 0 0"
+                         Background="#2f3136"                        
+                         Foreground="#FFFFFF" Text="{Binding GeneralConfiguration.ByePhrase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>                    
+                </Grid>
+                <StackPanel HorizontalAlignment="Right" Width="100">
+                    <Button Content="Speichern" 
+                        Margin="0 15 0 0"
+                        Width="100"
+                            Padding="3"
+                        IsEnabled="{Binding GeneralConfiguration.IsDirty}"
+                        Click="SaveGeneral_Click"/>
+                </StackPanel>                
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="Audio"
+                  Margin="12"
+                  Padding="12"
+                  BorderThickness="0.5">
+            <StackPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="220" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" Foreground="#FFFFFF">TTS Ausgabe:</Label>
+                    <ComboBox Margin="0 3 0 0" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding AudioConfiguration.AvailableAudioDevices}" SelectedItem="{Binding AudioConfiguration.TTSAudioDeviceName}"></ComboBox>
+                    <Label Grid.Row="1" Grid.Column="0" Foreground="#FFFFFF">Soundkommando Ausgabe:</Label>
+                    <ComboBox Margin="0 3 0 0" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding AudioConfiguration.AvailableAudioDevices}" SelectedItem="{Binding AudioConfiguration.SoundCommandDeviceName}"></ComboBox>
+                </Grid>
+                <StackPanel HorizontalAlignment="Right" Width="100">
+                    <Button Content="Speichern" 
+                        Margin="0 15 0 0"
+                        Width="100"
+                            Padding="3"
+                        IsEnabled="{Binding AudioConfiguration.IsDirty}"
+                        Click="SaveAudio_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
         <GroupBox Header="Twitch"
                   Margin="12"
                   Padding="12"
                   BorderThickness="0.5">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <StackPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="220" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                <Label Grid.Row="0" Grid.Column="0" Foreground="#FFFFFF">Kanal:</Label>
-                <TextBox Grid.Row="0" Grid.Column="1"
+                    <Label Grid.Row="0" Grid.Column="0" Foreground="#FFFFFF">Kanal:</Label>
+                    <TextBox Grid.Row="0" Grid.Column="1"
                          Padding="3"
-                         Background="#2f3136"
-                        
+                         Margin="0 3 0 0"
+                         Background="#2f3136"                        
                          Foreground="#FFFFFF" Text="{Binding TwitchConfiguration.Channel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                <Label Grid.Row="1" Grid.Column="0" Foreground="#FFFFFF">Token:</Label>
-                <Button Grid.Column="1" 
+                    <Label Grid.Row="1" Grid.Column="0" Foreground="#FFFFFF">Token:</Label>
+                    <Button Grid.Column="1" 
                         Grid.Row="1" 
+                        Margin="0 3 0 0"
                         IsEnabled="{Binding TwitchConfiguration.IsMissingAccessToken}"
                         Content="Token anfordern"
                         Click="RequestToken_Click"/>
-            </Grid>
+                </Grid>
+                <StackPanel HorizontalAlignment="Right" Width="100">
+                    <Button Content="Speichern" 
+                        Margin="0 15 0 0"
+                            Padding="3"
+                        Width="100"
+                        IsEnabled="{Binding TwitchConfiguration.IsDirty}"
+                        Click="SaveTwitch_Click"/>
+                </StackPanel>
+            </StackPanel>
         </GroupBox>
-        <Button Content="Speichern" 
-                IsEnabled="{Binding IsDirty}"
-                Click="Save_Click"/>
     </StackPanel>
 </UserControl>

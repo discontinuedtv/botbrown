@@ -4,8 +4,10 @@ namespace BotbrownWPF.ViewModels
 {
     public interface ISettingsViewModel : IViewModel
     {
+        AudioConfigurationViewModel AudioConfiguration { get; }
+
         TwitchConfigurationViewModel TwitchConfiguration { get; }
 
-        void Save();
+        GeneralConfigurationViewModel GeneralConfiguration { get; }
     }
 }
