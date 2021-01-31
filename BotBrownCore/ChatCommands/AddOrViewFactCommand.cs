@@ -1,12 +1,12 @@
 ﻿namespace BotBrown.ChatCommands
 {
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
     using BotBrown.Configuration;
     using BotBrown.Events;
     using BotBrown.Events.Twitch;
     using BotBrown.Models;
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
 
     public class AddOrViewFactCommand : BaseChatCommand
     {
@@ -19,9 +19,9 @@
             this.eventBus = eventBus;
         }
 
-        public override UserType ElligableUserType => UserType.Editor;
+        public override UserType ElligableUserType => UserType.AboveSubscriber;
 
-        public override string[] Commands => new[]{ "fact", "funfact" };
+        public override string[] Commands => new[] { "fact", "funfact" };
 
         public override TimeSpan Cooldown => TimeSpan.Zero;
 
@@ -30,18 +30,18 @@
         public override Task ConsumeCommandSpecific(ChatCommandReceivedEvent chatCommandReceivedEvent)
         {
             var commandArgs = chatCommandReceivedEvent.CommandArgs;
-            if(string.IsNullOrEmpty(commandArgs))
+            if (string.IsNullOrEmpty(commandArgs))
             {
                 return Task.CompletedTask;
             }
 
             var facts = configurationManager.LoadConfiguration<FactConfiguration>();
-            
+
             var splittedArgs = commandArgs.Split(' ');
-            if(splittedArgs.Length == 1)
+            if (splittedArgs.Length == 1)
             {
                 var fact = facts.GetFact(splittedArgs[0]);
-                if(fact == null)
+                if (fact == null)
                 {
                     return Task.CompletedTask;
                 }
@@ -53,7 +53,7 @@
             var key = splittedArgs[0];
             var newFact = string.Join(" ", splittedArgs.Skip(1).ToArray());
             facts.AddFact(key, newFact);
-            eventBus.Publish(new SendChannelMessageRequestedEvent($"Fact zu {key} angelegt / bearbeitet!.", chatCommandReceivedEvent.ChannelName));
+            eventBus.Publish(new SendChannelMessageRequestedEvent($"Fact zu {key} angelegt / bearbeitet!", chatCommandReceivedEvent.ChannelName));
             return Task.CompletedTask;
         }
     }
