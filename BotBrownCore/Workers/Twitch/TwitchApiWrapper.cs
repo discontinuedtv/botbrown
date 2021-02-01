@@ -1,17 +1,17 @@
 ﻿namespace BotBrown.Workers.Twitch
 {
-    using BotBrown.Configuration;
-    using BotBrown.Events;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using BotBrown.Configuration;
+    using BotBrown.Events;
+    using Serilog;
     using TwitchLib.Api;
     using TwitchLib.Api.Core;
     using TwitchLib.Api.Services;
     using TwitchLib.Api.Services.Events.FollowerService;
     using TwitchLib.Api.V5.Models.Channels;
-    using Serilog;
 
     public class TwitchApiWrapper : ITwitchApiWrapper
     {
@@ -105,13 +105,20 @@
         public async Task<string> GetUserIdByUsername(string username)
         {
             var user = await api.V5.Users.GetUserByNameAsync(username);
-            
-            if(user.Total != 1)
+
+            if (user.Total != 1)
             {
                 return null;
             }
 
             return user.Matches[0].Id;
+        }
+
+        public async Task<DateTime?> GetSubscriptionInfo(string userId)
+        {
+            TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>();
+            var userFollows = await api.V5.Users.CheckUserFollowsByChannelAsync(userId, twitchConfiguration.BroadcasterUserId);
+            return userFollows?.CreatedAt;
         }
 
         private void PublishSuccessMessageOnCompletion(Task<Channel> task)

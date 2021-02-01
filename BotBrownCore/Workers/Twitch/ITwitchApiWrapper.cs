@@ -1,8 +1,9 @@
 ﻿namespace BotBrown.Workers.Twitch
 {
+    using System;
+    using System.Threading.Tasks;
     using BotBrown.Configuration;
     using BotBrown.Events;
-    using System.Threading.Tasks;
 
     public interface ITwitchApiWrapper
     {
@@ -14,5 +15,7 @@
         Task<string> GetCurrentGame();
 
         Task<string> GetUserIdByUsername(string username);
+
+        Task<DateTime?> GetFollowSince(string userId)
     }
 }
