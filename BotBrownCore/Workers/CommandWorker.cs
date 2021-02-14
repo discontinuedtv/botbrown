@@ -1,13 +1,14 @@
 ﻿namespace BotBrown.Workers
 {
-    using BotBrown.ChatCommands;
-    using BotBrown;
-    using BotBrown.Configuration;
-    using BotBrown.Events;
-    using BotBrown.Events.Twitch;
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using BotBrown;
+    using BotBrown.ChatCommands;
+    using BotBrown.Configuration;
+    using BotBrown.Events;
+    using BotBrown.Events.Twitch;
+    using BotBrown.Models;
     using Serilog;
 
     public sealed class CommandWorker : IDisposable
@@ -126,6 +127,17 @@
 
                 bus.Publish(new SendChannelMessageRequestedEvent($"{optionalUser}: {simpleTextCommandConfiguration.Commands[@event.CommandText]}", @event.ChannelName));
                 return;
+            }
+
+            var targetedTextCommandConfiguration = configurationManager.LoadConfiguration<TargetedTextCommandConfiguration>();
+            if (targetedTextCommandConfiguration.Commands.ContainsKey(@event.CommandText))
+            {
+                var targetCommand = new TargetCommand(@event.CommandArgs, targetedTextCommandConfiguration.Commands[@event.CommandText], @event.User.Username);
+                if (targetCommand.IsValid())
+                {
+                    bus.Publish(new SendChannelMessageRequestedEvent(targetCommand.ResolvePreparedText(), @event.ChannelName));
+                    return;
+                }
             }
         }
 
