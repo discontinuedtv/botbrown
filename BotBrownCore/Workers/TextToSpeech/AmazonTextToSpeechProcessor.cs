@@ -21,7 +21,7 @@
             {
                 if (string.IsNullOrEmpty(languages))
                 {
-                    var pollyClient = GetPollyClient();
+                    using var pollyClient = GetPollyClient();
                     languages = string.Join(", ", pollyClient.DescribeVoices(new Amazon.Polly.Model.DescribeVoicesRequest()).Voices.Select(voice => voice.LanguageName));
                 }
 
@@ -42,8 +42,7 @@
                 return;
             }
 
-            var pollyClient = GetPollyClient();
-
+            using var pollyClient = GetPollyClient();
             var language = GetDesiredLanguage(user);
             if (string.IsNullOrEmpty(language))
             {

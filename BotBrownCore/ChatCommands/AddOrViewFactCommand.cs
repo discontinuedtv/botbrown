@@ -19,7 +19,7 @@
             this.eventBus = eventBus;
         }
 
-        public override UserType ElligableUserType => UserType.Editor;
+        public override UserType ElligableUserType => UserType.AboveSubscriber;
 
         public override string[] Commands => new[]{ "fact", "funfact" };
 

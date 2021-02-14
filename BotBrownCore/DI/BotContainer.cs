@@ -31,10 +31,15 @@
                 container.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel));
                 container.Register(Classes.FromThisAssembly().InNamespace("BotBrown", true)
                     .Unless(type => type == typeof(LoggingInterceptor))
+                    .Unless(type => type == typeof(ConfigurationManager))
                     .WithServiceAllInterfaces()
                     .Configure(x => x.Interceptors<LoggingInterceptor>()));
                 container.Register(Component.For<LoggingInterceptor>().ImplementedBy<LoggingInterceptor>().IsDefault());
 
+                container.Register(Classes.FromThisAssembly().BasedOn(typeof(IConfigurationManager))
+                    .WithServiceAllInterfaces()
+                    .LifestyleSingleton()
+                    .Configure(x => x.Interceptors<LoggingInterceptor>()));
                 container.Register(Classes.FromThisAssembly().BasedOn(typeof(IConfigurationFileFactory<>)).WithService.Base().Configure(x => x.Interceptors<LoggingInterceptor>()));
                 container.Register(Classes.FromThisAssembly().BasedOn(typeof(IChatCommand)).WithService.Base().Configure(x => x.Interceptors<LoggingInterceptor>()));
                 RegisterConfigurationPathProvider(botArguments);

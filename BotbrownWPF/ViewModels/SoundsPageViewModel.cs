@@ -1,10 +1,10 @@
 ﻿using BotBrown.Configuration;
-using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace BotbrownWPF.ViewModels
 {
-    public class SoundsPageViewModel : ISoundsPageViewModel, IViewModel
+    public class SoundsPageViewModel : Notifier, ISoundsPageViewModel, IViewModel
     {
         private readonly IConfigurationManager configurationManager;
         private readonly SoundCommandConfiguration soundCommandConfiguration;
@@ -13,6 +13,8 @@ namespace BotbrownWPF.ViewModels
         {
             this.configurationManager = configurationManager;
             soundCommandConfiguration = configurationManager.LoadConfiguration<SoundCommandConfiguration>();
+
+            soundCommandConfiguration.CommandsDefinitions.CollectionChanged += (s, e) => OnPropertyChanged(nameof(Sounds));
         }
 
         public ObservableCollection<SoundViewModel> Sounds
@@ -23,44 +25,32 @@ namespace BotbrownWPF.ViewModels
 
                 foreach (var definition in soundCommandConfiguration.CommandsDefinitions)
                 {
-                    sounds.Add(new SoundViewModel
-                    {
-                        Name = definition.Name,
-                        Volume = definition.Volume,
-                        CooldownInSeconds = definition.CooldownInSeconds,
-                        Filename = definition.Filename,
-                        Shortcut = definition.Shortcut
-                    });
+                    sounds.Add(new SoundViewModel(definition, null));
                 }
 
                 return sounds;
             }
         }
 
+        public void AddSound(SoundViewModel soundToAdd)
+        {
+            soundCommandConfiguration.AddDefinition(soundToAdd.Definition);
+        }
+
+        public string DestinationPathFor(string targetFileName)
+        {
+            return configurationManager.GenerateDestionationPathFor(targetFileName);
+        }
+
+        public bool HasExistingDefinitionForShortcut(string shortcut)
+        {
+            return soundCommandConfiguration.AllDefinitionKeys.Any(x => x == shortcut);
+        }
+
         public void Save()
         {
             configurationManager.WriteConfiguration(soundCommandConfiguration);
-        }
-    }
-
-    public class SoundViewModel : IViewModel
-    {
-        public string Name { get; set; }
-
-        public float Volume { get; set; }
-
-        public string Shortcut { get; set; }
-
-        public string Filename { get; set; }
-
-        public int CooldownInSeconds { get; set; }
-
-        public string VolumeInPercent
-        {
-            get
-            {
-                return $"{Convert.ToInt32(Volume)}%";
-            }
+            IsDirty = false;
         }
     }
 }

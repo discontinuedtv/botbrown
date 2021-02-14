@@ -12,5 +12,6 @@ namespace BotBrown.Configuration
         void WriteConfiguration(IConfiguration configurationValue);
         
         IEnumerable<IConfiguration> CheckConfigurationStatus();
+        string GenerateDestionationPathFor(string targetFileName);
     }
 }

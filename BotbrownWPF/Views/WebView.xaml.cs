@@ -14,7 +14,7 @@
     /// </summary>
     public partial class WebView : Window
     {
-        private WebViewModel vm;
+        private readonly WebViewModel vm;
 
         public WebView(WebViewModel vm)
         {
@@ -52,23 +52,24 @@
 
         private async Task<TwitchUserInfo> RequestUserId(string channelname, string accessToken)
         {
-            var client = new HttpClient();
-
-            var uri = new Uri($"https://api.twitch.tv/helix/users?login={channelname}");
-
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
-            client.DefaultRequestHeaders.Add("Client-Id", TwitchConfiguration.ApiClientId);
-            HttpResponseMessage response = await client.GetAsync(uri);
-            response.EnsureSuccessStatusCode();
-            var resp = await response.Content.ReadAsStringAsync();
-
-            var result = JsonConvert.DeserializeObject<TwitchApiResponse<TwitchUserInfo>>(resp);
-            if (result?.Data == null || !result.Data.Any())
+            using (var client = new HttpClient())
             {
-                throw new InvalidOperationException("Could not resolve Twitch user");
+                var uri = new Uri($"https://api.twitch.tv/helix/users?login={channelname}");
+
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+                client.DefaultRequestHeaders.Add("Client-Id", TwitchConfiguration.ApiClientId);
+                HttpResponseMessage response = await client.GetAsync(uri);
+                response.EnsureSuccessStatusCode();
+                var resp = await response.Content.ReadAsStringAsync();
+
+                var result = JsonConvert.DeserializeObject<TwitchApiResponse<TwitchUserInfo>>(resp);
+                if (result?.Data == null || !result.Data.Any())
+                {
+                    throw new InvalidOperationException("Could not resolve Twitch user");
+                }
+
+                return result.Data.First();
             }
-            
-            return result.Data.First();
         }
     }
 }

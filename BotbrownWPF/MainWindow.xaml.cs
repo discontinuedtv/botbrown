@@ -1,6 +1,7 @@
 ﻿namespace BotbrownWPF
 {
     using BotbrownWPF.ViewModels;
+    using System.Diagnostics;
     using System.Windows;
 
     /// <summary>
@@ -14,6 +15,9 @@
 
             this.DataContext = mainViewModel;
             this.MenuTabControl.SelectedIndex = 1;
+
+            Debugger.Launch();
+            Debugger.Break();
         }
     }
 }

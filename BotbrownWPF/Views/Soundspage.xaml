@@ -82,7 +82,9 @@
                 <StackPanel 
                     Margin="0 10 0 0"
                     HorizontalAlignment="Left">
-                    <Button Width="100">Hinzufügen</Button>
+                    <Button
+                        Click="Add_Click"
+                        Width="100">Hinzufügen</Button>
                 </StackPanel>
             </StackPanel>
         </GroupBox>

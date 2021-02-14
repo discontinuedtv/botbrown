@@ -78,6 +78,10 @@
     <Compile Include="ViewModels\Notifier.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\SoundsPageViewModel.cs" />
+    <Compile Include="ViewModels\SoundViewModel.cs" />
+    <Compile Include="Views\AddSoundView.xaml.cs">
+      <DependentUpon>AddSoundView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Commandspage.xaml.cs">
       <DependentUpon>Commandspage.xaml</DependentUpon>
     </Compile>
@@ -88,6 +92,7 @@
     <Compile Include="Views\ISettingsPage.cs" />
     <Compile Include="Views\ISoundsPage.cs" />
     <Compile Include="Views\IView.cs" />
+    <Compile Include="Views\EditMode.cs" />
     <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
@@ -103,6 +108,10 @@
     <Compile Include="WindsorViewFactory.cs" />
     <Compile Include="WpfInstaller.cs" />
     <Compile Include="WPFWindowActivator.cs" />
+    <Page Include="Views\AddSoundView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Commandspage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -154,6 +163,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="FodyWeavers.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -176,12 +188,25 @@
     <PackageReference Include="Castle.Windsor">
       <Version>5.0.1</Version>
     </PackageReference>
+    <PackageReference Include="Costura.Fody">
+      <Version>5.0.0-alpha0413</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Fody">
+      <Version>6.3.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Wpf.UI.Controls.WebView">
       <Version>6.1.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.SDK.Contracts">
       <Version>10.0.18362.2005</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
