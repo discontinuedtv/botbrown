@@ -8,7 +8,7 @@ namespace BotBrown.Workers
         {
             get
             {
-                return Directory.GetCurrentDirectory();
+                return $"{Directory.GetCurrentDirectory()}/Sounds";
             }
         }
     }

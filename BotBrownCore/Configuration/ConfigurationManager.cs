@@ -29,6 +29,11 @@
             this.registry = registry;
             this.logger = logger.ForContext<ConfigurationManager>();
             this.configurationPathProvider = configurationPathProvider;
+
+            if (!Directory.Exists(ConfigurationBasePath))
+            {
+                Directory.CreateDirectory(ConfigurationBasePath);
+            }
         }
 
         public void ResetCacheFor(string filename)
@@ -137,6 +142,11 @@
                     genericMethod.Invoke(null, null);
                 }
             }
+        }
+
+        public string GenerateDestionationPathFor(string targetFileName)
+        {
+            return Path.Combine(ConfigurationBasePath, targetFileName);
         }
     }
 }

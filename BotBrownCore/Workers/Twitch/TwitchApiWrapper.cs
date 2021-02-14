@@ -54,8 +54,9 @@
         {
             return new TwitchAPI(null, null, new ApiSettings
             {
-                ClientId = twitchConfiguration.ApiClientId,
-                AccessToken = twitchConfiguration.ApiAccessToken
+                ClientId = TwitchConfiguration.ApiClientId,
+                AccessToken = twitchConfiguration.AccessToken.Replace("oauth:", ""),
+                Secret = TwitchConfiguration.ClientSecret
             });
         }
 

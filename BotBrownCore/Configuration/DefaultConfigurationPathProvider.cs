@@ -8,7 +8,7 @@
         {
             get
             {
-                return Directory.GetCurrentDirectory();
+                return $"{Directory.GetCurrentDirectory()}/Configuration/";
             }
         }
     }

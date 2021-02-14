@@ -1,8 +1,8 @@
-﻿namespace BotBrownCore.Configuration
+﻿namespace BotBrown.Configuration
 {
-    using BotBrown.Configuration;
     using NAudio.CoreAudioApi;
     using Newtonsoft.Json;
+    using System.Collections.Generic;
     using System.ComponentModel;
 
     [ConfigurationFile(ConfigurationFileConstants.Audio)]
@@ -24,6 +24,18 @@
         [JsonIgnore]
         public MMDevice SelectedSoundCommandDevice { get; private set; }
 
+        [JsonIgnore]
+        public IEnumerable<string> AvailableDeviceNames
+        {
+            get
+            {
+                foreach (MMDevice device in EnumerateAvailableAudioDevices())
+                {
+                    yield return device.FriendlyName;
+                }
+            }
+        }
+
         private bool isDirty;
 
         public AudioConfiguration()
@@ -37,7 +49,7 @@
                 return;
             }
 
-            foreach (var audioEndpoint in deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active))
+            foreach (var audioEndpoint in EnumerateAvailableAudioDevices())
             {
                 if (audioEndpoint.FriendlyName == TTSAudioDeviceName)
                 {
@@ -80,6 +92,11 @@
             }
 
             isInitialized = true;
+        }
+
+        private MMDeviceCollection EnumerateAvailableAudioDevices()
+        {
+            return deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
         }
 
         public bool IsValid()

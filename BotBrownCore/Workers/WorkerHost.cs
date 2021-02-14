@@ -28,6 +28,7 @@
         private readonly IChatCommandResolver chatCommandResolver;
         private readonly ISoundProcessor soundProcessor;
         private readonly IConfigurationPathProvider configurationPathProvider;
+        private readonly IWindsorContainer container;
 
         public WorkerHost(
             IEventBus bus,
@@ -39,7 +40,8 @@
             IPresenceStore presenceStore,
             IChatCommandResolver chatCommandResolver,
             ISoundProcessor soundProcessor,
-            IConfigurationPathProvider configurationPathProvider)
+            IConfigurationPathProvider configurationPathProvider,
+            IWindsorContainer container)
         {
             this.bus = bus;
             this.textToSpeechProcessors = textToSpeechProcessors;
@@ -51,9 +53,8 @@
             this.chatCommandResolver = chatCommandResolver;
             this.soundProcessor = soundProcessor;
             this.configurationPathProvider = configurationPathProvider;
+            this.container = container;
         }
-
-        public WindsorContainer Container { get; set; }
 
         public void Execute(CancellationToken cancellationToken, BotArguments botArguments)
         {
@@ -125,12 +126,12 @@
 
         private void CreateStartup(IAppBuilder appBuilder)
         {
-            if (Container == null)
+            if (container == null)
             {
                 throw new InvalidOperationException("Kein CONTAINER!!");
             }
 
-            var startup = new WebserverStartup(Container);
+            var startup = new WebserverStartup(container);
             startup.Configuration(appBuilder);
         }
 

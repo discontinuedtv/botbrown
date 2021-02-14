@@ -4,7 +4,6 @@
     using System.IO;
     using System.Threading;
     using BotBrown.Configuration;
-    using BotBrownCore.Configuration;
     using NAudio.Wave;
     using Serilog;
 

@@ -7,7 +7,7 @@
     using System.Linq;
 
     [ConfigurationFile(ConfigurationFileConstants.Commands)]
-    public class CommandConfiguration : IChangeableConfiguration
+    public class SoundCommandConfiguration : IChangeableConfiguration
     {
         private bool isInitialized;
         private readonly Dictionary<string, CommandDefinition> definitions = new Dictionary<string, CommandDefinition>();
@@ -15,7 +15,7 @@
         public ObservableCollection<CommandDefinition> CommandsDefinitions { get; set; } = new ObservableCollection<CommandDefinition>();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public CommandConfiguration()
+        public SoundCommandConfiguration()
         {
             CommandsDefinitions.CollectionChanged += CommandsDefinitions_CollectionChanged;
         }
