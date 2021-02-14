@@ -1,0 +1,35 @@
+name: Release Build
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout sources
+      uses: actions/checkout@master
+    
+    - name: Setup nuget
+      uses: nuget/setup-nuget@v1
+      with:
+            nuget-version: '5.x'
+    
+    - name: Restore nuget packages
+      run: nuget restore BotBrown.sln      
+    
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Build solution
+      run: msbuild BotBrown.sln /t:Build /p:Configuration=Release
+
+    - name: Upload zip 
+      uses: actions/upload-artifact@v2
+      with:
+        name: botbrown
+        path: Build/Release/net48/
+
+    - name: Run tests
+      run: dotnet test --no-build --configuration Release
