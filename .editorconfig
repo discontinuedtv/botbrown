@@ -2,3 +2,6 @@
 
 # IDE0065: Die using-Anweisung wurde falsch platziert. 
 csharp_using_directive_placement = inside_namespace:silent
+
+# IDE0019: Musterabgleich verwenden
+csharp_style_pattern_matching_over_as_with_null_check = true:none

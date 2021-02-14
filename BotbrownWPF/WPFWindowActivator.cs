@@ -22,7 +22,7 @@
 
         private void AssignViewModel(object component, object[] arguments)
         {
-            var frameworkElement = component as FrameworkElement;
+            FrameworkElement frameworkElement = component as FrameworkElement;
             if (frameworkElement == null || arguments == null)
             {
                 return;
