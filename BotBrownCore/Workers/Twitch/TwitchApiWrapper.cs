@@ -142,5 +142,10 @@
             TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>();
             bus.Publish(new SendChannelMessageRequestedEvent(message, twitchConfiguration.Channel));
         }
+
+        public Task<DateTime?> GetFollowSince(string userId)
+        {
+            throw new NotImplementedException("TODO");
+        }
     }
 }

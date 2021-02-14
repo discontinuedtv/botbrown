@@ -16,6 +16,6 @@
 
         Task<string> GetUserIdByUsername(string username);
 
-        Task<DateTime?> GetFollowSince(string userId)
+        Task<DateTime?> GetFollowSince(string userId);
     }
 }
