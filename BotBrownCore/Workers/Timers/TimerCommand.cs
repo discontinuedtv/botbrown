@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BotBrown.Workers.Timers
+﻿namespace BotBrown.Workers.Timers
 {
+    using System;
+    using System.Collections.Generic;
+
     public sealed class TimerCommand
     {
-        private ITimeProvider timeProvider;
-        private DateTime doneAt;
+        private readonly ITimeProvider timeProvider;
+        private readonly DateTime doneAt;
         private bool isFinished;
 
         public TimerCommand(string timerName, DateTime doneAt, ITimeProvider timeProvider)

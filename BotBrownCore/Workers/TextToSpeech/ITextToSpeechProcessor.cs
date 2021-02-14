@@ -1,6 +1,6 @@
 ﻿namespace BotBrown.Workers.TextToSpeech
 {
-    using BotBrown.Configuration;
+    using BotBrown;
     using System;
 
     public interface ITextToSpeechProcessor
@@ -12,5 +12,7 @@
         void Speak(string message);
 
         bool TryGetLanguage(string requestedLanguage, out string language);
+
+        string Engine { get; }
     }
 }

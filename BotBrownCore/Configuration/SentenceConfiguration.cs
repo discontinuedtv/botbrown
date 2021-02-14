@@ -1,8 +1,9 @@
-﻿using System.ComponentModel;
-
-namespace BotBrown.Configuration
+﻿namespace BotBrown.Configuration
 {
-    public class SentenceConfiguration : IConfiguration
+    using System.ComponentModel;
+
+    [ConfigurationFile(ConfigurationFileConstants.Sentences)]
+    public class SentenceConfiguration : IChangeableConfiguration
     {
         public string FollowerAlert { get; set; }
 
@@ -15,6 +16,16 @@ namespace BotBrown.Configuration
         public string SubBombAlert { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public void Changed()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SentenceConfiguration)));
+        }
+
+        public bool IsValid()
+        {
+            return true;
+        }
     }
 }
 

@@ -6,7 +6,6 @@
     public sealed class UsernameResolver : IUsernameResolver
     {
         private readonly IConfigurationManager configurationManager;
-        private UsernameConfiguration usernameConfiguration;
 
         public UsernameResolver(IConfigurationManager configurationManager)
         {
@@ -15,37 +14,43 @@
 
         public ChannelUser ResolveUsername(ChannelUser user)
         {
-            usernameConfiguration = configurationManager.LoadConfiguration<UsernameConfiguration>(ConfigurationFileConstants.Usernames);
+            UsernameConfiguration usernameConfiguration = configurationManager.LoadConfiguration<UsernameConfiguration>();
 
             if (usernameConfiguration.TryGetValue(user.UserId, out string cachedUsername))
             {
-                return new ChannelUser(user.UserId, user.RealUsername, cachedUsername);
+                return user.WithResolvedUsername(cachedUsername);
             }
 
-            string username = user.RealUsername.Replace("_", " ");
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
+            string username = user.RealUsername;
 
-            foreach (char c in username)
+            for (int index = 0; index < username.Length; index++)
             {
-                if (char.IsUpper(c))
+                char letter = username[index];
+
+                if (char.IsUpper(letter) && index != 0)
                 {
-                    sb.Append($" {c}");
+                    sb.Append($" {letter}");
                 }
-                else if (char.IsNumber(c))
+                else if (letter == '_')
+                {
+                    sb.Append(" ");
+                }
+                else if (char.IsNumber(letter))
                 {
                     continue;
                 }
                 else
                 {
-                    sb.Append(c);
+                    sb.Append(letter);
                 }
             }
 
             string targetUsername = sb.ToString();
-            usernameConfiguration.AddUsername(user.UserId, user.RealUsername, targetUsername);
-            user.Username = targetUsername;
-            configurationManager.WriteConfiguration(usernameConfiguration, ConfigurationFileConstants.Usernames);
-            return new ChannelUser(user.UserId, user.RealUsername, targetUsername);
+
+            ChannelUser userWithResolvedUsername = user.WithResolvedUsername(targetUsername);
+            usernameConfiguration.AddUsername(userWithResolvedUsername);
+            return userWithResolvedUsername;
         }
     }
 }

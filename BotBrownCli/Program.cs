@@ -1,7 +1,6 @@
 ﻿namespace BotBrown
 {
     using System;
-    using System.Linq;
 
     class Program
     {
@@ -9,6 +8,10 @@
         {
             bool dontConnectToTwitch = false;
             bool isDebug = false;
+            string customConfigurationPath = null;
+            string customSoundsPath = null;
+            string logPath = "log/";
+            string port = null;
 
             foreach (var arg in args)
             {
@@ -23,10 +26,31 @@
                     isDebug = true;
                     continue;
                 }
+
+                if (arg.StartsWith("-ccp:"))
+                {
+                    customConfigurationPath = arg.Split(':')[1];
+                    continue;
+                }
+
+                if (arg.StartsWith("-csp:"))
+                {
+                    customSoundsPath = arg.Split(':')[1];
+                    continue;
+                }
+
+                if (arg.StartsWith("-l:"))
+                {
+                    logPath = arg.Split(':')[1];
+                }
+
+                if (arg.StartsWith("-port:"))
+                {
+                    port = arg.Split(':')[1];
+                }
             }
 
-            var botArguments = new BotArguments(isDebug, dontConnectToTwitch);
-
+            var botArguments = new BotArguments(isDebug, dontConnectToTwitch, port, customConfigurationPath, customSoundsPath, logPath);
             using (var bot = new Bot())
             {
                 bot.Execute(botArguments);
@@ -41,11 +65,6 @@
             if (theLine == "tts")
             {
                 bot.PublishTestTTSMessage("Testnachricht");
-            }
-
-            if (theLine == "cmd")
-            {
-                bot.PublishSoundCommand("scoddiNice");
             }
 
             if (theLine != "exit")

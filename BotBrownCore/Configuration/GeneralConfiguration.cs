@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-
-namespace BotBrown.Configuration
+﻿namespace BotBrown.Configuration
 {
-    public class GeneralConfiguration : IConfiguration
+    using System.Collections.Generic;
+    using System.ComponentModel;
+
+    [ConfigurationFile(ConfigurationFileConstants.General)]
+    public class GeneralConfiguration : IChangeableConfiguration
     {
         public bool ActivateTextToSpeech { get; set; }
+
+        public string TextToSpeechEngine { get; set; } = "Windows";
 
         public string BotChannelGreeting { get; set; }
 
@@ -14,5 +17,15 @@ namespace BotBrown.Configuration
         public HashSet<string> ByePhrases { get; set; } = new HashSet<string>();
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public void Changed()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GeneralConfiguration)));
+        }
+
+        public bool IsValid()
+        {
+            return true;
+        }
     }
 }

@@ -1,8 +1,7 @@
 ﻿namespace BotBrown.Configuration
 {
-    using System.ComponentModel;
-
-    public interface IConfiguration : INotifyPropertyChanged
+    public interface IConfiguration
     {
+        bool IsValid();
     }
 }

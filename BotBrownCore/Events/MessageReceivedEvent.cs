@@ -1,18 +1,28 @@
-﻿using System;
-using BotBrown.Configuration;
-using BotBrown.Events.Twitch;
-
-namespace BotBrown.Events
+﻿namespace BotBrown.Events
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using BotBrown.Events.Twitch;
+    using BotBrown;
+
     public sealed class MessageReceivedEvent : UserSpecificEvent
     {
-        public MessageReceivedEvent(ChannelUser user, TwitchChatMessage message)
+        private readonly List<Emote> emotesInMessage = new List<Emote>();
+
+        public MessageReceivedEvent(ChannelUser user, TwitchChatMessage message, IEnumerable<Emote> emotesInMessage)
             : base(user)
         {
             Message = message;
+            this.emotesInMessage.AddRange(emotesInMessage);
+
         }
 
         public TwitchChatMessage Message { get; }
+
+        public IReadOnlyCollection<Emote> EmotesInMessage => emotesInMessage.ToList();
+
+        public bool HasEmotesInMessage => emotesInMessage.Count > 0;
 
         internal void OutputMessage(Action<MessageReceivedEvent> action)
         {
