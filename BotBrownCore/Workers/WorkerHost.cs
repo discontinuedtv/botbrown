@@ -1,20 +1,21 @@
-﻿namespace BotBrown.Workers
+namespace BotBrown.Workers
 {
+    using BotBrown;
+    using BotBrown.ChatCommands;
     using BotBrown.Configuration;
+    using BotBrown.Configuration.Transient;
     using BotBrown.Events;
     using BotBrown.Workers.TextToSpeech;
     using BotBrown.Workers.Twitch;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Microsoft.Owin.Hosting;
-    using BotBrown.ChatCommands;
-    using Serilog;
-    using System;
-    using Owin;
     using BotBrown.Workers.Webserver;
     using Castle.Windsor;
-    using BotBrown;
+    using Microsoft.Owin.Hosting;
+    using Owin;
+    using Serilog;
+    using System;
     using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     public class WorkerHost : IWorkerHost
     {
@@ -28,6 +29,7 @@
         private readonly IChatCommandResolver chatCommandResolver;
         private readonly ISoundProcessor soundProcessor;
         private readonly IConfigurationPathProvider configurationPathProvider;
+        private readonly ITransientConfigStore transientConfigStore;
 
         public WorkerHost(
             IEventBus bus,
@@ -39,7 +41,8 @@
             IPresenceStore presenceStore,
             IChatCommandResolver chatCommandResolver,
             ISoundProcessor soundProcessor,
-            IConfigurationPathProvider configurationPathProvider)
+            IConfigurationPathProvider configurationPathProvider,
+            ITransientConfigStore transientConfigStore)
         {
             this.bus = bus;
             this.textToSpeechProcessors = textToSpeechProcessors;
@@ -51,6 +54,7 @@
             this.chatCommandResolver = chatCommandResolver;
             this.soundProcessor = soundProcessor;
             this.configurationPathProvider = configurationPathProvider;
+            this.transientConfigStore = transientConfigStore;
         }
 
         public WindsorContainer Container { get; set; }
@@ -101,7 +105,7 @@
         {
             Task.Run(async () =>
             {
-                using var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, chatCommandResolver, logger);
+                using var commandWorker = new CommandWorker(bus, configurationManager, presenceStore, chatCommandResolver, logger, transientConfigStore);
                 return await commandWorker.Execute(cancellationToken);
             });
         }

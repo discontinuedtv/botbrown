@@ -1,15 +1,16 @@
-﻿namespace BotBrown.Workers
+namespace BotBrown.Workers
 {
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
     using BotBrown;
     using BotBrown.ChatCommands;
     using BotBrown.Configuration;
+    using BotBrown.Configuration.Transient;
     using BotBrown.Events;
     using BotBrown.Events.Twitch;
     using BotBrown.Models;
     using Serilog;
+    using System;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     public sealed class CommandWorker : IDisposable
     {
@@ -17,6 +18,7 @@
         private readonly IConfigurationManager configurationManager;
         private readonly IPresenceStore presenceStore;
         private readonly IChatCommandResolver chatCommandResolver;
+        private readonly ITransientConfigStore transientConfigStore;
         private readonly ILogger logger;
         private Guid identifier = Guid.NewGuid();
 
@@ -25,12 +27,14 @@
             IConfigurationManager configurationManager,
             IPresenceStore presenceStore,
             IChatCommandResolver chatCommandResolver,
-            ILogger logger)
+            ILogger logger,
+            ITransientConfigStore transientConfigStore)
         {
             this.bus = bus;
             this.configurationManager = configurationManager;
             this.presenceStore = presenceStore;
             this.chatCommandResolver = chatCommandResolver;
+            this.transientConfigStore = transientConfigStore;
             this.logger = logger.ForContext<CommandWorker>();
         }
 
@@ -44,6 +48,7 @@
             bus.SubscribeToTopic<CommunitySubscriptionEvent>(identifier);
             bus.SubscribeToTopic<TwitchChannelJoinedEvent>(identifier);
             bus.SubscribeToTopic<ChatCommandReceivedEvent>(identifier);
+            bus.SubscribeToTopic<RaidReceivedEvent>(identifier);
 
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -89,6 +94,11 @@
                         ProcessChatCommandReceivedEvent(chatCommandReceivedEvent);
                     }
 
+                    if (bus.TryConsume(identifier, out RaidReceivedEvent raidReceivedEvent))
+                    {
+                        ProcesRaidReceivedEvent(raidReceivedEvent);
+                    }
+
                     await Task.Delay(100, cancellationToken);
                 }
                 catch (Exception e)
@@ -98,6 +108,14 @@
             }
 
             return true;
+        }
+
+        private void ProcesRaidReceivedEvent(RaidReceivedEvent raidReceivedEvent)
+        {
+            if (raidReceivedEvent != null)
+            {
+                transientConfigStore.Store(new MuteTimer());
+            }
         }
 
         private void ProcessChatCommandReceivedEvent(ChatCommandReceivedEvent @event)
@@ -147,6 +165,11 @@
 
         private void ProcessNewFollowerEvent(NewFollowerEvent newFollowerEvent)
         {
+            if (transientConfigStore.Get<MuteTimer>(out var raidTimer) && raidTimer.IsMute())
+            {
+                return;
+            }
+
             var sentenceConfiguration = configurationManager.LoadConfiguration<SentenceConfiguration>();
             foreach (ChannelUser newFollow in newFollowerEvent.NewFollowers)
             {
@@ -184,6 +207,11 @@
 
         private void ProcessChannelJoinedEvent(TwitchChannelJoinedEvent channelJoinedEvent)
         {
+            if (transientConfigStore.Get<MuteTimer>(out var raidTimer) && raidTimer.IsMute())
+            {
+                return;
+            }
+
             var generalConfiguration = configurationManager.LoadConfiguration<GeneralConfiguration>();
             if (string.IsNullOrEmpty(generalConfiguration.BotChannelGreeting))
             {
