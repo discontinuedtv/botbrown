@@ -68,7 +68,8 @@ namespace BotBrown.Workers
 
                     if (bus.TryConsume(identifier, out UpdateChannelEvent channelUpdate))
                     {
-                        apiWrapper.UpdateChannel(channelUpdate);
+                        // Discarding the output. Event was consumed anyways.
+                        _ = apiWrapper.UpdateChannel(channelUpdate);
                     }
 
                     await Task.Delay(100, cancellationToken);

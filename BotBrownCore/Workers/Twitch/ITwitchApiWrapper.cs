@@ -1,4 +1,4 @@
-﻿namespace BotBrown.Workers.Twitch
+namespace BotBrown.Workers.Twitch
 {
     using BotBrown.Configuration;
     using BotBrown.Events;
@@ -9,7 +9,8 @@
         void ConnectToTwitch(TwitchConfiguration twitchConfiguration);
 
         void Stop();
-        void UpdateChannel(UpdateChannelEvent channelUpdate);
+
+        Task UpdateChannel(UpdateChannelEvent channelUpdate);
 
         Task<string> GetCurrentGame();
 
