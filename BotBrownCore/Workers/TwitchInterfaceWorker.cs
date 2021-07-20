@@ -1,12 +1,12 @@
-﻿namespace BotBrown.Workers
+namespace BotBrown.Workers
 {
     using BotBrown.Configuration;
     using BotBrown.Events;
     using BotBrown.Workers.Twitch;
+    using Serilog;
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Serilog;
 
     public sealed class TwitchInterfaceWorker : IDisposable
     {
@@ -51,7 +51,7 @@
             bus.SubscribeToTopic<SendChannelMessageRequestedEvent>(identifier);
             bus.SubscribeToTopic<SendWhisperMessageRequestedEvent>(identifier);
             bus.SubscribeToTopic<UpdateChannelEvent>(identifier);
-          
+
             while (!cancellationToken.IsCancellationRequested)
             {
                 try

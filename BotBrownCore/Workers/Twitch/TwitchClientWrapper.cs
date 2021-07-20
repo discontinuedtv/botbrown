@@ -1,9 +1,10 @@
-﻿namespace BotBrown.Workers.Twitch
+namespace BotBrown.Workers.Twitch
 {
     using BotBrown;
     using BotBrown.Configuration;
     using BotBrown.Events;
     using BotBrown.Events.Twitch;
+    using Serilog;
     using System;
     using System.Collections.Generic;
     using TwitchLib.Client;
@@ -14,7 +15,6 @@
     using TwitchLib.Communication.Models;
     using Emote = Events.Twitch.Emote;
     using UserType = Models.UserType;
-    using Serilog;
 
     public class TwitchClientWrapper : ITwitchClientWrapper
     {
@@ -52,6 +52,7 @@
             bus.AddTopic<MessageReceivedEvent>();
             bus.AddTopic<TwitchChannelJoinedEvent>();
             bus.AddTopic<ChatCommandReceivedEvent>();
+            bus.AddTopic<RaidReceivedEvent>();
         }
 
         private void RegisterClientCallbacks()
@@ -66,11 +67,22 @@
             client.OnGiftedSubscription += Client_OnGiftedSubscription;
             client.OnChatCommandReceived += Client_OnChatCommandReceived;
             client.OnWhisperCommandReceived += Client_OnWhisperCommandReceived;
-
+            client.OnRaidNotification += Client_OnRaidNotification;
             client.OnConnected += Client_OnConnected;
             client.OnDisconnected += Client_OnDisconnected;
 
             client.OnLog += Client_Log;
+        }
+
+        private void Client_OnRaidNotification(object sender, OnRaidNotificationArgs e)
+        {
+            if (e == null)
+            {
+                logger.Warning("Leeres Raid-Event empfangen.");
+                return;
+            }
+
+            bus.Publish(new RaidReceivedEvent(e.RaidNotification.DisplayName, e.RaidNotification.MsgParamViewerCount));
         }
 
         private void Client_OnWhisperCommandReceived(object sender, OnWhisperCommandReceivedArgs e)
@@ -84,7 +96,7 @@
             ChannelUser user = usernameResolver.ResolveUsername(new ChannelUser(command.ChatMessage.UserId, command.ChatMessage.DisplayName, command.ChatMessage.DisplayName));
             string optionalUser = null;
 
-            if(chatCommandReceivedArguments.Command.ArgumentsAsString.StartsWith("@"))
+            if (chatCommandReceivedArguments.Command.ArgumentsAsString.StartsWith("@"))
             {
                 optionalUser = chatCommandReceivedArguments.Command.ArgumentsAsString;
             }
@@ -95,22 +107,22 @@
 
         private UserType ConvertToInternalUserType(ChatMessage chatMessage)
         {
-            if(chatMessage.IsBroadcaster)
+            if (chatMessage.IsBroadcaster)
             {
                 return UserType.Broadcaster;
             }
 
-            if(chatMessage.IsModerator)
+            if (chatMessage.IsModerator)
             {
                 return UserType.Moderator;
             }
 
-            if(chatMessage.IsVip)
+            if (chatMessage.IsVip)
             {
                 return UserType.Vip;
             }
 
-            if(chatMessage.IsSubscriber)
+            if (chatMessage.IsSubscriber)
             {
                 return UserType.Subscriber;
             }
