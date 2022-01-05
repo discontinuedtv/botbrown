@@ -1,4 +1,4 @@
-﻿namespace BotBrown.Workers.Twitch
+namespace BotBrown.Workers.Twitch
 {
     using BotBrown.Configuration;
     using BotBrown.Events;
@@ -8,26 +8,23 @@
     using System.Threading.Tasks;
     using TwitchLib.Api;
     using TwitchLib.Api.Core;
+    using TwitchLib.Api.Helix.Models.Channels.ModifyChannelInformation;
     using TwitchLib.Api.Services;
     using TwitchLib.Api.Services.Events.FollowerService;
-    using TwitchLib.Api.V5.Models.Channels;
-    using Serilog;
 
     public class TwitchApiWrapper : ITwitchApiWrapper
     {
         private readonly IUsernameResolver usernameResolver;
         private readonly IEventBus bus;
         private readonly IConfigurationManager configurationManager;
-        private readonly ILogger logger;
         private FollowerService followerService;
         private TwitchAPI api;
 
-        public TwitchApiWrapper(IUsernameResolver usernameResolver, IEventBus bus, IConfigurationManager configurationManager, ILogger logger)
+        public TwitchApiWrapper(IUsernameResolver usernameResolver, IEventBus bus, IConfigurationManager configurationManager)
         {
             this.usernameResolver = usernameResolver;
             this.bus = bus;
             this.configurationManager = configurationManager;
-            this.logger = logger;
         }
 
         public void ConnectToTwitch(TwitchConfiguration twitchConfiguration)
@@ -83,16 +80,30 @@
             bus.Publish(newFollowerEvent);
         }
 
-        public void UpdateChannel(UpdateChannelEvent updateChannelEvent)
+        public async Task UpdateChannel(UpdateChannelEvent updateChannelEvent)
         {
             TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>();
-            api.V5.Channels.GetChannelByIDAsync(twitchConfiguration.BroadcasterUserId)
-                .ContinueWith(task =>
-                {
-                    updateChannelEvent.Update(task.Result);
-                    return api.V5.Channels.UpdateChannelAsync(twitchConfiguration.BroadcasterUserId, updateChannelEvent.Title, updateChannelEvent.Game);
-                })
-                .ContinueWith(task => task.Result.ContinueWith(x => PublishSuccessMessageOnCompletion(x)));
+            var channelInformationResponse = await api.Helix.Channels.GetChannelInformationAsync(twitchConfiguration.BroadcasterUserId, twitchConfiguration.ApiAccessToken);
+
+            var channelInformation = channelInformationResponse.Data.FirstOrDefault();
+            if (channelInformation == null)
+            {
+                return;
+            }
+
+            updateChannelEvent.Update(channelInformation);
+
+            var gamesResponse = await api.Helix.Games.GetGamesAsync(null, new List<string> { updateChannelEvent.Game });
+            var game = gamesResponse.Games.FirstOrDefault();
+
+            var modifyChannelInformationRequest = new ModifyChannelInformationRequest
+            {
+                Title = updateChannelEvent.Title,
+                GameId = game?.Id ?? channelInformation.GameId
+            };
+
+            await api.Helix.Channels.ModifyChannelInformationAsync(twitchConfiguration.BroadcasterUserId, modifyChannelInformationRequest, twitchConfiguration.ApiAccessToken);
+            bus.Publish(new SendChannelMessageRequestedEvent("Titel oder Game wurden geändert.", twitchConfiguration.Channel));
         }
 
         public async Task<string> GetCurrentGame()
@@ -104,36 +115,15 @@
 
         public async Task<string> GetUserIdByUsername(string username)
         {
-            var user = await api.V5.Users.GetUserByNameAsync(username);
-            
-            if(user.Total != 1)
+            var twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>();
+            var usersResponse = await api.Helix.Users.GetUsersAsync(null, new List<string> { username }, twitchConfiguration.ApiAccessToken);
+
+            if (usersResponse.Users.Length != 1)
             {
                 return null;
             }
 
-            return user.Matches[0].Id;
-        }
-
-        private void PublishSuccessMessageOnCompletion(Task<Channel> task)
-        {
-            task.ContinueWith(t =>
-            {
-                PublishFeedbackMessage("Titel oder Game konnte nicht geändert werden.");
-                logger.Error("Beim ändern der Kanaleinstellungen ist ein Fehler aufgetreten: {Exception}", t.Exception);
-            },
-            TaskContinuationOptions.OnlyOnFaulted);
-
-            task.ContinueWith(t =>
-            {
-                PublishFeedbackMessage("Titel oder Game wurden geändert.");
-            },
-            TaskContinuationOptions.OnlyOnRanToCompletion);
-        }
-
-        private void PublishFeedbackMessage(string message)
-        {
-            TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>();
-            bus.Publish(new SendChannelMessageRequestedEvent(message, twitchConfiguration.Channel));
+            return usersResponse.Users.FirstOrDefault()?.Id;
         }
     }
 }

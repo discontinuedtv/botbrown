@@ -132,7 +132,7 @@ namespace BotBrown.Workers.Twitch
 
         private void Client_Log(object sender, OnLogArgs e)
         {
-            //Console.WriteLine(e.Data);
+            Console.WriteLine(e.Data);
         }
 
         private void InitializeTwitchClient(TwitchConfiguration twitchConfiguration, ConnectionCredentials credentials, WebSocketClient customClient)

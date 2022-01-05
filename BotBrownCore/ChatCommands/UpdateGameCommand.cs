@@ -1,4 +1,4 @@
-﻿namespace BotBrown.ChatCommands
+namespace BotBrown.ChatCommands
 {
     using BotBrown.Events;
     using BotBrown.Events.Twitch;

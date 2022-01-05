@@ -1,4 +1,4 @@
-﻿namespace BotBrown
+namespace BotBrown
 {
     using BotBrown.ChatCommands;
     using BotBrown.Configuration;
@@ -42,7 +42,7 @@
         private void RegisterLogger(BotArguments botArguments)
         {
             var configuration = new LoggerConfiguration().MinimumLevel.Verbose()
-                 .WriteTo.RollingFile(
+                 .WriteTo.File(
                      Path.Combine(botArguments.LogPath, "botbrown-{Date}.log"),
                      botArguments.IsDebug ? Serilog.Events.LogEventLevel.Debug : Serilog.Events.LogEventLevel.Verbose,
                      "({Timestamp:HH:mm:ss.fff}|{Level:u3}|{SourceContext}) {Message}{NewLine}{Exception}"
