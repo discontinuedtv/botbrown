@@ -83,7 +83,7 @@ namespace BotBrown.Workers.Twitch
         public async Task UpdateChannel(UpdateChannelEvent updateChannelEvent)
         {
             TwitchConfiguration twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>();
-            var channelInformationResponse = await api.Helix.Channels.GetChannelInformationAsync(twitchConfiguration.BroadcasterUserId);
+            var channelInformationResponse = await api.Helix.Channels.GetChannelInformationAsync(twitchConfiguration.BroadcasterUserId, twitchConfiguration.ApiAccessToken);
 
             var channelInformation = channelInformationResponse.Data.FirstOrDefault();
             if (channelInformation == null)
@@ -102,7 +102,7 @@ namespace BotBrown.Workers.Twitch
                 GameId = game?.Id ?? channelInformation.GameId
             };
 
-            await api.Helix.Channels.ModifyChannelInformationAsync(twitchConfiguration.BroadcasterUserId, modifyChannelInformationRequest, twitchConfiguration.AccessToken);
+            await api.Helix.Channels.ModifyChannelInformationAsync(twitchConfiguration.BroadcasterUserId, modifyChannelInformationRequest, twitchConfiguration.ApiAccessToken);
             bus.Publish(new SendChannelMessageRequestedEvent("Titel oder Game wurden geändert.", twitchConfiguration.Channel));
         }
 
@@ -116,8 +116,7 @@ namespace BotBrown.Workers.Twitch
         public async Task<string> GetUserIdByUsername(string username)
         {
             var twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>();
-            var usersResponse = await api.Helix.Users.GetUsersAsync(null, new List<string> { username }, twitchConfiguration.AccessToken);
-
+            var usersResponse = await api.Helix.Users.GetUsersAsync(null, new List<string> { username }, twitchConfiguration.ApiAccessToken);
 
             if (usersResponse.Users.Length != 1)
             {
