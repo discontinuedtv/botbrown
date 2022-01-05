@@ -1,0 +1,35 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "BotBrown.ChannelData";
+
+package birthdays;
+
+// The birthdays endpoint definition
+service BirthdayService {
+  // Sends a greeting
+  rpc StoreBirthday (StoreBirthdayRequest) returns (StoreBirthdayReply);
+
+  rpc MarkCongratulated (MarkCongratulatedRequest) returns (MarkCongratulatedReply);
+}
+
+// The request message containing the birthdays.
+message StoreBirthdayRequest {
+  string userId = 1;
+  int64 day = 2;
+}
+
+// The response message containing the greetings.
+message StoreBirthdayReply {
+  string message = 1;
+}
+
+// The request message containing the birthdays.
+message MarkCongratulatedRequest {
+  string userId = 1;
+  int32 year = 2;
+}
+
+// The response message containing the greetings.
+message MarkCongratulatedReply {
+  string message = 1;
+}
