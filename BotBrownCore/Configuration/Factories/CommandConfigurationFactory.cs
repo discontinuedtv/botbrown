@@ -3,11 +3,11 @@ namespace BotBrown.Configuration.Factories
     using System.Collections.ObjectModel;
     using BotBrown;
 
-    public class CommandConfigurationFileFactory : IConfigurationFileFactory<CommandConfiguration>
+    public class CommandConfigurationFileFactory : IConfigurationFileFactory<SoundCommandConfiguration>
     {
-        public CommandConfiguration CreateDefaultConfiguration()
+        public SoundCommandConfiguration CreateDefaultConfiguration()
         {
-            return new CommandConfiguration
+            return new SoundCommandConfiguration
             {
                 CommandsDefinitions = new ObservableCollection<CommandDefinition>
                 {

@@ -10,7 +10,6 @@
     using System.Threading;
     using BotBrown;
     using BotBrown.Configuration;
-    using BotBrownCore.Configuration;
     using NAudio.CoreAudioApi;
     using NAudio.Wave;
     using SpeechLib;
@@ -102,7 +101,7 @@
             using var sourceStream = new MemoryStream((byte[])waveStream.GetData());
             using var output = new WasapiOut(audioConfiguration.SelectedTTSDevice, AudioClientShareMode.Shared, true, 100);
             using var provider = new RawSourceWaveStream(sourceStream, new WaveFormat(44100, BitResolution, 2));
-            
+
             sourceStream.Seek(0, SeekOrigin.Begin);
             output.Volume = 1f;
             output.Init(provider);
@@ -159,6 +158,12 @@
             foreach (InstalledVoice voice in voices)
             {
                 string[] languageName = voice.VoiceInfo.Culture.DisplayName.ToLower().Split(' ');
+
+                if (availableLanguages.ContainsKey(languageName[0]))
+                {
+                    continue;
+                }
+
                 availableLanguages.Add(languageName[0], voice.VoiceInfo.Name);
             }
         }

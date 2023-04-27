@@ -1,7 +1,6 @@
 ﻿namespace BotBrown.Workers.TextToSpeech
 {
     using BotBrown.Configuration;
-    using BotBrownCore.Configuration;
     using Microsoft.CognitiveServices.Speech;
     using NAudio.Wave;
     using System;
@@ -43,7 +42,7 @@
             }
 
             audioConfiguration.InitializeConfiguration();
-            const int volume = 100;
+            const int volume = 75;
 
             var config = SpeechConfig.FromSubscription(azureConfiguration.SubscriptionKey, "westeurope");
 

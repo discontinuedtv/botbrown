@@ -31,27 +31,17 @@
         {
             try
             {
-                twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>();
-                logger.Information("Twitch Konfiguration wurde geladen.");
+                await AttemptConnection(cancellationToken);
 
-                if (!twitchConfiguration.IsValid())
-                {
-                    logger.Information("Die Twitch Konfiguration ist nicht valide");
-                    return false;
-                }
-
-                clientWrapper.ConnectToTwitch(twitchConfiguration);
-                apiWrapper.ConnectToTwitch(twitchConfiguration);
+                bus.SubscribeToTopic<SendChannelMessageRequestedEvent>(identifier);
+                bus.SubscribeToTopic<SendWhisperMessageRequestedEvent>(identifier);
+                bus.SubscribeToTopic<UpdateChannelEvent>(identifier);
             }
             catch (Exception e)
             {
                 logger.Error("Der Bot wurde aufgrund eines Fehlers beendet. Fehler: {e}", e);
             }
-
-            bus.SubscribeToTopic<SendChannelMessageRequestedEvent>(identifier);
-            bus.SubscribeToTopic<SendWhisperMessageRequestedEvent>(identifier);
-            bus.SubscribeToTopic<UpdateChannelEvent>(identifier);
-          
+         
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
@@ -73,6 +63,8 @@
 
                     await Task.Delay(100, cancellationToken);
                 }
+                catch (TaskCanceledException)
+                { }
                 catch (Exception e)
                 {
                     logger.Error("Bei der Verarbeitung von Twitch Events ist ein Fehler aufgetreten: {e}", e);
@@ -80,6 +72,24 @@
             }
 
             return true;
+        }
+
+        private async Task AttemptConnection(CancellationToken cancellationToken)
+        {
+            twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>();
+            logger.Information("Die Twitch Konfiguration wurde geladen.");
+
+            if (!twitchConfiguration.IsValid())
+            {
+                while (!cancellationToken.IsCancellationRequested && !twitchConfiguration.IsValid())
+                {
+                    await Task.Delay(1000);
+                    twitchConfiguration = configurationManager.LoadConfiguration<TwitchConfiguration>();
+                }
+            }
+
+            clientWrapper.ConnectToTwitch(twitchConfiguration);
+            apiWrapper.ConnectToTwitch(twitchConfiguration);
         }
 
         public void Dispose()

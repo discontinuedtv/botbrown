@@ -91,6 +91,8 @@
 
                     await Task.Delay(100, cancellationToken);
                 }
+                catch (TaskCanceledException)
+                { }
                 catch (Exception e)
                 {
                     logger.Error("Bei der Verarbeitung eines Kommandos ist ein Fehler aufgetreten: {e}", e);
@@ -209,7 +211,7 @@
                 return;
             }
 
-            var soundConfiguration = configurationManager.LoadConfiguration<CommandConfiguration>();
+            var soundConfiguration = configurationManager.LoadConfiguration<SoundCommandConfiguration>();
             foreach (var emoteInMessage in message.EmotesInMessage)
             {
                 if (!soundConfiguration.TryGetDefinition(emoteInMessage.Name, out CommandDefinition commandDefinition))

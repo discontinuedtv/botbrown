@@ -1,12 +1,8 @@
 ﻿namespace BotBrown
 {
-    using System;
-    using SpiderEye.Windows;
-
-    public class Program : ProgramBase
+    public class BotArgumentsFactory
     {
-        [STAThread]
-        public static void Main(string[] args)
+        public BotArguments BuildFrom(string[] args)
         {
             bool dontConnectToTwitch = false;
             bool isDebug = false;
@@ -29,11 +25,6 @@
                     continue;
                 }
 
-                if (arg.StartsWith("-port:"))
-                {
-                    port = arg.Split(':')[1];
-                }
-
                 if (arg.StartsWith("-ccp:"))
                 {
                     customConfigurationPath = arg.Split(':')[1];
@@ -49,13 +40,16 @@
                 if (arg.StartsWith("-l:"))
                 {
                     logPath = arg.Split(':')[1];
-                    continue;
+                }
+
+                if (arg.StartsWith("-port:"))
+                {
+                    port = arg.Split(':')[1];
                 }
             }
 
             var botArguments = new BotArguments(isDebug, dontConnectToTwitch, port, customConfigurationPath, customSoundsPath, logPath);
-            WindowsApplication.Init();
-            Run(botArguments);
+            return botArguments;
         }
     }
 }

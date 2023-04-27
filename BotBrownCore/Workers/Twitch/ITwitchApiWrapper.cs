@@ -9,6 +9,7 @@
         void ConnectToTwitch(TwitchConfiguration twitchConfiguration);
 
         void Stop();
+
         void UpdateChannel(UpdateChannelEvent channelUpdate);
 
         Task<string> GetCurrentGame();

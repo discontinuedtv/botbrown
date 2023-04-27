@@ -8,7 +8,5 @@
         void Execute(CancellationToken cancellationToken, BotArguments botArguments);
 
         void PublishTTSMessage(string message);
-
-        WindsorContainer Container { get; set; }
     }
 }

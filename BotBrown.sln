@@ -1,4 +1,5 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -20,9 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotBrownCore.Tests", "BotBrownCore.Tests\BotBrownCore.Tests.csproj", "{8543C509-0088-4A9A-931F-E24165650C07}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotBrownGui.Core", "BotBrownGui.Core\BotBrownGui.Core.csproj", "{38A325B1-30B8-4A4F-8D0C-A2A173D11847}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotBrown", "BotBrown\BotBrown.csproj", "{4AD4E238-F6A5-41E5-B27D-A35FDDB841D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotbrownWPF", "BotbrownWPF\BotbrownWPF.csproj", "{49D6B424-8985-4833-81C6-C243CE1CD074}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,14 +41,10 @@ Global
 		{8543C509-0088-4A9A-931F-E24165650C07}.Debug|x64.Build.0 = Debug|x64
 		{8543C509-0088-4A9A-931F-E24165650C07}.Release|x64.ActiveCfg = Release|x64
 		{8543C509-0088-4A9A-931F-E24165650C07}.Release|x64.Build.0 = Release|x64
-		{38A325B1-30B8-4A4F-8D0C-A2A173D11847}.Debug|x64.ActiveCfg = Debug|x64
-		{38A325B1-30B8-4A4F-8D0C-A2A173D11847}.Debug|x64.Build.0 = Debug|x64
-		{38A325B1-30B8-4A4F-8D0C-A2A173D11847}.Release|x64.ActiveCfg = Release|x64
-		{38A325B1-30B8-4A4F-8D0C-A2A173D11847}.Release|x64.Build.0 = Release|x64
-		{4AD4E238-F6A5-41E5-B27D-A35FDDB841D1}.Debug|x64.ActiveCfg = Debug|x64
-		{4AD4E238-F6A5-41E5-B27D-A35FDDB841D1}.Debug|x64.Build.0 = Debug|x64
-		{4AD4E238-F6A5-41E5-B27D-A35FDDB841D1}.Release|x64.ActiveCfg = Release|x64
-		{4AD4E238-F6A5-41E5-B27D-A35FDDB841D1}.Release|x64.Build.0 = Release|x64
+		{49D6B424-8985-4833-81C6-C243CE1CD074}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{49D6B424-8985-4833-81C6-C243CE1CD074}.Debug|x64.Build.0 = Debug|Any CPU
+		{49D6B424-8985-4833-81C6-C243CE1CD074}.Release|x64.ActiveCfg = Release|Any CPU
+		{49D6B424-8985-4833-81C6-C243CE1CD074}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

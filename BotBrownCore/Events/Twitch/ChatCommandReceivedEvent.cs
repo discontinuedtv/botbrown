@@ -7,7 +7,7 @@
     {
         private readonly UserType userType;
 
-        public ChatCommandReceivedEvent(ChannelUser user, string commandText, string commandArgs, string channelName, string optionalUser, UserType userType)
+        public ChatCommandReceivedEvent(ChannelUser user, string commandText, string commandArgs, string channelName, string optionalUser, UserType userType, string customRewardId)
             : base(user)
         {
             CommandText = commandText;
@@ -15,6 +15,7 @@
             OptionalUser = optionalUser;
             this.userType = userType;
             CommandArgs = commandArgs;
+            CustomRewardId = customRewardId;
         }
 
         public string CommandText { get; }
@@ -24,7 +25,11 @@
         public string ChannelName { get; }
 
         public string OptionalUser { get; }
-        
+
+        public string CustomRewardId { get; }
+
+        public bool HasCustomRewardId => !string.IsNullOrEmpty(CustomRewardId);
+
         public bool IsForUserType(UserType typeToCheck)
         {
             return userType.IsType(typeToCheck);

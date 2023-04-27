@@ -1,2 +1,5 @@
-☐ 110100100.global auf Spotify checken
-☐ Geburtstagsständchen einbauen
+☐ Der Bot soll nicht neu starten müssen um beim ersten Mal zu funktionieren
+	  -> Twitch Worker müssen darauf reagieren, dass sich die Anmeldeinformationen ändern
+☐ Logout Button
+☐ Simple Text Command reparieren
+	
